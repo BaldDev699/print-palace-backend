@@ -428,6 +428,23 @@ export type Database = {
     }
     Functions: {
       get_pending_withdrawals: { Args: { user_uuid: string }; Returns: number }
+      get_public_manufacturers: {
+        Args: never
+        Returns: {
+          certifications: string[]
+          company_name: string
+          created_at: string
+          description: string
+          id: string
+          is_verified: boolean
+          lead_time_days: number
+          minimum_order_quantity: number
+          specialties: string[]
+          updated_at: string
+          user_id: string
+          website_url: string
+        }[]
+      }
       get_user_roge_balance: { Args: { user_uuid: string }; Returns: number }
       has_role: {
         Args: {

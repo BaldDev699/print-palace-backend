@@ -53,10 +53,7 @@ const ManufacturersPage = () => {
 
   const fetchManufacturers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('manufacturers')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.rpc('get_public_manufacturers');
 
       if (error) throw error;
       setManufacturers((data || []) as any);
