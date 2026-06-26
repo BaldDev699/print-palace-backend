@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ManufacturersRouteImport } from './routes/manufacturers'
+import { Route as DesignerRouteImport } from './routes/designer'
+import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturersRoute = ManufacturersRouteImport.update({
+  id: '/manufacturers',
+  path: '/manufacturers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignerRoute = DesignerRouteImport.update({
+  id: '/designer',
+  path: '/designer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturers'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturers'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturers'
+    | '/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  CollectionRoute: typeof CollectionRoute
+  DesignerRoute: typeof DesignerRoute
+  ManufacturersRoute: typeof ManufacturersRoute
+  ProfileRoute: typeof ProfileRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturers': {
+      id: '/manufacturers'
+      path: '/manufacturers'
+      fullPath: '/manufacturers'
+      preLoaderRoute: typeof ManufacturersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designer': {
+      id: '/designer'
+      path: '/designer'
+      fullPath: '/designer'
+      preLoaderRoute: typeof DesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +157,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  CollectionRoute: CollectionRoute,
+  DesignerRoute: DesignerRoute,
+  ManufacturersRoute: ManufacturersRoute,
+  ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
