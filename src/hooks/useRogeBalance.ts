@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { getRogeBalanceFn } from '@/lib/roge-balance.functions';
 
 export interface RogeBalanceData {
   totalBalance: number;
@@ -21,27 +21,8 @@ export function useRogeBalance() {
   const loadBalance = async () => {
     try {
       setBalanceData(prev => ({ ...prev, isLoading: true, error: null }));
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
 
-      // Get total balance using the database function
-      const { data: totalBalanceData, error: balanceError } = await supabase
-        .rpc('get_user_roge_balance', { user_uuid: user.id });
-
-      if (balanceError) throw balanceError;
-
-      // Get pending withdrawals using the database function
-      const { data: pendingWithdrawalsData, error: pendingError } = await supabase
-        .rpc('get_pending_withdrawals', { user_uuid: user.id });
-
-      if (pendingError) throw pendingError;
-
-      const totalBalance = Number(totalBalanceData || 0);
-      const pendingWithdrawals = Number(pendingWithdrawalsData || 0);
-      const availableBalance = Math.max(0, totalBalance - pendingWithdrawals);
+      const { totalBalance, availableBalance, pendingWithdrawals } = await getRogeBalanceFn();
 
       setBalanceData({
         totalBalance,
