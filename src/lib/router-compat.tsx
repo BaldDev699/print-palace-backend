@@ -43,7 +43,9 @@ export function useLocation() {
     pathname: loc.pathname,
     search: loc.searchStr ?? "",
     hash: loc.hash ?? "",
-    state: (loc.state ?? {}) as Record<string, unknown> & { scrollTo?: string },
+    state: (loc.state ?? {}) as unknown as Record<string, unknown> & {
+      scrollTo?: string;
+    },
   };
 }
 
