@@ -9,38 +9,248 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ManufacturersRouteImport } from './routes/manufacturers'
+import { Route as ManufacturerDashboardRouteImport } from './routes/manufacturer-dashboard'
+import { Route as ManufacturerRouteImport } from './routes/manufacturer'
+import { Route as DesignerRouteImport } from './routes/designer'
+import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
+import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
+import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
+import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturersRoute = ManufacturersRouteImport.update({
+  id: '/manufacturers',
+  path: '/manufacturers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturerDashboardRoute = ManufacturerDashboardRouteImport.update({
+  id: '/manufacturer-dashboard',
+  path: '/manufacturer-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturerRoute = ManufacturerRouteImport.update({
+  id: '/manufacturer',
+  path: '/manufacturer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignerRoute = DesignerRouteImport.update({
+  id: '/designer',
+  path: '/designer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManufacturerIndexRoute = ManufacturerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ManufacturerRoute,
+} as any)
+const ManufacturerWalletRoute = ManufacturerWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => ManufacturerRoute,
+} as any)
+const ManufacturerPortfolioRoute = ManufacturerPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => ManufacturerRoute,
+} as any)
+const ManufacturerOrdersRoute = ManufacturerOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => ManufacturerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturer': typeof ManufacturerRouteWithChildren
+  '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
+  '/manufacturer/wallet': typeof ManufacturerWalletRoute
+  '/manufacturer/': typeof ManufacturerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
+  '/manufacturer/wallet': typeof ManufacturerWalletRoute
+  '/manufacturer': typeof ManufacturerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
+  '/designer': typeof DesignerRoute
+  '/manufacturer': typeof ManufacturerRouteWithChildren
+  '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
+  '/manufacturers': typeof ManufacturersRoute
+  '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
+  '/manufacturer/wallet': typeof ManufacturerWalletRoute
+  '/manufacturer/': typeof ManufacturerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturer'
+    | '/manufacturer-dashboard'
+    | '/manufacturers'
+    | '/profile'
+    | '/sitemap.xml'
+    | '/manufacturer/orders'
+    | '/manufacturer/portfolio'
+    | '/manufacturer/wallet'
+    | '/manufacturer/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturer-dashboard'
+    | '/manufacturers'
+    | '/profile'
+    | '/sitemap.xml'
+    | '/manufacturer/orders'
+    | '/manufacturer/portfolio'
+    | '/manufacturer/wallet'
+    | '/manufacturer'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/collection'
+    | '/designer'
+    | '/manufacturer'
+    | '/manufacturer-dashboard'
+    | '/manufacturers'
+    | '/profile'
+    | '/sitemap.xml'
+    | '/manufacturer/orders'
+    | '/manufacturer/portfolio'
+    | '/manufacturer/wallet'
+    | '/manufacturer/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  CollectionRoute: typeof CollectionRoute
+  DesignerRoute: typeof DesignerRoute
+  ManufacturerRoute: typeof ManufacturerRouteWithChildren
+  ManufacturerDashboardRoute: typeof ManufacturerDashboardRoute
+  ManufacturersRoute: typeof ManufacturersRoute
+  ProfileRoute: typeof ProfileRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturers': {
+      id: '/manufacturers'
+      path: '/manufacturers'
+      fullPath: '/manufacturers'
+      preLoaderRoute: typeof ManufacturersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturer-dashboard': {
+      id: '/manufacturer-dashboard'
+      path: '/manufacturer-dashboard'
+      fullPath: '/manufacturer-dashboard'
+      preLoaderRoute: typeof ManufacturerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturer': {
+      id: '/manufacturer'
+      path: '/manufacturer'
+      fullPath: '/manufacturer'
+      preLoaderRoute: typeof ManufacturerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designer': {
+      id: '/designer'
+      path: '/designer'
+      fullPath: '/designer'
+      preLoaderRoute: typeof DesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +258,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manufacturer/': {
+      id: '/manufacturer/'
+      path: '/'
+      fullPath: '/manufacturer/'
+      preLoaderRoute: typeof ManufacturerIndexRouteImport
+      parentRoute: typeof ManufacturerRoute
+    }
+    '/manufacturer/wallet': {
+      id: '/manufacturer/wallet'
+      path: '/wallet'
+      fullPath: '/manufacturer/wallet'
+      preLoaderRoute: typeof ManufacturerWalletRouteImport
+      parentRoute: typeof ManufacturerRoute
+    }
+    '/manufacturer/portfolio': {
+      id: '/manufacturer/portfolio'
+      path: '/portfolio'
+      fullPath: '/manufacturer/portfolio'
+      preLoaderRoute: typeof ManufacturerPortfolioRouteImport
+      parentRoute: typeof ManufacturerRoute
+    }
+    '/manufacturer/orders': {
+      id: '/manufacturer/orders'
+      path: '/orders'
+      fullPath: '/manufacturer/orders'
+      preLoaderRoute: typeof ManufacturerOrdersRouteImport
+      parentRoute: typeof ManufacturerRoute
+    }
   }
 }
 
+interface ManufacturerRouteChildren {
+  ManufacturerOrdersRoute: typeof ManufacturerOrdersRoute
+  ManufacturerPortfolioRoute: typeof ManufacturerPortfolioRoute
+  ManufacturerWalletRoute: typeof ManufacturerWalletRoute
+  ManufacturerIndexRoute: typeof ManufacturerIndexRoute
+}
+
+const ManufacturerRouteChildren: ManufacturerRouteChildren = {
+  ManufacturerOrdersRoute: ManufacturerOrdersRoute,
+  ManufacturerPortfolioRoute: ManufacturerPortfolioRoute,
+  ManufacturerWalletRoute: ManufacturerWalletRoute,
+  ManufacturerIndexRoute: ManufacturerIndexRoute,
+}
+
+const ManufacturerRouteWithChildren = ManufacturerRoute._addFileChildren(
+  ManufacturerRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  CollectionRoute: CollectionRoute,
+  DesignerRoute: DesignerRoute,
+  ManufacturerRoute: ManufacturerRouteWithChildren,
+  ManufacturerDashboardRoute: ManufacturerDashboardRoute,
+  ManufacturersRoute: ManufacturersRoute,
+  ProfileRoute: ProfileRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
