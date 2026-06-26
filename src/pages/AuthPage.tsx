@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from '@/lib/router-compat';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { lovable } from '@/integrations/lovable/index';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
