@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { awardRogeCoinsFn } from "@/lib/roge-coins.functions";
 
 export type TransactionType = 'earned' | 'bonus' | 'referral';
 
@@ -11,7 +11,7 @@ interface AwardCoinsParams {
 }
 
 /**
- * Award Roge coins to a user through the Edge Function
+ * Award Roge coins to a user through a server function.
  */
 export async function awardRogeCoins({
   userId,
@@ -21,18 +21,15 @@ export async function awardRogeCoins({
   referenceId
 }: AwardCoinsParams) {
   try {
-    const { data, error } = await supabase.functions.invoke('award-roge-coins', {
-      body: {
+    return await awardRogeCoinsFn({
+      data: {
         user_id: userId,
         transaction_type: type,
         amount,
         description,
-        reference_id: referenceId
-      }
+        reference_id: referenceId,
+      },
     });
-
-    if (error) throw error;
-    return data;
   } catch (error) {
     console.error('Error awarding Roge coins:', error);
     throw error;
