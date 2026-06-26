@@ -87,31 +87,31 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
     setManufacturersError('');
 
     try {
-      // Primary query - verified manufacturers
-      let { data, error } = await supabase
-        .from('manufacturers')
-        .select('id, company_name, minimum_order_quantity, lead_time_days, specialties')
-        .eq('is_verified', true)
-        .order('lead_time_days', { ascending: true })
+      const { data: allManufacturers, error } = await supabase
+        .rpc('get_public_manufacturers')
         .abortSignal(signal);
 
       if (error) throw error;
 
-      // If no verified manufacturers, try fallback query
-      if (!data || data.length === 0) {
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('manufacturers')
-          .select('id, company_name, minimum_order_quantity, lead_time_days, specialties')
-          .order('created_at', { ascending: false })
-          .limit(10)
-          .abortSignal(signal);
+      const list = allManufacturers || [];
+      // Prefer verified manufacturers, sorted by lead time
+      let data = list
+        .filter((m: any) => m.is_verified)
+        .sort((a: any, b: any) => (a.lead_time_days ?? 0) - (b.lead_time_days ?? 0));
 
-        if (fallbackError) throw fallbackError;
-        data = fallbackData || [];
+      // Fallback to most recent manufacturers if none verified
+      if (data.length === 0) {
+        data = [...list]
+          .sort(
+            (a: any, b: any) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+          )
+          .slice(0, 10);
       }
 
       setManufacturers(data as any);
       setManufacturersError('');
+
     } catch (error: any) {
       if (error.name === 'AbortError') return; // Request was cancelled
 
