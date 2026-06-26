@@ -59,6 +59,13 @@ export type Database = {
             referencedRelation: "manufacturers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "manufacturer_portfolio_manufacturer_id_fkey"
+            columns: ["manufacturer_id"]
+            isOneToOne: false
+            referencedRelation: "manufacturers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       manufacturers: {
@@ -252,6 +259,13 @@ export type Database = {
             referencedRelation: "manufacturers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "orders_manufacturer_id_fkey"
+            columns: ["manufacturer_id"]
+            isOneToOne: false
+            referencedRelation: "manufacturers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -424,7 +438,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      manufacturers_public: {
+        Row: {
+          certifications: string[] | null
+          company_name: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_verified: boolean | null
+          lead_time_days: number | null
+          minimum_order_quantity: number | null
+          specialties: string[] | null
+          updated_at: string | null
+          user_id: string | null
+          website_url: string | null
+        }
+        Insert: {
+          certifications?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          lead_time_days?: number | null
+          minimum_order_quantity?: number | null
+          specialties?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          certifications?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          lead_time_days?: number | null
+          minimum_order_quantity?: number | null
+          specialties?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_pending_withdrawals: { Args: { user_uuid: string }; Returns: number }
