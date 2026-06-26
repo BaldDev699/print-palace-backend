@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Button } from '@/components/ui/button';
 import { DesignCanvas } from '@/components/designer/DesignCanvas';
 import { DesignSidebar } from '@/components/designer/DesignSidebar';

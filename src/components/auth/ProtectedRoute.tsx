@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from '@/lib/router-compat';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 

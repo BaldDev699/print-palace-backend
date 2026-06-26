@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import signatureTeeImage from '@/assets/collection-signature-tee.jpg';
 import artisanHoodieImage from '@/assets/collection-artisan-hoodie.jpg';
 import innovatorCapImage from '@/assets/collection-innovator-cap.jpg';

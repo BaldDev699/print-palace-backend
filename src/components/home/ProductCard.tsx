@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from '@/lib/router-compat'; // Import Link
 
 interface ProductCardProps {
   title: string;

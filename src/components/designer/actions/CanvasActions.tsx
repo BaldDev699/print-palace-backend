@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Canvas as FabricCanvas } from 'fabric';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router-compat';
 
 interface CanvasActionsProps {
   fabricCanvas: FabricCanvas | null;

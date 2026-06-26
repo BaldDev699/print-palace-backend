@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from '@/lib/router-compat';
 import { Package, Wallet, ImageIcon, Menu } from 'lucide-react';
 import {
   Sidebar,

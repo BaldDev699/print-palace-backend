@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from '@/lib/router-compat';
 import { Header, Footer } from '@/components/layout';
 import { ManufacturerSidebar } from './ManufacturerSidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
