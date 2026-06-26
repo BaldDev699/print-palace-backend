@@ -163,7 +163,30 @@ const AuthPage = () => {
           <p className="text-muted-foreground">Join the creative community</p>
         </div>
 
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full mb-4"
+          onClick={handleGoogleSignIn}
+          disabled={isLoading}
+        >
+          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.66 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.8 3 14.6 2 12 2 6.9 2 2.8 6.1 2.8 11.2S6.9 20.4 12 20.4c6 0 9.5-4.2 9.5-9.1 0-.6-.07-1.1-.16-1.6H12z" />
+          </svg>
+          Continue with Google
+        </Button>
+
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">or</span>
+          </div>
+        </div>
+
         <Tabs defaultValue="login" className="w-full">
+
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
