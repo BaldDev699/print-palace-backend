@@ -81,7 +81,7 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
     selectedObject.set(updates);
     fabricCanvas.renderAll();
     
-    setObjectProperties(prev => ({ ...prev, [property]: value }));
+    setObjectProperties((prev: any) => ({ ...prev, [property]: value }));
   };
 
   const deleteSelectedObject = () => {

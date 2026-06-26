@@ -166,7 +166,7 @@ export const useCollageFrames = (fabricCanvas: FabricCanvas | null) => {
     if (!frame || !fabricCanvas) return;
 
     const loadImage = (imageUrl: string) => {
-      FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' as TCrossOrigin }, (img) => {
+      FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' as TCrossOrigin }, (img: any) => {
         if (!img) {
           toast.error('Failed to load image');
           return;
@@ -265,7 +265,7 @@ export const useCollageFrames = (fabricCanvas: FabricCanvas | null) => {
     reader.onload = (e) => {
       const imageUrl = e.target?.result as string;
       if (imageUrl) {
-        FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' as TCrossOrigin }, (img) => {
+        FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' as TCrossOrigin }, (img: any) => {
           if (img) {
             // Scale to cover canvas
             const canvasWidth = fabricCanvas.width || 1080;

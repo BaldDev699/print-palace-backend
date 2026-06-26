@@ -59,7 +59,7 @@ const ManufacturersPage = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setManufacturers(data || []);
+      setManufacturers((data || []) as any);
     } catch (error) {
       console.error('Error fetching manufacturers:', error);
       toast.error('Failed to load manufacturers');
@@ -79,7 +79,7 @@ const ManufacturersPage = () => {
         .maybeSingle();
 
       if (error) throw error;
-      setUserManufacturer(data);
+      setUserManufacturer(data as any);
     } catch (error) {
       console.error('Error fetching user manufacturer:', error);
     }

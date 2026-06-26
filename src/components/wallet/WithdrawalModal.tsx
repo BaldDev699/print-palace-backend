@@ -67,7 +67,7 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
         .order('is_default', { ascending: false });
 
       if (error) throw error;
-      setUserWallets(data || []);
+      setUserWallets((data || []) as any);
     } catch (error) {
       console.error('Error loading wallets:', error);
     }

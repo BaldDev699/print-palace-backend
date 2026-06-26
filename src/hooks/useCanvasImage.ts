@@ -24,7 +24,7 @@ export const useCanvasImage = (fabricCanvas: FabricCanvas | null) => {
       const imageOptions: LoadImageOptions = { crossOrigin: 'anonymous' };
 
       // Callback function passed as the third argument
-      FabricImage.fromURL(data, imageOptions, (img) => {
+      FabricImage.fromURL(data, imageOptions, (img: any) => {
         if (!img) {
           toast.error("Failed to load image onto canvas.");
           return;

@@ -110,7 +110,7 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
         data = fallbackData || [];
       }
 
-      setManufacturers(data);
+      setManufacturers(data as any);
       setManufacturersError('');
     } catch (error: any) {
       if (error.name === 'AbortError') return; // Request was cancelled

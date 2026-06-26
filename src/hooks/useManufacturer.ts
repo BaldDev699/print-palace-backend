@@ -52,7 +52,7 @@ export function useManufacturer() {
           return;
         }
 
-        setManufacturer(data);
+        setManufacturer(data as any);
       } catch (error) {
         console.error('Error:', error);
         navigate('/manufacturers');

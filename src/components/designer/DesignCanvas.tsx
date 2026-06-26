@@ -137,7 +137,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   );
   
   useEffect(() => {
-    const cleanup = initCanvas(canvasRef);
+    const cleanup = initCanvas(canvasRef as any);
     setIsTemplateDrawerOpen(true);
     return () => {
       if (typeof cleanup === 'function') {

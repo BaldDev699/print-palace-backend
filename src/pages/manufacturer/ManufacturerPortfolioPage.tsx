@@ -48,7 +48,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        setPortfolioItems(data || []);
+        setPortfolioItems((data || []) as any);
       } catch (error) {
         console.error('Error fetching portfolio:', error);
       } finally {

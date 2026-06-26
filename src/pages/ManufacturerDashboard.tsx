@@ -84,7 +84,7 @@ const ManufacturerDashboard = () => {
         return;
       }
       
-      setManufacturer(data);
+      setManufacturer(data as any);
     } catch (error) {
       console.error('Error fetching manufacturer:', error);
       toast.error('Failed to load manufacturer profile');
@@ -113,7 +113,7 @@ const ManufacturerDashboard = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setOrders(data || []);
+      setOrders((data || []) as any);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error('Failed to load orders');

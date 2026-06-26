@@ -67,7 +67,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <ShapeLibraryButton onClick={onOpenShapeLibrary} isActive={activeTool === 'shape-library'} />
           <SuggestedDesignsButton onClick={onOpenSuggestedDesigns} isActive={activeTool === 'suggested-designs'} />
           <TemplateButton onClick={onOpenTemplates} />
-          <TextFormatMenu fabricCanvas={fabricCanvas} />
+          <TextFormatMenu fabricCanvas={fabricCanvas ?? null} />
           <PrintingOptions onPrintingMethodSelect={onPrintingMethodSelect} />
         </div>
         
