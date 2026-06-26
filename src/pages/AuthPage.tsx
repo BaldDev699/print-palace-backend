@@ -22,6 +22,25 @@ const AuthPage = () => {
   });
   const navigate = useNavigate();
 
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth('google', {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error('Could not sign in with Google. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      navigate('/');
+    } catch {
+      toast.error('Could not sign in with Google. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
