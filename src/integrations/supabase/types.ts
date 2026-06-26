@@ -59,13 +59,6 @@ export type Database = {
             referencedRelation: "manufacturers"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "manufacturer_portfolio_manufacturer_id_fkey"
-            columns: ["manufacturer_id"]
-            isOneToOne: false
-            referencedRelation: "manufacturers_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       manufacturers: {
@@ -259,13 +252,6 @@ export type Database = {
             referencedRelation: "manufacturers"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "orders_manufacturer_id_fkey"
-            columns: ["manufacturer_id"]
-            isOneToOne: false
-            referencedRelation: "manufacturers_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       profiles: {
@@ -438,54 +424,27 @@ export type Database = {
       }
     }
     Views: {
-      manufacturers_public: {
-        Row: {
-          certifications: string[] | null
-          company_name: string | null
-          created_at: string | null
-          description: string | null
-          id: string | null
-          is_verified: boolean | null
-          lead_time_days: number | null
-          minimum_order_quantity: number | null
-          specialties: string[] | null
-          updated_at: string | null
-          user_id: string | null
-          website_url: string | null
-        }
-        Insert: {
-          certifications?: string[] | null
-          company_name?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          is_verified?: boolean | null
-          lead_time_days?: number | null
-          minimum_order_quantity?: number | null
-          specialties?: string[] | null
-          updated_at?: string | null
-          user_id?: string | null
-          website_url?: string | null
-        }
-        Update: {
-          certifications?: string[] | null
-          company_name?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          is_verified?: boolean | null
-          lead_time_days?: number | null
-          minimum_order_quantity?: number | null
-          specialties?: string[] | null
-          updated_at?: string | null
-          user_id?: string | null
-          website_url?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_pending_withdrawals: { Args: { user_uuid: string }; Returns: number }
+      get_public_manufacturers: {
+        Args: never
+        Returns: {
+          certifications: string[]
+          company_name: string
+          created_at: string
+          description: string
+          id: string
+          is_verified: boolean
+          lead_time_days: number
+          minimum_order_quantity: number
+          specialties: string[]
+          updated_at: string
+          user_id: string
+          website_url: string
+        }[]
+      }
       get_user_roge_balance: { Args: { user_uuid: string }; Returns: number }
       has_role: {
         Args: {
