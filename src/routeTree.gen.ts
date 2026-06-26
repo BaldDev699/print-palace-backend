@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ManufacturersRouteImport } from './routes/manufacturers'
 import { Route as ManufacturerDashboardRouteImport } from './routes/manufacturer-dashboard'
@@ -22,6 +23,11 @@ import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wa
 import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
 import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/manufacturer-dashboard'
     | '/manufacturers'
     | '/profile'
+    | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/manufacturer-dashboard'
     | '/manufacturers'
     | '/profile'
+    | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/manufacturer-dashboard'
     | '/manufacturers'
     | '/profile'
+    | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
@@ -178,10 +190,18 @@ export interface RootRouteChildren {
   ManufacturerDashboardRoute: typeof ManufacturerDashboardRoute
   ManufacturersRoute: typeof ManufacturersRoute
   ProfileRoute: typeof ProfileRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -296,6 +316,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManufacturerDashboardRoute: ManufacturerDashboardRoute,
   ManufacturersRoute: ManufacturersRoute,
   ProfileRoute: ProfileRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
