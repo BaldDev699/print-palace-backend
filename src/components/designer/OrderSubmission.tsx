@@ -1,20 +1,31 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Canvas as FabricCanvas } from 'fabric';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from '@/lib/router-compat';
-import { Send, Package, Clock, Calculator, RefreshCw, AlertCircle } from 'lucide-react';
-import { calculatePricing, formatKsh, kshToCents } from '@/lib/pricing';
-import { getProductQuantityRule, isValidQuantity, roundUpToValidQuantity, getEffectiveMinimum } from '@/lib/quantityRules';
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Canvas as FabricCanvas } from "fabric";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "@/lib/router-compat";
+import { Send, Package, Clock, Calculator, RefreshCw, AlertCircle } from "lucide-react";
+import { calculatePricing, formatKsh, kshToCents } from "@/lib/pricing";
+import {
+  getProductQuantityRule,
+  isValidQuantity,
+  roundUpToValidQuantity,
+  getEffectiveMinimum,
+} from "@/lib/quantityRules";
 
 interface Manufacturer {
   id: string;
@@ -36,17 +47,17 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
   fabricCanvas,
   measurements,
   productType,
-  printingMethod = 'DTG',
+  printingMethod = "DTG",
   onClose,
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
   const [manufacturersLoading, setManufacturersLoading] = useState(true);
-  const [manufacturersError, setManufacturersError] = useState<string>('');
-  const [selectedManufacturer, setSelectedManufacturer] = useState<string>('');
+  const [manufacturersError, setManufacturersError] = useState<string>("");
+  const [selectedManufacturer, setSelectedManufacturer] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
-  const [notes, setNotes] = useState<string>('');
+  const [notes, setNotes] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -79,16 +90,16 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-    
+
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
     setManufacturersLoading(true);
-    setManufacturersError('');
+    setManufacturersError("");
 
     try {
       const { data: allManufacturers, error } = await supabase
-        .rpc('get_public_manufacturers')
+        .rpc("get_public_manufacturers")
         .abortSignal(signal);
 
       if (error) throw error;
@@ -103,30 +114,33 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
       if (data.length === 0) {
         data = [...list]
           .sort(
-            (a: any, b: any) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+            (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
           )
           .slice(0, 10);
       }
 
       setManufacturers(data as any);
-      setManufacturersError('');
-
+      setManufacturersError("");
     } catch (error: any) {
-      if (error.name === 'AbortError') return; // Request was cancelled
+      if (error.name === "AbortError") return; // Request was cancelled
 
-      console.error('Error fetching manufacturers:', error);
-      
+      console.error("Error fetching manufacturers:", error);
+
       // Retry logic
       if (retryCount < 2) {
-        setTimeout(() => {
-          fetchManufacturers(retryCount + 1);
-        }, 1000 * (retryCount + 1)); // Exponential backoff
+        setTimeout(
+          () => {
+            fetchManufacturers(retryCount + 1);
+          },
+          1000 * (retryCount + 1),
+        ); // Exponential backoff
         return;
       }
 
       // Final error state
-      setManufacturersError('Failed to load manufacturers. Please check your connection and try again.');
+      setManufacturersError(
+        "Failed to load manufacturers. Please check your connection and try again.",
+      );
       setManufacturers([]);
     } finally {
       setManufacturersLoading(false);
@@ -139,17 +153,17 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
 
   const handleSubmitOrder = async () => {
     if (!user) {
-      toast.error('You must be logged in to submit an order');
+      toast.error("You must be logged in to submit an order");
       return;
     }
 
     if (!selectedManufacturer) {
-      toast.error('Please select a manufacturer');
+      toast.error("Please select a manufacturer");
       return;
     }
 
     if (!fabricCanvas) {
-      toast.error('No design available to submit');
+      toast.error("No design available to submit");
       return;
     }
 
@@ -158,9 +172,9 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
       // Export canvas as JSON and image
       const designJson = fabricCanvas.toJSON();
       const designImage = fabricCanvas.toDataURL({
-        format: 'png',
+        format: "png",
         quality: 0.8,
-        multiplier: 2
+        multiplier: 2,
       });
 
       const orderData = {
@@ -171,14 +185,14 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
           image: designImage,
           canvas_dimensions: {
             width: fabricCanvas.width,
-            height: fabricCanvas.height
-          }
+            height: fabricCanvas.height,
+          },
         },
         measurements,
         product_type: productType,
         quantity,
         notes,
-        status: 'pending',
+        status: "pending",
         // Pricing fields
         currency: pricing.currency,
         printing_method: printingMethod,
@@ -190,40 +204,40 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
         tax_cents: kshToCents(pricing.breakdown.tax),
         shipping_cents: kshToCents(pricing.breakdown.shipping),
         total_cents: kshToCents(pricing.breakdown.total),
-        pricing_breakdown: pricing.breakdown as any
+        pricing_breakdown: pricing.breakdown as any,
       };
 
       const { data, error } = await supabase
-        .from('orders')
+        .from("orders")
         .insert([orderData])
-        .select('id')
+        .select("id")
         .single();
 
       if (error) throw error;
 
-      toast.success('Order submitted successfully! Redirecting to your profile...');
+      toast.success("Order submitted successfully! Redirecting to your profile...");
       onClose();
-      navigate('/profile', { 
-        state: { 
-          openOrdersTab: true, 
-          newOrderId: data.id 
-        } 
+      navigate("/profile", {
+        state: {
+          openOrdersTab: true,
+          newOrderId: data.id,
+        },
       });
     } catch (error) {
-      console.error('Error submitting order:', error);
-      toast.error('Failed to submit order');
+      console.error("Error submitting order:", error);
+      toast.error("Failed to submit order");
     } finally {
       setLoading(false);
     }
   };
 
-  const selectedManufacturerData = manufacturers.find(m => m.id === selectedManufacturer);
-  
+  const selectedManufacturerData = manufacturers.find((m) => m.id === selectedManufacturer);
+
   // Calculate effective minimum considering both product rules and manufacturer minimums
-  const effectiveMinimum = selectedManufacturerData ? 
-    getEffectiveMinimum(productType, selectedManufacturerData.minimum_order_quantity) : 
-    (productRule?.minimumQuantity || 1);
-  
+  const effectiveMinimum = selectedManufacturerData
+    ? getEffectiveMinimum(productType, selectedManufacturerData.minimum_order_quantity)
+    : productRule?.minimumQuantity || 1;
+
   // Check if current quantity is valid
   const isQuantityValid = isValidQuantity(productType, quantity) && quantity >= effectiveMinimum;
 
@@ -234,7 +248,7 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
       setQuantity(effectiveMinimum);
       return;
     }
-    
+
     // Round up to valid quantity if needed
     const validQuantity = roundUpToValidQuantity(productType, numValue);
     setQuantity(Math.max(validQuantity, effectiveMinimum));
@@ -265,9 +279,9 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
                     <span className="text-sm font-medium">Unable to load manufacturers</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">{manufacturersError}</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={retryFetchManufacturers}
                     className="h-8"
                   >
@@ -280,9 +294,9 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
               <div className="border border-muted bg-muted/30 rounded-lg p-4 text-center">
                 <Package className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">No verified manufacturers available</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={retryFetchManufacturers}
                   className="mt-2 h-8"
                 >
@@ -301,7 +315,8 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
                       <div className="flex flex-col">
                         <span className="font-medium">{manufacturer.company_name}</span>
                         <span className="text-sm text-muted-foreground">
-                          Min: {manufacturer.minimum_order_quantity} units • {manufacturer.lead_time_days} days
+                          Min: {manufacturer.minimum_order_quantity} units •{" "}
+                          {manufacturer.lead_time_days} days
                         </span>
                       </div>
                     </SelectItem>
@@ -323,18 +338,18 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
                     <Clock className="h-4 w-4" />
                     Lead Time: {selectedManufacturerData.lead_time_days} days
                   </div>
-                   {selectedManufacturerData.specialties?.length > 0 && (
-                     <div>
-                       <p className="text-sm font-medium mb-1">Specialties:</p>
-                       <div className="flex flex-wrap gap-1">
-                         {selectedManufacturerData.specialties.map((specialty, index) => (
-                           <Badge key={index} variant="secondary" className="text-xs">
-                             {specialty}
-                           </Badge>
-                         ))}
-                       </div>
-                     </div>
-                   )}
+                  {selectedManufacturerData.specialties?.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-1">Specialties:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {selectedManufacturerData.specialties.map((specialty, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {specialty}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -358,17 +373,18 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
                   {productRule.description} (minimum: {productRule.minimumQuantity})
                 </p>
               )}
-              {selectedManufacturerData && selectedManufacturerData.minimum_order_quantity > (productRule?.minimumQuantity || 0) && (
-                <p className="text-sm text-muted-foreground">
-                  Manufacturer minimum: {selectedManufacturerData.minimum_order_quantity} units
-                </p>
-              )}
+              {selectedManufacturerData &&
+                selectedManufacturerData.minimum_order_quantity >
+                  (productRule?.minimumQuantity || 0) && (
+                  <p className="text-sm text-muted-foreground">
+                    Manufacturer minimum: {selectedManufacturerData.minimum_order_quantity} units
+                  </p>
+                )}
               {!isQuantityValid && (
                 <p className="text-sm text-destructive">
-                  {quantity < effectiveMinimum 
+                  {quantity < effectiveMinimum
                     ? `Minimum quantity is ${effectiveMinimum} units`
-                    : `Must be in multiples of ${productRule?.stepSize || 1}`
-                  }
+                    : `Must be in multiples of ${productRule?.stepSize || 1}`}
                 </p>
               )}
             </div>
@@ -377,27 +393,29 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
           <div>
             <Label>Order Details</Label>
             <div className="bg-muted p-4 rounded-lg space-y-4 text-sm">
-              <div><strong>Product Type:</strong> {productType}</div>
-              
+              <div>
+                <strong>Product Type:</strong> {productType}
+              </div>
+
               {fabricCanvas && (
                 <div>
                   <strong>Design Preview:</strong>
                   <div className="mt-2 border rounded overflow-hidden bg-white">
-                    <img 
-                      src={fabricCanvas.toDataURL({ format: 'png', quality: 0.8, multiplier: 0.5 })} 
-                      alt="Design preview" 
+                    <img
+                      src={fabricCanvas.toDataURL({ format: "png", quality: 0.8, multiplier: 0.5 })}
+                      alt="Design preview"
                       className="w-full h-32 object-contain"
                     />
                   </div>
                 </div>
               )}
-              
+
               <div>
                 <strong>Measurements:</strong>
                 <div className="grid grid-cols-2 gap-2 pl-4 mt-1">
                   {Object.entries(measurements).map(([key, value]) => (
                     <div key={key}>
-                      {key.replace(/([A-Z])/g, ' $1').toLowerCase()}: {value}cm
+                      {key.replace(/([A-Z])/g, " $1").toLowerCase()}: {value}cm
                     </div>
                   ))}
                 </div>
@@ -417,7 +435,9 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span>Base Price ({quantity} × {formatKsh(pricing.breakdown.basePrice / quantity)}):</span>
+                    <span>
+                      Base Price ({quantity} × {formatKsh(pricing.breakdown.basePrice / quantity)}):
+                    </span>
                     <span>{formatKsh(pricing.breakdown.basePrice)}</span>
                   </div>
                   <div className="flex justify-between">
@@ -468,18 +488,20 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
           <div className="flex gap-4 pt-4">
             <Button
               onClick={handleSubmitOrder}
-              disabled={loading || manufacturersLoading || !selectedManufacturer || !isQuantityValid}
+              disabled={
+                loading || manufacturersLoading || !selectedManufacturer || !isQuantityValid
+              }
               className="flex-1"
             >
-              {loading ? 'Submitting...' : 'Submit Order'}
+              {loading ? "Submitting..." : "Submit Order"}
             </Button>
-            {(!selectedManufacturer && !manufacturersLoading && !manufacturersError) && (
-              <p className="text-xs text-muted-foreground mt-1">Select a manufacturer to continue</p>
+            {!selectedManufacturer && !manufacturersLoading && !manufacturersError && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Select a manufacturer to continue
+              </p>
             )}
             {!isQuantityValid && (
-              <p className="text-xs text-destructive mt-1">
-                Please enter a valid quantity
-              </p>
+              <p className="text-xs text-destructive mt-1">Please enter a valid quantity</p>
             )}
             <Button variant="outline" onClick={onClose}>
               Cancel

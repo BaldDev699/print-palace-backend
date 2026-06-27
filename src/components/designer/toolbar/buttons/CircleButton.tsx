@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Circle } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Circle } from "lucide-react";
 
 interface CircleButtonProps {
   onClick: () => void;
@@ -14,7 +13,7 @@ export const CircleButton: React.FC<CircleButtonProps> = ({ onClick, isActive })
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          variant={isActive ? 'secondary' : 'ghost'}
+          variant={isActive ? "secondary" : "ghost"}
           size="icon"
           onClick={onClick}
           aria-label="Add Circle"

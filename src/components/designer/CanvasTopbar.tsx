@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { 
-  ZoomIn, 
-  ZoomOut, 
-  Maximize2, 
-  Hand, 
-  Download, 
-  Undo, 
-  Redo, 
-  Settings 
-} from 'lucide-react';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { ZoomIn, ZoomOut, Maximize2, Hand, Download, Undo, Redo, Settings } from "lucide-react";
 
 interface CanvasTopbarProps {
   zoom: number;
@@ -31,15 +28,15 @@ interface CanvasTopbarProps {
 }
 
 const presetSizes = [
-  { name: 'Square (1:1)', width: 1080, height: 1080 },
-  { name: 'Instagram Post', width: 1080, height: 1080 },
-  { name: 'Instagram Story', width: 1080, height: 1920 },
-  { name: 'Facebook Post', width: 1200, height: 630 },
-  { name: 'Twitter Post', width: 1200, height: 675 },
-  { name: 'LinkedIn Post', width: 1200, height: 627 },
-  { name: 'YouTube Thumbnail', width: 1280, height: 720 },
-  { name: 'A4 Portrait', width: 2480, height: 3508 },
-  { name: 'A4 Landscape', width: 3508, height: 2480 },
+  { name: "Square (1:1)", width: 1080, height: 1080 },
+  { name: "Instagram Post", width: 1080, height: 1080 },
+  { name: "Instagram Story", width: 1080, height: 1920 },
+  { name: "Facebook Post", width: 1200, height: 630 },
+  { name: "Twitter Post", width: 1200, height: 675 },
+  { name: "LinkedIn Post", width: 1200, height: 627 },
+  { name: "YouTube Thumbnail", width: 1280, height: 720 },
+  { name: "A4 Portrait", width: 2480, height: 3508 },
+  { name: "A4 Landscape", width: 3508, height: 2480 },
 ];
 
 export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
@@ -53,11 +50,11 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
   onRedo,
   onCanvasSizeChange,
   onExport,
-  currentCanvasSize
+  currentCanvasSize,
 }) => {
   const [isSizeDialogOpen, setIsSizeDialogOpen] = useState(false);
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
-  const [exportFormat, setExportFormat] = useState('png');
+  const [exportFormat, setExportFormat] = useState("png");
   const [exportQuality, setExportQuality] = useState(90);
   const [exportTransparent, setExportTransparent] = useState(false);
   const [customWidth, setCustomWidth] = useState(currentCanvasSize.width);
@@ -90,49 +87,25 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
         <div className="flex items-center gap-2">
           {/* Zoom Controls */}
           <div className="flex items-center gap-1 border border-border rounded-md">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleZoomOut}
-              disabled={zoom <= 0.1}
-            >
+            <Button variant="ghost" size="sm" onClick={handleZoomOut} disabled={zoom <= 0.1}>
               <ZoomOut className="h-4 w-4" />
             </Button>
-            <span className="text-sm min-w-[60px] text-center">
-              {Math.round(zoom * 100)}%
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleZoomIn}
-              disabled={zoom >= 4}
-            >
+            <span className="text-sm min-w-[60px] text-center">{Math.round(zoom * 100)}%</span>
+            <Button variant="ghost" size="sm" onClick={handleZoomIn} disabled={zoom >= 4}>
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleZoomReset}
-            >
+            <Button variant="ghost" size="sm" onClick={handleZoomReset}>
               <Maximize2 className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Pan Mode Toggle */}
-          <Button
-            variant={isPanMode ? "default" : "outline"}
-            size="sm"
-            onClick={onPanModeToggle}
-          >
+          <Button variant={isPanMode ? "default" : "outline"} size="sm" onClick={onPanModeToggle}>
             <Hand className="h-4 w-4" />
           </Button>
 
           {/* Canvas Size */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsSizeDialogOpen(true)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setIsSizeDialogOpen(true)}>
             <Settings className="h-4 w-4 mr-2" />
             {currentCanvasSize.width} × {currentCanvasSize.height}
           </Button>
@@ -141,30 +114,16 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
         <div className="flex items-center gap-2">
           {/* Undo/Redo */}
           <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onUndo}
-              disabled={!canUndo}
-            >
+            <Button variant="outline" size="sm" onClick={onUndo} disabled={!canUndo}>
               <Undo className="h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onRedo}
-              disabled={!canRedo}
-            >
+            <Button variant="outline" size="sm" onClick={onRedo} disabled={!canRedo}>
               <Redo className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Export */}
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => setIsExportDialogOpen(true)}
-          >
+          <Button variant="default" size="sm" onClick={() => setIsExportDialogOpen(true)}>
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
@@ -177,7 +136,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
           <DialogHeader>
             <DialogTitle>Canvas Size</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
               {presetSizes.map((preset) => (
@@ -227,7 +186,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
           <DialogHeader>
             <DialogTitle>Export Settings</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div>
               <Label>Format</Label>
@@ -243,7 +202,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
               </Select>
             </div>
 
-            {exportFormat !== 'png' && (
+            {exportFormat !== "png" && (
               <div>
                 <Label>Quality: {exportQuality}%</Label>
                 <Slider

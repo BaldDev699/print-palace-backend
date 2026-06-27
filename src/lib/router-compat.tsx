@@ -85,9 +85,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
 );
 Link.displayName = "Link";
 
-type NavLinkChild =
-  | React.ReactNode
-  | ((state: { isActive: boolean }) => React.ReactNode);
+type NavLinkChild = React.ReactNode | ((state: { isActive: boolean }) => React.ReactNode);
 
 type NavLinkProps = Omit<
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -99,14 +97,7 @@ type NavLinkProps = Omit<
   children?: NavLinkChild;
 };
 
-export function NavLink({
-  to,
-  end,
-  className,
-  children,
-  onClick,
-  ...rest
-}: NavLinkProps) {
+export function NavLink({ to, end, className, children, onClick, ...rest }: NavLinkProps) {
   const navigate = useNavigate();
   const loc = useLocation();
   const isActive = end ? loc.pathname === to : loc.pathname.startsWith(to);

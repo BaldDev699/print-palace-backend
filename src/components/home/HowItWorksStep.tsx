@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { LucideProps } from 'lucide-react';
+import React from "react";
+import { LucideProps } from "lucide-react";
 
 interface HowItWorksStepProps {
   stepNumber: number;
@@ -9,7 +8,12 @@ interface HowItWorksStepProps {
   IconComponent: React.ComponentType<LucideProps>;
 }
 
-const HowItWorksStep: React.FC<HowItWorksStepProps> = ({ stepNumber, title, description, IconComponent }) => {
+const HowItWorksStep: React.FC<HowItWorksStepProps> = ({
+  stepNumber,
+  title,
+  description,
+  IconComponent,
+}) => {
   return (
     <div className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md">
       <div className="bg-primary text-primary-foreground rounded-full p-4 mb-6 inline-flex">
@@ -23,4 +27,3 @@ const HowItWorksStep: React.FC<HowItWorksStepProps> = ({ stepNumber, title, desc
 };
 
 export default HowItWorksStep;
-

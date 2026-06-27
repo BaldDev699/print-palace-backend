@@ -1,53 +1,52 @@
-
-import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Link } from '@/lib/router-compat';
-import { Button } from '@/components/ui/button';
-import { DesignCanvas } from '@/components/designer/DesignCanvas';
-import { DesignSidebar } from '@/components/designer/DesignSidebar';
-import { InspectorPanel } from '@/components/designer/InspectorPanel';
-import { OrderSubmission } from '@/components/designer/OrderSubmission';
-import { useAuth } from '@/contexts/AuthContext';
-import { Canvas as FabricCanvas } from 'fabric';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { Link } from "@/lib/router-compat";
+import { Button } from "@/components/ui/button";
+import { DesignCanvas } from "@/components/designer/DesignCanvas";
+import { DesignSidebar } from "@/components/designer/DesignSidebar";
+import { InspectorPanel } from "@/components/designer/InspectorPanel";
+import { OrderSubmission } from "@/components/designer/OrderSubmission";
+import { useAuth } from "@/contexts/AuthContext";
+import { Canvas as FabricCanvas } from "fabric";
+import { toast } from "sonner";
 
 const DesignerPage = () => {
   const { user } = useAuth();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [measurements, setMeasurements] = useState<Record<string, number>>({});
-  const [productType, setProductType] = useState<string>('');
-  
+  const [productType, setProductType] = useState<string>("");
+
   // New state for design interface
-  const [activeTool, setActiveTool] = useState('select');
-  const [drawingColor, setDrawingColor] = useState('#000000');
-  const [mockupColor, setMockupColor] = useState('#ffffff');
+  const [activeTool, setActiveTool] = useState("select");
+  const [drawingColor, setDrawingColor] = useState("#000000");
+  const [mockupColor, setMockupColor] = useState("#ffffff");
   const [currentMockup, setCurrentMockup] = useState<any>(null);
-  const [printingMethod, setPrintingMethod] = useState<string>('DTG');
+  const [printingMethod, setPrintingMethod] = useState<string>("DTG");
 
   const handleProceedToCheckout = () => {
     if (!user) {
-      toast.error('Please sign in to proceed with checkout');
+      toast.error("Please sign in to proceed with checkout");
       return;
     }
 
     if (!fabricCanvas) {
-      toast.error('Please create a design first');
+      toast.error("Please create a design first");
       return;
     }
 
     // Check if canvas has any user-created content (not just mockup)
     const objects = fabricCanvas.getObjects();
-    const hasUserContent = objects.some(obj => !(obj as any).data?.isMockup);
-    
+    const hasUserContent = objects.some((obj) => !(obj as any).data?.isMockup);
+
     if (!hasUserContent) {
-      toast.error('Please add some design elements before checkout');
+      toast.error("Please add some design elements before checkout");
       return;
     }
 
     if (!productType) {
-      toast.error('Please select a product template first');
+      toast.error("Please select a product template first");
       return;
     }
 
@@ -56,37 +55,37 @@ const DesignerPage = () => {
 
   const handleSaveDesign = () => {
     if (!fabricCanvas) return;
-    
+
     const thumbnail = fabricCanvas.toDataURL({
-      format: 'png',
+      format: "png",
       quality: 0.8,
-      multiplier: 0.5
+      multiplier: 0.5,
     });
-    
-    const currentDate = new Date().toISOString().split('T')[0];
+
+    const currentDate = new Date().toISOString().split("T")[0];
     const newDesign = {
       id: `design-${Date.now()}`,
       name: `Design ${new Date().toLocaleTimeString()}`,
       imageUrl: thumbnail,
-      lastEdited: currentDate
+      lastEdited: currentDate,
     };
-    
-    const existingDesigns = JSON.parse(localStorage.getItem('savedDesigns') || '[]');
+
+    const existingDesigns = JSON.parse(localStorage.getItem("savedDesigns") || "[]");
     const updatedDesigns = [newDesign, ...existingDesigns];
-    localStorage.setItem('savedDesigns', JSON.stringify(updatedDesigns));
-    
-    toast.success('Design saved successfully!');
+    localStorage.setItem("savedDesigns", JSON.stringify(updatedDesigns));
+
+    toast.success("Design saved successfully!");
   };
 
   const handleClearCanvas = () => {
     if (!fabricCanvas) return;
     fabricCanvas.clear();
-    fabricCanvas.backgroundColor = '#ffffff';
+    fabricCanvas.backgroundColor = "#ffffff";
     fabricCanvas.renderAll();
-    toast.info('Canvas cleared!');
+    toast.info("Canvas cleared!");
   };
 
-  // Sidebar event handlers  
+  // Sidebar event handlers
   const handleToolClick = (tool: string) => {
     setActiveTool(tool);
     if ((window as any).designCanvasAPI) {
@@ -146,7 +145,7 @@ const DesignerPage = () => {
             }
           }}
         />
-        
+
         <main className="flex-1 flex flex-col">
           <div className="p-4 border-b border-border bg-card">
             <div className="flex items-center justify-between">
@@ -161,9 +160,9 @@ const DesignerPage = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex-1 p-6 flex flex-col min-h-0">
-            <DesignCanvas 
+            <DesignCanvas
               onCanvasReady={setFabricCanvas}
               onMeasurementsChange={setMeasurements}
               onProductTypeChange={setProductType}
@@ -176,7 +175,7 @@ const DesignerPage = () => {
             />
           </div>
         </main>
-        
+
         <InspectorPanel
           fabricCanvas={fabricCanvas}
           currentMockup={currentMockup}
@@ -185,7 +184,7 @@ const DesignerPage = () => {
         />
       </div>
       <Footer />
-      
+
       {isCheckoutOpen && (
         <OrderSubmission
           fabricCanvas={fabricCanvas}

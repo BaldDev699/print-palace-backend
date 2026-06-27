@@ -1,13 +1,18 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Template } from '@/hooks/useTemplates';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, Palette, Tag } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Template } from "@/hooks/useTemplates";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Star, Palette, Tag } from "lucide-react";
 
 interface TemplatesProps {
   open: boolean;
@@ -16,13 +21,13 @@ interface TemplatesProps {
   onTemplateSelect: (template: Template) => void;
 }
 
-export const Templates: React.FC<TemplatesProps> = ({ 
-  open, 
-  onOpenChange, 
-  templates, 
-  onTemplateSelect 
+export const Templates: React.FC<TemplatesProps> = ({
+  open,
+  onOpenChange,
+  templates,
+  onTemplateSelect,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const handleTemplateClick = (template: Template) => {
     onTemplateSelect(template);
@@ -30,25 +35,26 @@ export const Templates: React.FC<TemplatesProps> = ({
   };
 
   // Group templates by category
-  const categories = Array.from(new Set(templates.map(t => t.category)));
-  const popularTemplates = templates.filter(t => t.popular);
-  
-  const filteredTemplates = selectedCategory === 'all' 
-    ? templates 
-    : selectedCategory === 'popular'
-    ? popularTemplates
-    : templates.filter(t => t.category === selectedCategory);
+  const categories = Array.from(new Set(templates.map((t) => t.category)));
+  const popularTemplates = templates.filter((t) => t.popular);
+
+  const filteredTemplates =
+    selectedCategory === "all"
+      ? templates
+      : selectedCategory === "popular"
+        ? popularTemplates
+        : templates.filter((t) => t.category === selectedCategory);
 
   const TemplateCard = ({ template }: { template: Template }) => (
-    <div 
-      key={template.id} 
+    <div
+      key={template.id}
       className="group cursor-pointer relative"
       onClick={() => handleTemplateClick(template)}
       title={template.name}
     >
       <div className="w-24 h-24 relative overflow-hidden bg-muted rounded-md border border-border hover:border-primary/50 transition-colors">
-        <img 
-          src={template.thumbnail} 
+        <img
+          src={template.thumbnail}
           alt={template.name}
           className="object-cover w-full h-full transition-transform duration-200 group-hover:scale-105"
         />
@@ -77,11 +83,15 @@ export const Templates: React.FC<TemplatesProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="flex-1 flex flex-col">
+        <Tabs
+          value={selectedCategory}
+          onValueChange={setSelectedCategory}
+          className="flex-1 flex flex-col"
+        >
           <TabsList className="flex w-full mx-3 mb-3 overflow-x-auto bg-muted">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="popular">Popular</TabsTrigger>
-            {categories.map(category => (
+            {categories.map((category) => (
               <TabsTrigger key={category} value={category}>
                 {category}
               </TabsTrigger>
@@ -95,7 +105,7 @@ export const Templates: React.FC<TemplatesProps> = ({
                   <TemplateCard key={template.id} template={template} />
                 ))}
               </div>
-              
+
               {filteredTemplates.length === 0 && (
                 <div className="text-center py-12">
                   <Palette className="w-12 h-12 text-muted-foreground mx-auto mb-4" />

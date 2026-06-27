@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { RectangleHorizontal } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { RectangleHorizontal } from "lucide-react";
 
 interface RectangleButtonProps {
   onClick: () => void;
@@ -14,7 +13,7 @@ export const RectangleButton: React.FC<RectangleButtonProps> = ({ onClick, isAct
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          variant={isActive ? 'secondary' : 'ghost'}
+          variant={isActive ? "secondary" : "ghost"}
           size="icon"
           onClick={onClick}
           aria-label="Add Rectangle"

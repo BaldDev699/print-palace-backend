@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useManufacturer } from '@/hooks/useManufacturer';
-import { supabase } from '@/integrations/supabase/client';
-import { OrderModal } from '@/components/orders/OrderModal';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useManufacturer } from "@/hooks/useManufacturer";
+import { supabase } from "@/integrations/supabase/client";
+import { OrderModal } from "@/components/orders/OrderModal";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 interface Order {
   id: string;
@@ -38,15 +38,15 @@ export const ManufacturerOrdersPage: React.FC = () => {
 
       try {
         const { data, error } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('manufacturer_id', manufacturer.id)
-          .order('created_at', { ascending: false });
+          .from("orders")
+          .select("*")
+          .eq("manufacturer_id", manufacturer.id)
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setOrders((data || []) as any);
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error("Error fetching orders:", error);
       } finally {
         setLoading(false);
       }
@@ -68,14 +68,14 @@ export const ManufacturerOrdersPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     const statusColors = {
-      pending: 'bg-yellow-500',
-      confirmed: 'bg-blue-500',
-      production: 'bg-purple-500',
-      shipped: 'bg-green-500',
-      delivered: 'bg-emerald-500',
-      cancelled: 'bg-red-500',
+      pending: "bg-yellow-500",
+      confirmed: "bg-blue-500",
+      production: "bg-purple-500",
+      shipped: "bg-green-500",
+      delivered: "bg-emerald-500",
+      cancelled: "bg-red-500",
     };
-    return statusColors[status as keyof typeof statusColors] || 'bg-gray-500';
+    return statusColors[status as keyof typeof statusColors] || "bg-gray-500";
   };
 
   if (manufacturerLoading || loading) {
@@ -115,15 +115,14 @@ export const ManufacturerOrdersPage: React.FC = () => {
                       </Badge>
                     </div>
                     <p className="text-muted-foreground">
-                      Quantity: {order.quantity} • Total: KSh {(order.total_cents / 100).toLocaleString()}
+                      Quantity: {order.quantity} • Total: KSh{" "}
+                      {(order.total_cents / 100).toLocaleString()}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Ordered on {new Date(order.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <Button onClick={() => handleViewOrder(order)}>
-                    View Details
-                  </Button>
+                  <Button onClick={() => handleViewOrder(order)}>View Details</Button>
                 </div>
               </CardContent>
             </Card>

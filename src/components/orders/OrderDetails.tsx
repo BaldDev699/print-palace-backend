@@ -1,17 +1,22 @@
-
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Package, Clock, Calendar, MapPin, CreditCard, Truck, Calculator } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { formatKsh } from '@/lib/pricing';
-import { OrderChat } from './OrderChat';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Package, Clock, Calendar, MapPin, CreditCard, Truck, Calculator } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { formatKsh } from "@/lib/pricing";
+import { OrderChat } from "./OrderChat";
 
 interface Order {
   id: string;
@@ -37,29 +42,34 @@ interface OrderDetailsProps {
   onOrderUpdate?: () => void;
 }
 
-export const OrderDetails: React.FC<OrderDetailsProps> = ({ 
-  order, 
-  isManufacturer = false, 
-  onOrderUpdate 
+export const OrderDetails: React.FC<OrderDetailsProps> = ({
+  order,
+  isManufacturer = false,
+  onOrderUpdate,
 }) => {
-  const [shippingLocation, setShippingLocation] = useState('');
+  const [shippingLocation, setShippingLocation] = useState("");
   const [estimatedShipping, setEstimatedShipping] = useState(0);
-  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || '');
+  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || "");
   const [loading, setLoading] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "in_progress":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const estimateShipping = () => {
     if (!shippingLocation.trim()) {
-      toast.error('Please enter shipping location');
+      toast.error("Please enter shipping location");
       return;
     }
 
@@ -67,11 +77,11 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
     const location = shippingLocation.toLowerCase();
     let estimate = 0;
 
-    if (location.includes('nairobi')) {
+    if (location.includes("nairobi")) {
       estimate = 500; // 5 KSh in cents
-    } else if (location.includes('mombasa') || location.includes('kisumu')) {
+    } else if (location.includes("mombasa") || location.includes("kisumu")) {
       estimate = 800;
-    } else if (location.includes('kenya')) {
+    } else if (location.includes("kenya")) {
       estimate = 1200;
     } else {
       estimate = 2000; // International
@@ -85,16 +95,16 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
     setLoading(true);
     try {
       const { error } = await supabase
-        .from('orders')
+        .from("orders")
         .update({ status: newStatus })
-        .eq('id', order.id);
+        .eq("id", order.id);
 
       if (error) throw error;
-      toast.success('Order status updated');
+      toast.success("Order status updated");
       onOrderUpdate?.();
     } catch (error) {
-      console.error('Error updating order:', error);
-      toast.error('Failed to update order status');
+      console.error("Error updating order:", error);
+      toast.error("Failed to update order status");
     } finally {
       setLoading(false);
     }
@@ -109,20 +119,17 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
 
       if (trackingNumber) {
         updates.tracking_number = trackingNumber;
-        updates.delivery_status = 'shipped';
+        updates.delivery_status = "shipped";
       }
 
-      const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .eq('id', order.id);
+      const { error } = await supabase.from("orders").update(updates).eq("id", order.id);
 
       if (error) throw error;
-      toast.success('Shipping information updated');
+      toast.success("Shipping information updated");
       onOrderUpdate?.();
     } catch (error) {
-      console.error('Error updating shipping:', error);
-      toast.error('Failed to update shipping information');
+      console.error("Error updating shipping:", error);
+      toast.error("Failed to update shipping information");
     } finally {
       setLoading(false);
     }
@@ -145,11 +152,9 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
             </div>
             <div className="flex gap-2">
               <Badge className={getStatusColor(order.status)}>
-                {order.status.replace('_', ' ').toUpperCase()}
+                {order.status.replace("_", " ").toUpperCase()}
               </Badge>
-              <Badge variant="outline">
-                {order.payment_status.toUpperCase()}
-              </Badge>
+              <Badge variant="outline">{order.payment_status.toUpperCase()}</Badge>
             </div>
           </div>
         </CardHeader>
@@ -173,9 +178,9 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
             <div>
               <h4 className="font-medium mb-2">Design Preview</h4>
               <div className="border rounded overflow-hidden bg-white max-w-md">
-                <img 
-                  src={order.design_data.image} 
-                  alt="Order design" 
+                <img
+                  src={order.design_data.image}
+                  alt="Order design"
                   className="w-full h-48 object-contain"
                 />
               </div>
@@ -185,9 +190,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
           {order.notes && (
             <div>
               <h4 className="font-medium mb-2">Order Notes</h4>
-              <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
-                {order.notes}
-              </p>
+              <p className="text-sm text-muted-foreground bg-muted p-3 rounded">{order.notes}</p>
             </div>
           )}
         </CardContent>
@@ -231,7 +234,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
                   Estimate
                 </Button>
               </div>
-              
+
               {estimatedShipping > 0 && (
                 <div className="p-3 bg-muted rounded">
                   <p className="text-sm">
@@ -249,12 +252,12 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
                 />
               </div>
 
-              <Button 
-                onClick={updateShipping} 
+              <Button
+                onClick={updateShipping}
                 disabled={loading || estimatedShipping === 0}
                 className="w-full"
               >
-                {loading ? 'Updating...' : 'Update Shipping Information'}
+                {loading ? "Updating..." : "Update Shipping Information"}
               </Button>
             </div>
           </CardContent>
@@ -262,11 +265,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
       )}
 
       {/* Order Chat */}
-      <OrderChat 
-        orderId={order.id} 
-        customerName="Customer"
-        manufacturerName="Manufacturer"
-      />
+      <OrderChat orderId={order.id} customerName="Customer" manufacturerName="Manufacturer" />
     </div>
   );
 };

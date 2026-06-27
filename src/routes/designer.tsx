@@ -6,7 +6,10 @@ export const Route = createFileRoute("/designer")({
   head: () => ({
     meta: [
       { title: "Design Studio — Roge Print Studio" },
-      { name: "description", content: "Create your custom apparel design in the Roge online design studio." },
+      {
+        name: "description",
+        content: "Create your custom apparel design in the Roge online design studio.",
+      },
     ],
   }),
   component: DesignerPage,

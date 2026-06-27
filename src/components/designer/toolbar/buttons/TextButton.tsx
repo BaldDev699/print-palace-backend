@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Type } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Type } from "lucide-react";
 
 interface TextButtonProps {
   onClick: () => void;
@@ -14,7 +13,7 @@ export const TextButton: React.FC<TextButtonProps> = ({ onClick, isActive }) => 
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          variant={isActive ? 'secondary' : 'ghost'}
+          variant={isActive ? "secondary" : "ghost"}
           size="icon"
           onClick={onClick}
           aria-label="Add Text"

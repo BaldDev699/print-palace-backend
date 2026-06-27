@@ -83,17 +83,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "print-palace" },
-      { name: "description", content: "Forge Your Backend provides a robust backend for a print studio application." },
+      {
+        name: "description",
+        content: "Forge Your Backend provides a robust backend for a print studio application.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "print-palace" },
-      { property: "og:description", content: "Forge Your Backend provides a robust backend for a print studio application." },
+      {
+        property: "og:description",
+        content: "Forge Your Backend provides a robust backend for a print studio application.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "print-palace" },
-      { name: "twitter:description", content: "Forge Your Backend provides a robust backend for a print studio application." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/768578d9-b71c-4255-830a-7bdec75d624c/id-preview-38a33092--cc20fe35-0ec6-4ad5-a918-3d103f679adc.lovable.app-1782438147367.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/768578d9-b71c-4255-830a-7bdec75d624c/id-preview-38a33092--cc20fe35-0ec6-4ad5-a918-3d103f679adc.lovable.app-1782438147367.png" },
+      {
+        name: "twitter:description",
+        content: "Forge Your Backend provides a robust backend for a print studio application.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/768578d9-b71c-4255-830a-7bdec75d624c/id-preview-38a33092--cc20fe35-0ec6-4ad5-a918-3d103f679adc.lovable.app-1782438147367.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/768578d9-b71c-4255-830a-7bdec75d624c/id-preview-38a33092--cc20fe35-0ec6-4ad5-a918-3d103f679adc.lovable.app-1782438147367.png",
+      },
     ],
     links: [
       {

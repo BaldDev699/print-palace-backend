@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/router-compat';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Clock, Package, CheckCircle, Edit, Eye, Calendar, User } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { ManufacturerForm } from '@/components/manufacturers/ManufacturerForm';
-import { OrderModal } from '@/components/orders/OrderModal';
-import { useAuth } from '@/contexts/AuthContext';
-import { formatKsh } from '@/lib/pricing';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "@/lib/router-compat";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MapPin, Clock, Package, CheckCircle, Edit, Eye, Calendar, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { ManufacturerForm } from "@/components/manufacturers/ManufacturerForm";
+import { OrderModal } from "@/components/orders/OrderModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { formatKsh } from "@/lib/pricing";
 
 interface Manufacturer {
   id: string;
@@ -60,7 +60,7 @@ const ManufacturerDashboard = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
     fetchManufacturerData();
@@ -72,22 +72,22 @@ const ManufacturerDashboard = () => {
 
     try {
       const { data, error } = await supabase
-        .from('manufacturers')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("manufacturers")
+        .select("*")
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (error) throw error;
-      
+
       if (!data) {
-        navigate('/manufacturers');
+        navigate("/manufacturers");
         return;
       }
-      
+
       setManufacturer(data as any);
     } catch (error) {
-      console.error('Error fetching manufacturer:', error);
-      toast.error('Failed to load manufacturer profile');
+      console.error("Error fetching manufacturer:", error);
+      toast.error("Failed to load manufacturer profile");
     } finally {
       setLoading(false);
     }
@@ -98,25 +98,25 @@ const ManufacturerDashboard = () => {
 
     try {
       const { data: manufacturerData, error: manufacturerError } = await supabase
-        .from('manufacturers')
-        .select('id')
-        .eq('user_id', user.id)
+        .from("manufacturers")
+        .select("id")
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (manufacturerError) throw manufacturerError;
       if (!manufacturerData) return;
 
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('manufacturer_id', manufacturerData.id)
-        .order('created_at', { ascending: false });
+        .from("orders")
+        .select("*")
+        .eq("manufacturer_id", manufacturerData.id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setOrders((data || []) as any);
     } catch (error) {
-      console.error('Error fetching orders:', error);
-      toast.error('Failed to load orders');
+      console.error("Error fetching orders:", error);
+      toast.error("Failed to load orders");
     }
   };
 
@@ -137,11 +137,16 @@ const ManufacturerDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "in_progress":
+        return "bg-blue-100 text-blue-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -173,11 +178,11 @@ const ManufacturerDashboard = () => {
             <div>
               <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
                 {manufacturer.company_name}
-                {manufacturer.is_verified && (
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                )}
+                {manufacturer.is_verified && <CheckCircle className="h-6 w-6 text-green-500" />}
               </h1>
-              <p className="text-muted-foreground">{manufacturer.description?.split('\n\n')[0] || 'Manufacturing Partner Dashboard'}</p>
+              <p className="text-muted-foreground">
+                {manufacturer.description?.split("\n\n")[0] || "Manufacturing Partner Dashboard"}
+              </p>
             </div>
             <Button onClick={() => setShowEditForm(true)} className="gap-2">
               <Edit className="h-4 w-4" />
@@ -241,7 +246,7 @@ const ManufacturerDashboard = () => {
                                 <div className="flex items-center gap-2">
                                   <h3 className="font-semibold">{order.product_type}</h3>
                                   <Badge className={getStatusColor(order.status)}>
-                                    {order.status.replace('_', ' ').toUpperCase()}
+                                    {order.status.replace("_", " ").toUpperCase()}
                                   </Badge>
                                   <Badge variant="outline">
                                     {order.payment_status.toUpperCase()}
@@ -256,17 +261,15 @@ const ManufacturerDashboard = () => {
                                     <Calendar className="h-4 w-4" />
                                     {new Date(order.created_at).toLocaleDateString()}
                                   </span>
-                                  <span>
-                                    Total: {formatKsh(order.total_cents / 100)}
-                                  </span>
+                                  <span>Total: {formatKsh(order.total_cents / 100)}</span>
                                 </div>
                                 {order.notes && (
                                   <p className="text-sm text-muted-foreground">{order.notes}</p>
                                 )}
                               </div>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
+                              <Button
+                                variant="outline"
+                                size="sm"
                                 className="gap-2"
                                 onClick={() => handleViewOrder(order)}
                               >
@@ -299,12 +302,12 @@ const ManufacturerDashboard = () => {
                       {manufacturer.address}
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     {manufacturer.lead_time_days} days lead time
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-sm">
                     <Package className="h-4 w-4 text-muted-foreground" />
                     Min order: {manufacturer.minimum_order_quantity} units
@@ -353,10 +356,10 @@ const ManufacturerDashboard = () => {
                     <div className="border rounded-lg p-4">
                       <h3 className="font-semibold mb-2">Service Description</h3>
                       <p className="text-sm text-muted-foreground whitespace-pre-line">
-                        {manufacturer.description || 'No description provided'}
+                        {manufacturer.description || "No description provided"}
                       </p>
                     </div>
-                    
+
                     <Button onClick={() => setShowEditForm(true)} className="w-full">
                       Update Services & Capabilities
                     </Button>

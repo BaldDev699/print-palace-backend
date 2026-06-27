@@ -13,8 +13,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Roge Print Studio — Custom Apparel Printing & Design" },
       {
         property: "og:description",
-        content:
-          "Design custom printed apparel online and order from verified manufacturers.",
+        content: "Design custom printed apparel online and order from verified manufacturers.",
       },
     ],
   }),

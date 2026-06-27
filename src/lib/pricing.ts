@@ -16,56 +16,56 @@ export interface PricingResult {
 
 // Base unit prices in KSh
 const BASE_PRICES: Record<string, number> = {
-  't-shirt': 800,
-  'hoodie': 1800,
-  'cap': 600,
-  'apron': 700,
-  'scrubs': 1200,
-  'jumpsuit': 2000,
-  'long-sleeve': 900,
-  'tank-top': 700,
-  'flag': 1000,
-  'water-bottle': 1200,
-  'key-holder': 300,
-  'wristband': 200,
-  'packaging-bag': 800,
-  'ticketing-band': 150,
-  'business-card': 100,
-  'teardrop-banner': 1500,
-  'general': 500,
+  "t-shirt": 800,
+  hoodie: 1800,
+  cap: 600,
+  apron: 700,
+  scrubs: 1200,
+  jumpsuit: 2000,
+  "long-sleeve": 900,
+  "tank-top": 700,
+  flag: 1000,
+  "water-bottle": 1200,
+  "key-holder": 300,
+  wristband: 200,
+  "packaging-bag": 800,
+  "ticketing-band": 150,
+  "business-card": 100,
+  "teardrop-banner": 1500,
+  general: 500,
 };
 
 // Printing method surcharges in KSh
 const PRINTING_SURCHARGES: Record<string, number> = {
-  'DTG': 150,
-  'No Cut': 100,
-  'Embroidery': 200,
+  DTG: 150,
+  "No Cut": 100,
+  Embroidery: 200,
 };
 
 // Quantity discount tiers
 const QUANTITY_DISCOUNTS = [
   { min: 200, discount: 0.15 }, // 15% off for 200+
   { min: 100, discount: 0.12 }, // 12% off for 100+
-  { min: 50, discount: 0.10 },  // 10% off for 50+
-  { min: 25, discount: 0.07 },  // 7% off for 25+
-  { min: 10, discount: 0.05 },  // 5% off for 10+
+  { min: 50, discount: 0.1 }, // 10% off for 50+
+  { min: 25, discount: 0.07 }, // 7% off for 25+
+  { min: 10, discount: 0.05 }, // 5% off for 10+
 ];
 
 // Design coverage adjustments
 const DESIGN_COVERAGE_ADJUSTMENTS: Record<string, number> = {
-  'small': 0,      // 0% adjustment
-  'medium': 0.05,  // 5% increase
-  'large': 0.10,   // 10% increase
+  small: 0, // 0% adjustment
+  medium: 0.05, // 5% increase
+  large: 0.1, // 10% increase
 };
 
 export function calculatePricing(
   productType: string,
   printingMethod: string,
   quantity: number,
-  designCoverage: 'small' | 'medium' | 'large' = 'small'
+  designCoverage: "small" | "medium" | "large" = "small",
 ): PricingResult {
   // Get base price
-  const baseUnitPrice = BASE_PRICES[productType] || BASE_PRICES['t-shirt'];
+  const baseUnitPrice = BASE_PRICES[productType] || BASE_PRICES["t-shirt"];
   const basePrice = baseUnitPrice * quantity;
 
   // Get printing surcharge
@@ -107,7 +107,7 @@ export function calculatePricing(
       shipping,
       total,
     },
-    currency: 'KSh',
+    currency: "KSh",
   };
 }
 
@@ -123,5 +123,5 @@ export function centsToKsh(cents: number): number {
 
 // Format currency for display
 export function formatKsh(amount: number): string {
-  return `KSh ${amount.toLocaleString('en-KE', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  return `KSh ${amount.toLocaleString("en-KE", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }

@@ -1,14 +1,25 @@
-
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
-import { Type } from 'lucide-react';
-import { Canvas as FabricCanvas, Textbox } from 'fabric';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Type } from "lucide-react";
+import { Canvas as FabricCanvas, Textbox } from "fabric";
+import { toast } from "sonner";
 
 interface TextFormatMenuProps {
   fabricCanvas: FabricCanvas | null;
@@ -17,13 +28,23 @@ interface TextFormatMenuProps {
 export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [fontSize, setFontSize] = useState([24]);
-  const [fontFamily, setFontFamily] = useState('Arial');
-  const [customFontUrl, setCustomFontUrl] = useState('');
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [customFontUrl, setCustomFontUrl] = useState("");
 
   const predefinedFonts = [
-    'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 
-    'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS',
-    'Trebuchet MS', 'Arial Black', 'Impact'
+    "Arial",
+    "Helvetica",
+    "Times New Roman",
+    "Courier New",
+    "Verdana",
+    "Georgia",
+    "Palatino",
+    "Garamond",
+    "Bookman",
+    "Comic Sans MS",
+    "Trebuchet MS",
+    "Arial Black",
+    "Impact",
   ];
 
   const addCustomFont = () => {
@@ -35,26 +56,29 @@ export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) 
     // Create a new font face
     const fontName = `CustomFont_${Date.now()}`;
     const fontFace = new FontFace(fontName, `url(${customFontUrl})`);
-    
-    fontFace.load().then((loadedFont) => {
-      document.fonts.add(loadedFont);
-      setFontFamily(fontName);
-      toast.success("Custom font loaded successfully!");
-    }).catch(() => {
-      toast.error("Failed to load custom font. Please check the URL.");
-    });
+
+    fontFace
+      .load()
+      .then((loadedFont) => {
+        document.fonts.add(loadedFont);
+        setFontFamily(fontName);
+        toast.success("Custom font loaded successfully!");
+      })
+      .catch(() => {
+        toast.error("Failed to load custom font. Please check the URL.");
+      });
   };
 
   const addFormattedText = () => {
     if (!fabricCanvas) return;
 
-    const textbox = new Textbox('Your Text Here', {
+    const textbox = new Textbox("Your Text Here", {
       left: 50,
       top: 50,
       width: 200,
       fontSize: fontSize[0],
       fontFamily: fontFamily,
-      fill: '#000000',
+      fill: "#000000",
       hasControls: true,
       hasBorders: true,
       editable: true,
@@ -71,7 +95,7 @@ export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) 
     if (!fabricCanvas) return;
 
     const activeObject = fabricCanvas.getActiveObject();
-    if (activeObject && activeObject.type === 'textbox') {
+    if (activeObject && activeObject.type === "textbox") {
       const textObj = activeObject as Textbox;
       textObj.set({
         fontSize: fontSize[0],
@@ -96,7 +120,7 @@ export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) 
         <DialogHeader>
           <DialogTitle>Text Formatting</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           <div className="space-y-2">
             <Label>Font Family</Label>
@@ -122,7 +146,9 @@ export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) 
                 value={customFontUrl}
                 onChange={(e) => setCustomFontUrl(e.target.value)}
               />
-              <Button onClick={addCustomFont} size="sm">Load</Button>
+              <Button onClick={addCustomFont} size="sm">
+                Load
+              </Button>
             </div>
           </div>
 
@@ -131,21 +157,15 @@ export const TextFormatMenu: React.FC<TextFormatMenuProps> = ({ fabricCanvas }) 
               <Label>Font Size</Label>
               <span className="text-sm text-muted-foreground">{fontSize[0]}px</span>
             </div>
-            <Slider
-              value={fontSize}
-              onValueChange={setFontSize}
-              min={8}
-              max={120}
-              step={1}
-            />
+            <Slider value={fontSize} onValueChange={setFontSize} min={8} max={120} step={1} />
           </div>
 
           <div className="preview p-4 border rounded-md bg-muted/20">
-            <p 
-              style={{ 
-                fontFamily: fontFamily, 
+            <p
+              style={{
+                fontFamily: fontFamily,
                 fontSize: `${fontSize[0]}px`,
-                margin: 0 
+                margin: 0,
               }}
             >
               Preview Text
