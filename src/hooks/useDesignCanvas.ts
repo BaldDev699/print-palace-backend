@@ -62,7 +62,6 @@ export const useDesignCanvas = (): FabricCanvasHook => {
           setFabricCanvas(null);
         }
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [],
   ); // setFabricCanvas is stable, so empty dependency array is fine.
