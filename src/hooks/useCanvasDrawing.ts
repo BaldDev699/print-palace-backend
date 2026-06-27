@@ -1,11 +1,10 @@
-
-import { useEffect } from 'react';
-import { Canvas as FabricCanvas } from 'fabric';
+import { useEffect } from "react";
+import { Canvas as FabricCanvas } from "fabric";
 
 export const useCanvasDrawing = (
   fabricCanvas: FabricCanvas | null,
   isDrawingMode: boolean,
-  color: string
+  color: string,
 ) => {
   useEffect(() => {
     if (!fabricCanvas || fabricCanvas.disposed) return;
@@ -16,7 +15,7 @@ export const useCanvasDrawing = (
 
   useEffect(() => {
     if (!fabricCanvas || fabricCanvas.disposed || !fabricCanvas.freeDrawingBrush) return;
-    
+
     // Configure the brush
     fabricCanvas.freeDrawingBrush.color = color;
     fabricCanvas.freeDrawingBrush.width = 3;
@@ -24,22 +23,22 @@ export const useCanvasDrawing = (
 
   useEffect(() => {
     if (!fabricCanvas || fabricCanvas.disposed) return;
-    
+
     // Set the cursor safely
     try {
       if (isDrawingMode) {
-        fabricCanvas.setCursor('crosshair');
-        fabricCanvas.hoverCursor = 'crosshair';
-        fabricCanvas.moveCursor = 'crosshair';
+        fabricCanvas.setCursor("crosshair");
+        fabricCanvas.hoverCursor = "crosshair";
+        fabricCanvas.moveCursor = "crosshair";
       } else {
-        fabricCanvas.setCursor('default');
-        fabricCanvas.hoverCursor = 'move';
-        fabricCanvas.moveCursor = 'move';
+        fabricCanvas.setCursor("default");
+        fabricCanvas.hoverCursor = "move";
+        fabricCanvas.moveCursor = "move";
       }
     } catch (error) {
       // Silently handle cursor errors on disposed canvas
     }
-    
+
     fabricCanvas.renderAll();
   }, [fabricCanvas, isDrawingMode]);
 };

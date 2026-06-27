@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getRogeBalanceFn } from '@/lib/roge-balance.functions';
+import { useState, useEffect } from "react";
+import { getRogeBalanceFn } from "@/lib/roge-balance.functions";
 
 export interface RogeBalanceData {
   totalBalance: number;
@@ -15,12 +15,12 @@ export function useRogeBalance() {
     availableBalance: 0,
     pendingWithdrawals: 0,
     isLoading: true,
-    error: null
+    error: null,
   });
 
   const loadBalance = async () => {
     try {
-      setBalanceData(prev => ({ ...prev, isLoading: true, error: null }));
+      setBalanceData((prev) => ({ ...prev, isLoading: true, error: null }));
 
       const { totalBalance, availableBalance, pendingWithdrawals } = await getRogeBalanceFn();
 
@@ -29,14 +29,14 @@ export function useRogeBalance() {
         availableBalance,
         pendingWithdrawals,
         isLoading: false,
-        error: null
+        error: null,
       });
     } catch (error: any) {
-      console.error('Error loading Roge balance:', error);
-      setBalanceData(prev => ({
+      console.error("Error loading Roge balance:", error);
+      setBalanceData((prev) => ({
         ...prev,
         isLoading: false,
-        error: error.message || 'Failed to load balance'
+        error: error.message || "Failed to load balance",
       }));
     }
   };
@@ -47,6 +47,6 @@ export function useRogeBalance() {
 
   return {
     ...balanceData,
-    refetchBalance: loadBalance
+    refetchBalance: loadBalance,
   };
 }

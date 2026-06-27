@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { UploadCloud } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { UploadCloud } from "lucide-react";
 
 interface ImageUploadButtonProps {
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -36,7 +35,7 @@ export const ImageUploadButton: React.FC<ImageUploadButtonProps> = ({ onImageUpl
         type="file"
         accept="image/*"
         ref={imageInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={onImageUpload}
       />
     </>

@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Link } from '@/lib/router-compat';
-import heroPrintingWorkshop from '@/assets/hero-printing-workshop.jpg';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/lib/router-compat";
+import heroPrintingWorkshop from "@/assets/hero-printing-workshop.jpg";
 
 const Hero = () => {
   return (
@@ -17,9 +16,14 @@ const Hero = () => {
           Custom Prints, <span className="block">Uniquely Yours.</span>
         </h1>
         <p className="text-lg sm:text-xl md:text-2xl mb-10 max-w-2xl mx-auto">
-          High-quality apparel and promotional items, personalized with your design. Fast, reliable, and affordable.
+          High-quality apparel and promotional items, personalized with your design. Fast, reliable,
+          and affordable.
         </p>
-        <Button size="lg" className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground" asChild>
+        <Button
+          size="lg"
+          className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 text-primary-foreground"
+          asChild
+        >
           <Link to="/designer">Start Your Project</Link>
         </Button>
       </div>

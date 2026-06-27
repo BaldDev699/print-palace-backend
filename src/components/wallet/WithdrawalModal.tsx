@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Coins, ArrowRight, Wallet, Shield, Clock, AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import React, { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Coins, ArrowRight, Wallet, Shield, Clock, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-type BlockchainNetwork = Database['public']['Enums']['blockchain_network'];
-type WithdrawalStatus = Database['public']['Enums']['withdrawal_status'];
+type BlockchainNetwork = Database["public"]["Enums"]["blockchain_network"];
+type WithdrawalStatus = Database["public"]["Enums"]["withdrawal_status"];
 
 interface WithdrawalModalProps {
   isOpen: boolean;
@@ -38,20 +44,20 @@ interface UserWallet {
 }
 
 const NETWORKS: NetworkOption[] = [
-  { id: 'TRC20', name: 'USDT - TRC20', symbol: 'USDT', fee: 1, minAmount: 10, icon: '₮' },
-  { id: 'ERC20', name: 'USDT - ERC20', symbol: 'USDT', fee: 15, minAmount: 20, icon: '₮' },
-  { id: 'ETH', name: 'Ethereum', symbol: 'ETH', fee: 0.005, minAmount: 0.01, icon: 'Ξ' },
+  { id: "TRC20", name: "USDT - TRC20", symbol: "USDT", fee: 1, minAmount: 10, icon: "₮" },
+  { id: "ERC20", name: "USDT - ERC20", symbol: "USDT", fee: 15, minAmount: 20, icon: "₮" },
+  { id: "ETH", name: "Ethereum", symbol: "ETH", fee: 0.005, minAmount: 0.01, icon: "Ξ" },
 ];
 
 export default function WithdrawalModal({ isOpen, onClose, currentBalance }: WithdrawalModalProps) {
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkOption | null>(null);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState("");
   const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
   const [userWallets, setUserWallets] = useState<UserWallet[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showAddWallet, setShowAddWallet] = useState(false);
-  const [newWalletAddress, setNewWalletAddress] = useState('');
-  const [newWalletName, setNewWalletName] = useState('');
+  const [newWalletAddress, setNewWalletAddress] = useState("");
+  const [newWalletName, setNewWalletName] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -62,46 +68,46 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
   const loadUserWallets = async () => {
     try {
       const { data, error } = await supabase
-        .from('user_wallets')
-        .select('*')
-        .order('is_default', { ascending: false });
+        .from("user_wallets")
+        .select("*")
+        .order("is_default", { ascending: false });
 
       if (error) throw error;
       setUserWallets((data || []) as any);
     } catch (error) {
-      console.error('Error loading wallets:', error);
+      console.error("Error loading wallets:", error);
     }
   };
 
   const addNewWallet = async () => {
     if (!selectedNetwork || !newWalletAddress.trim()) {
-      toast.error('Please select a network and enter a wallet address');
+      toast.error("Please select a network and enter a wallet address");
       return;
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
-      const { error } = await supabase
-        .from('user_wallets')
-        .insert({
-          user_id: user.id,
-          network: selectedNetwork.id,
-          wallet_address: newWalletAddress.trim(),
-          wallet_name: newWalletName.trim() || `${selectedNetwork.name} Wallet`,
-          is_default: userWallets.length === 0
-        });
+      const { error } = await supabase.from("user_wallets").insert({
+        user_id: user.id,
+        network: selectedNetwork.id,
+        wallet_address: newWalletAddress.trim(),
+        wallet_name: newWalletName.trim() || `${selectedNetwork.name} Wallet`,
+        is_default: userWallets.length === 0,
+      });
 
       if (error) throw error;
 
-      toast.success('Wallet address added successfully');
-      setNewWalletAddress('');
-      setNewWalletName('');
+      toast.success("Wallet address added successfully");
+      setNewWalletAddress("");
+      setNewWalletName("");
       setShowAddWallet(false);
       loadUserWallets();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to add wallet address');
+      toast.error(error.message || "Failed to add wallet address");
     }
   };
 
@@ -113,7 +119,7 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
 
   const handleWithdraw = async () => {
     if (!selectedNetwork || !amount || !selectedWallet) {
-      toast.error('Please fill in all required fields');
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -124,37 +130,37 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
     }
 
     if (withdrawAmount > currentBalance) {
-      toast.error('Insufficient balance');
+      toast.error("Insufficient balance");
       return;
     }
 
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
 
       const finalAmount = calculateFinalAmount();
 
-      const { error } = await supabase
-        .from('withdrawal_requests')
-        .insert({
-          user_id: user.id,
-          amount: withdrawAmount,
-          network: selectedNetwork.id,
-          wallet_address: selectedWallet.wallet_address,
-          network_fee: selectedNetwork.fee,
-          final_amount: finalAmount
-        });
+      const { error } = await supabase.from("withdrawal_requests").insert({
+        user_id: user.id,
+        amount: withdrawAmount,
+        network: selectedNetwork.id,
+        wallet_address: selectedWallet.wallet_address,
+        network_fee: selectedNetwork.fee,
+        final_amount: finalAmount,
+      });
 
       if (error) throw error;
 
-      toast.success('Withdrawal request submitted successfully');
+      toast.success("Withdrawal request submitted successfully");
       onClose();
-      setAmount('');
+      setAmount("");
       setSelectedWallet(null);
       setSelectedNetwork(null);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to submit withdrawal request');
+      toast.error(error.message || "Failed to submit withdrawal request");
     } finally {
       setIsLoading(false);
     }
@@ -186,7 +192,9 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">{currentBalance.toLocaleString()} RC</div>
+              <div className="text-3xl font-bold text-primary">
+                {currentBalance.toLocaleString()} RC
+              </div>
               <p className="text-sm text-muted-foreground mt-1">Ready for withdrawal</p>
             </CardContent>
           </Card>
@@ -207,10 +215,13 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
           {/* Network Selection */}
           <div className="space-y-2">
             <Label>Network</Label>
-            <Select value={selectedNetwork?.id || ''} onValueChange={(value) => {
-              const network = NETWORKS.find(n => n.id === value);
-              setSelectedNetwork(network || null);
-            }}>
+            <Select
+              value={selectedNetwork?.id || ""}
+              onValueChange={(value) => {
+                const network = NETWORKS.find((n) => n.id === value);
+                setSelectedNetwork(network || null);
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select network" />
               </SelectTrigger>
@@ -254,13 +265,13 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
           <div className="space-y-2">
             <Label>Withdrawal address</Label>
             {!showAddWallet ? (
-              <Select 
-                value={selectedWallet?.id || ''} 
+              <Select
+                value={selectedWallet?.id || ""}
                 onValueChange={(value) => {
-                  if (value === 'add_new') {
+                  if (value === "add_new") {
                     setShowAddWallet(true);
                   } else {
-                    const wallet = userWallets.find(w => w.id === value);
+                    const wallet = userWallets.find((w) => w.id === value);
                     setSelectedWallet(wallet || null);
                   }
                 }}
@@ -270,17 +281,17 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
                 </SelectTrigger>
                 <SelectContent>
                   {userWallets
-                    .filter(wallet => !selectedNetwork || wallet.network === selectedNetwork.id)
+                    .filter((wallet) => !selectedNetwork || wallet.network === selectedNetwork.id)
                     .map((wallet) => (
-                    <SelectItem key={wallet.id} value={wallet.id}>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{wallet.wallet_name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {wallet.wallet_address.slice(0, 6)}...{wallet.wallet_address.slice(-4)}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
+                      <SelectItem key={wallet.id} value={wallet.id}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{wallet.wallet_name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {wallet.wallet_address.slice(0, 6)}...{wallet.wallet_address.slice(-4)}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
                   <SelectItem value="add_new">
                     <span className="text-primary">+ Add new address</span>
                   </SelectItem>
@@ -305,7 +316,9 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={addNewWallet}>Add Wallet</Button>
+                  <Button size="sm" onClick={addNewWallet}>
+                    Add Wallet
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => setShowAddWallet(false)}>
                     Cancel
                   </Button>
@@ -341,20 +354,16 @@ export default function WithdrawalModal({ isOpen, onClose, currentBalance }: Wit
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={onClose} 
-              className="flex-1"
-            >
+            <Button variant="outline" onClick={onClose} className="flex-1">
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleWithdraw}
               disabled={!selectedNetwork || !amount || !selectedWallet || isLoading}
               className="flex-1 gap-2"
             >
               {isLoading ? (
-                'Processing...'
+                "Processing..."
               ) : (
                 <>
                   <Shield className="h-4 w-4" />

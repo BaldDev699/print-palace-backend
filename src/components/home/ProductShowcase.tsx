@@ -1,28 +1,29 @@
-
-import React from 'react';
-import ProductCard from './ProductCard';
-import customTshirtMockup from '@/assets/custom-tshirt-mockup.jpg';
-import customHoodieMockup from '@/assets/custom-hoodie-mockup.jpg';
-import customCapMockup from '@/assets/custom-cap-mockup.jpg';
+import React from "react";
+import ProductCard from "./ProductCard";
+import customTshirtMockup from "@/assets/custom-tshirt-mockup.jpg";
+import customHoodieMockup from "@/assets/custom-hoodie-mockup.jpg";
+import customCapMockup from "@/assets/custom-cap-mockup.jpg";
 
 const products = [
   {
-    title: 'Custom T-Shirts',
-    description: 'High-quality cotton t-shirts, perfect for events, teams, or personal style. Variety of colors and sizes.',
+    title: "Custom T-Shirts",
+    description:
+      "High-quality cotton t-shirts, perfect for events, teams, or personal style. Variety of colors and sizes.",
     imageUrl: customTshirtMockup,
-    link: '#tshirts',
+    link: "#tshirts",
   },
   {
-    title: 'Personalized Hoodies',
-    description: 'Comfortable and stylish hoodies. Ideal for groups, merchandise, or everyday wear. Print or embroidery.',
+    title: "Personalized Hoodies",
+    description:
+      "Comfortable and stylish hoodies. Ideal for groups, merchandise, or everyday wear. Print or embroidery.",
     imageUrl: customHoodieMockup,
-    link: '#hoodies',
+    link: "#hoodies",
   },
   {
-    title: 'Branded Caps & Hats',
-    description: 'Custom caps and hats for your brand, team, or event. Various styles available.',
+    title: "Branded Caps & Hats",
+    description: "Custom caps and hats for your brand, team, or event. Various styles available.",
     imageUrl: customCapMockup,
-    link: '#caps',
+    link: "#caps",
   },
 ];
 
@@ -50,4 +51,3 @@ const ProductShowcase = () => {
 };
 
 export default ProductShowcase;
-

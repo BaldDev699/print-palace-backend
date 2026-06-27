@@ -1,8 +1,8 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Grid, Layout, Maximize } from 'lucide-react';
+import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Grid, Layout, Maximize } from "lucide-react";
 
 export type CollageLayout = {
   id: string;
@@ -13,41 +13,41 @@ export type CollageLayout = {
 interface CollageTemplatesProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onLayoutSelect: (layout: CollageLayout, mode: 'apply' | 'add') => void;
+  onLayoutSelect: (layout: CollageLayout, mode: "apply" | "add") => void;
 }
 
 const collageLayouts: CollageLayout[] = [
   {
-    id: '2x2',
-    name: '2×2 Grid',
+    id: "2x2",
+    name: "2×2 Grid",
     cells: [
       { x: 0, y: 0, w: 0.48, h: 0.48 },
       { x: 0.52, y: 0, w: 0.48, h: 0.48 },
       { x: 0, y: 0.52, w: 0.48, h: 0.48 },
-      { x: 0.52, y: 0.52, w: 0.48, h: 0.48 }
-    ]
+      { x: 0.52, y: 0.52, w: 0.48, h: 0.48 },
+    ],
   },
   {
-    id: '1x3',
-    name: '1×3 Vertical',
+    id: "1x3",
+    name: "1×3 Vertical",
     cells: [
       { x: 0, y: 0, w: 1, h: 0.32 },
       { x: 0, y: 0.34, w: 1, h: 0.32 },
-      { x: 0, y: 0.68, w: 1, h: 0.32 }
-    ]
+      { x: 0, y: 0.68, w: 1, h: 0.32 },
+    ],
   },
   {
-    id: '3x1',
-    name: '3×1 Horizontal',
+    id: "3x1",
+    name: "3×1 Horizontal",
     cells: [
       { x: 0, y: 0, w: 0.32, h: 1 },
       { x: 0.34, y: 0, w: 0.32, h: 1 },
-      { x: 0.68, y: 0, w: 0.32, h: 1 }
-    ]
+      { x: 0.68, y: 0, w: 0.32, h: 1 },
+    ],
   },
   {
-    id: '3x3',
-    name: '3×3 Grid',
+    id: "3x3",
+    name: "3×3 Grid",
     cells: [
       { x: 0, y: 0, w: 0.32, h: 0.32 },
       { x: 0.34, y: 0, w: 0.32, h: 0.32 },
@@ -57,47 +57,47 @@ const collageLayouts: CollageLayout[] = [
       { x: 0.68, y: 0.34, w: 0.32, h: 0.32 },
       { x: 0, y: 0.68, w: 0.32, h: 0.32 },
       { x: 0.34, y: 0.68, w: 0.32, h: 0.32 },
-      { x: 0.68, y: 0.68, w: 0.32, h: 0.32 }
-    ]
+      { x: 0.68, y: 0.68, w: 0.32, h: 0.32 },
+    ],
   },
   {
-    id: 'large-small',
-    name: 'Large + Small',
+    id: "large-small",
+    name: "Large + Small",
     cells: [
       { x: 0, y: 0, w: 0.65, h: 1 },
       { x: 0.68, y: 0, w: 0.32, h: 0.48 },
-      { x: 0.68, y: 0.52, w: 0.32, h: 0.48 }
-    ]
+      { x: 0.68, y: 0.52, w: 0.32, h: 0.48 },
+    ],
   },
   {
-    id: 'top-bottom',
-    name: 'Top + Bottom',
+    id: "top-bottom",
+    name: "Top + Bottom",
     cells: [
       { x: 0, y: 0, w: 1, h: 0.65 },
       { x: 0, y: 0.68, w: 0.48, h: 0.32 },
-      { x: 0.52, y: 0.68, w: 0.48, h: 0.32 }
-    ]
+      { x: 0.52, y: 0.68, w: 0.48, h: 0.32 },
+    ],
   },
   {
-    id: 'magazine',
-    name: 'Magazine',
+    id: "magazine",
+    name: "Magazine",
     cells: [
       { x: 0, y: 0, w: 0.48, h: 0.65 },
       { x: 0.52, y: 0, w: 0.48, h: 0.32 },
       { x: 0.52, y: 0.35, w: 0.48, h: 0.32 },
-      { x: 0, y: 0.68, w: 1, h: 0.32 }
-    ]
+      { x: 0, y: 0.68, w: 1, h: 0.32 },
+    ],
   },
   {
-    id: 'story',
-    name: 'Story Layout',
+    id: "story",
+    name: "Story Layout",
     cells: [
       { x: 0, y: 0, w: 1, h: 0.4 },
       { x: 0, y: 0.43, w: 0.65, h: 0.25 },
       { x: 0.68, y: 0.43, w: 0.32, h: 0.25 },
-      { x: 0, y: 0.71, w: 1, h: 0.29 }
-    ]
-  }
+      { x: 0, y: 0.71, w: 1, h: 0.29 },
+    ],
+  },
 ];
 
 const LayoutPreview: React.FC<{ layout: CollageLayout }> = ({ layout }) => (
@@ -110,7 +110,7 @@ const LayoutPreview: React.FC<{ layout: CollageLayout }> = ({ layout }) => (
           left: `${cell.x * 100}%`,
           top: `${cell.y * 100}%`,
           width: `${cell.w * 100}%`,
-          height: `${cell.h * 100}%`
+          height: `${cell.h * 100}%`,
         }}
       />
     ))}
@@ -120,7 +120,7 @@ const LayoutPreview: React.FC<{ layout: CollageLayout }> = ({ layout }) => (
 export const CollageTemplates: React.FC<CollageTemplatesProps> = ({
   open,
   onOpenChange,
-  onLayoutSelect
+  onLayoutSelect,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -131,7 +131,7 @@ export const CollageTemplates: React.FC<CollageTemplatesProps> = ({
             Collage Templates
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto max-h-[60vh] p-1">
           {collageLayouts.map((layout) => (
             <Card key={layout.id} className="p-3 hover:shadow-md transition-shadow">
@@ -141,14 +141,14 @@ export const CollageTemplates: React.FC<CollageTemplatesProps> = ({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => onLayoutSelect(layout, 'add')}
+                  onClick={() => onLayoutSelect(layout, "add")}
                   className="flex-1"
                 >
                   Add
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => onLayoutSelect(layout, 'apply')}
+                  onClick={() => onLayoutSelect(layout, "apply")}
                   className="flex-1"
                 >
                   Apply

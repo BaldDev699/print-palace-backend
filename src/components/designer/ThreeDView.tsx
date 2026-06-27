@@ -1,22 +1,31 @@
-
-import React, { useState, Suspense } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { View, Loader2 } from 'lucide-react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
-import ProductModel3D from './ProductModel3D';
+import React, { useState, Suspense } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { View, Loader2 } from "lucide-react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera, Environment } from "@react-three/drei";
+import ProductModel3D from "./ProductModel3D";
 
 interface ThreeDViewProps {
   canvasData?: string;
-  productType?: 't-shirt' | 'hoodie' | 'cap' | 'general' | string;
+  productType?: "t-shirt" | "hoodie" | "cap" | "general" | string;
 }
 
-const Scene3D: React.FC<{ canvasData?: string; productType?: string }> = ({ canvasData, productType }) => {
+const Scene3D: React.FC<{ canvasData?: string; productType?: string }> = ({
+  canvasData,
+  productType,
+}) => {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, 3]} />
-      <OrbitControls 
+      <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
@@ -24,7 +33,7 @@ const Scene3D: React.FC<{ canvasData?: string; productType?: string }> = ({ canv
         minDistance={1.5}
         autoRotate={false}
       />
-      
+
       {/* Lighting */}
       <ambientLight intensity={0.6} />
       <directionalLight
@@ -35,15 +44,12 @@ const Scene3D: React.FC<{ canvasData?: string; productType?: string }> = ({ canv
         shadow-mapSize-height={1024}
       />
       <pointLight position={[-5, -5, -5]} intensity={0.3} />
-      
+
       {/* Environment for reflections */}
       <Environment preset="studio" />
-      
+
       {/* Product Model */}
-      <ProductModel3D 
-        productType={productType || 'general'} 
-        canvasData={canvasData}
-      />
+      <ProductModel3D productType={productType || "general"} canvasData={canvasData} />
     </>
   );
 };
@@ -71,19 +77,20 @@ export const ThreeDView: React.FC<ThreeDViewProps> = ({ canvasData, productType 
       <DialogContent className="sm:max-w-[800px] h-[600px]">
         <DialogHeader>
           <DialogTitle>
-            3D Preview - {productType ? productType.charAt(0).toUpperCase() + productType.slice(1) : 'Item'}
+            3D Preview -{" "}
+            {productType ? productType.charAt(0).toUpperCase() + productType.slice(1) : "Item"}
           </DialogTitle>
           <DialogDescription>
             Interactive 3D preview of your design. Click and drag to rotate, scroll to zoom.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex-1 rounded-md overflow-hidden bg-gradient-to-br from-background to-muted/20">
           <Suspense fallback={<LoadingFallback />}>
-            <Canvas 
-              shadows 
+            <Canvas
+              shadows
               gl={{ antialias: true, alpha: true }}
-              style={{ background: 'transparent' }}
+              style={{ background: "transparent" }}
             >
               <Scene3D canvasData={canvasData} productType={productType} />
             </Canvas>
@@ -93,4 +100,3 @@ export const ThreeDView: React.FC<ThreeDViewProps> = ({ canvasData, productType 
     </Dialog>
   );
 };
-

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,24 +8,31 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import showcaseCollection1 from '@/assets/showcase-collection-1.jpg';
-import showcasePrintingProcess from '@/assets/showcase-printing-process.jpg';
-import showcaseTeamUniforms from '@/assets/showcase-team-uniforms.jpg';
-import showcaseEmbroidery from '@/assets/showcase-embroidery.jpg';
-import showcasePromotionalItems from '@/assets/showcase-promotional-items.jpg';
+import showcaseCollection1 from "@/assets/showcase-collection-1.jpg";
+import showcasePrintingProcess from "@/assets/showcase-printing-process.jpg";
+import showcaseTeamUniforms from "@/assets/showcase-team-uniforms.jpg";
+import showcaseEmbroidery from "@/assets/showcase-embroidery.jpg";
+import showcasePromotionalItems from "@/assets/showcase-promotional-items.jpg";
 
 const images = [
-  { src: showcaseCollection1, alt: "Collection of custom printed apparel showcasing quality and variety" },
-  { src: showcasePrintingProcess, alt: "Screen printing process in action showing professional equipment" },
+  {
+    src: showcaseCollection1,
+    alt: "Collection of custom printed apparel showcasing quality and variety",
+  },
+  {
+    src: showcasePrintingProcess,
+    alt: "Screen printing process in action showing professional equipment",
+  },
   { src: showcaseTeamUniforms, alt: "Team wearing matching custom printed company uniforms" },
   { src: showcaseEmbroidery, alt: "Custom embroidery machine working on detailed logo design" },
-  { src: showcasePromotionalItems, alt: "Various custom printed promotional items and marketing materials" },
+  {
+    src: showcasePromotionalItems,
+    alt: "Various custom printed promotional items and marketing materials",
+  },
 ];
 
 const RotatingImageShowcase = () => {
-  const plugin = React.useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: true })
-  );
+  const plugin = React.useRef(Autoplay({ delay: 5000, stopOnInteraction: true }));
 
   return (
     <section className="py-12 md:py-16 bg-muted/40">
@@ -49,11 +55,7 @@ const RotatingImageShowcase = () => {
                 <div className="p-1">
                   <Card>
                     <CardContent className="flex aspect-[16/9] items-center justify-center p-0 overflow-hidden rounded-lg">
-                      <img 
-                        src={image.src} 
-                        alt={image.alt} 
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={image.src} alt={image.alt} className="w-full h-full object-cover" />
                     </CardContent>
                   </Card>
                 </div>

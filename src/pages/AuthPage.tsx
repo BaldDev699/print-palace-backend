@@ -1,42 +1,48 @@
-
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from '@/lib/router-compat';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import { lovable } from '@/integrations/lovable/index';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "@/lib/router-compat";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { lovable } from "@/integrations/lovable/index";
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [signupForm, setSignupForm] = useState({ 
-    email: '', 
-    password: '', 
-    confirmPassword: '', 
-    fullName: '' 
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [signupForm, setSignupForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    fullName: "",
   });
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth('google', {
+      const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
       if (result.error) {
-        toast.error('Could not sign in with Google. Please try again.');
+        toast.error("Could not sign in with Google. Please try again.");
         setIsLoading(false);
         return;
       }
       if (result.redirected) return;
-      navigate('/');
+      navigate("/");
     } catch {
-      toast.error('Could not sign in with Google. Please try again.');
+      toast.error("Could not sign in with Google. Please try again.");
       setIsLoading(false);
     }
   };
@@ -44,17 +50,19 @@ const AuthPage = () => {
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         // Check URL params for redirect
         const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect');
-        const from = urlParams.get('from');
-        
-        if (redirect === 'manufacturers' && from === 'manufacturers') {
-          navigate('/manufacturers?from=auth');
+        const redirect = urlParams.get("redirect");
+        const from = urlParams.get("from");
+
+        if (redirect === "manufacturers" && from === "manufacturers") {
+          navigate("/manufacturers?from=auth");
         } else {
-          navigate('/');
+          navigate("/");
         }
       }
     };
@@ -72,8 +80,8 @@ const AuthPage = () => {
       });
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          toast.error('Invalid email or password. Please try again.');
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password. Please try again.");
         } else {
           toast.error(error.message);
         }
@@ -81,20 +89,20 @@ const AuthPage = () => {
       }
 
       if (data.user) {
-        toast.success('Welcome back!');
+        toast.success("Welcome back!");
         // Check URL params for redirect after login
         const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect');
-        const from = urlParams.get('from');
-        
-        if (redirect === 'manufacturers' && from === 'manufacturers') {
-          navigate('/manufacturers?from=auth');
+        const redirect = urlParams.get("redirect");
+        const from = urlParams.get("from");
+
+        if (redirect === "manufacturers" && from === "manufacturers") {
+          navigate("/manufacturers?from=auth");
         } else {
-          navigate('/');
+          navigate("/");
         }
       }
     } catch (error) {
-      toast.error('An unexpected error occurred. Please try again.');
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -102,14 +110,14 @@ const AuthPage = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (signupForm.password !== signupForm.confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error("Passwords do not match");
       return;
     }
 
     if (signupForm.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
+      toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -122,13 +130,13 @@ const AuthPage = () => {
         options: {
           data: {
             full_name: signupForm.fullName,
-          }
-        }
+          },
+        },
       });
 
       if (error) {
-        if (error.message.includes('User already registered')) {
-          toast.error('This email is already registered. Please try logging in instead.');
+        if (error.message.includes("User already registered")) {
+          toast.error("This email is already registered. Please try logging in instead.");
         } else {
           toast.error(error.message);
         }
@@ -136,20 +144,20 @@ const AuthPage = () => {
       }
 
       if (data.user) {
-        toast.success('Account created successfully! You can now start designing.');
+        toast.success("Account created successfully! You can now start designing.");
         // Check URL params for redirect after signup
         const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect');
-        const from = urlParams.get('from');
-        
-        if (redirect === 'manufacturers' && from === 'manufacturers') {
-          navigate('/manufacturers?from=auth');
+        const redirect = urlParams.get("redirect");
+        const from = urlParams.get("from");
+
+        if (redirect === "manufacturers" && from === "manufacturers") {
+          navigate("/manufacturers?from=auth");
         } else {
-          navigate('/');
+          navigate("/");
         }
       }
     } catch (error) {
-      toast.error('An unexpected error occurred. Please try again.');
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -171,7 +179,10 @@ const AuthPage = () => {
           disabled={isLoading}
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.66 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.8 3 14.6 2 12 2 6.9 2 2.8 6.1 2.8 11.2S6.9 20.4 12 20.4c6 0 9.5-4.2 9.5-9.1 0-.6-.07-1.1-.16-1.6H12z" />
+            <path
+              fill="#EA4335"
+              d="M12 10.2v3.9h5.5c-.24 1.4-1.66 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.8 3 14.6 2 12 2 6.9 2 2.8 6.1 2.8 11.2S6.9 20.4 12 20.4c6 0 9.5-4.2 9.5-9.1 0-.6-.07-1.1-.16-1.6H12z"
+            />
           </svg>
           Continue with Google
         </Button>
@@ -186,12 +197,11 @@ const AuthPage = () => {
         </div>
 
         <Tabs defaultValue="login" className="w-full">
-
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="login">
             <Card>
               <CardHeader>
@@ -233,14 +243,14 @@ const AuthPage = () => {
                         Signing in...
                       </>
                     ) : (
-                      'Sign In'
+                      "Sign In"
                     )}
                   </Button>
                 </CardFooter>
               </form>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="signup">
             <Card>
               <CardHeader>
@@ -291,7 +301,9 @@ const AuthPage = () => {
                       type="password"
                       placeholder="Confirm your password"
                       value={signupForm.confirmPassword}
-                      onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })}
+                      onChange={(e) =>
+                        setSignupForm({ ...signupForm, confirmPassword: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -304,7 +316,7 @@ const AuthPage = () => {
                         Creating account...
                       </>
                     ) : (
-                      'Create Account'
+                      "Create Account"
                     )}
                   </Button>
                 </CardFooter>

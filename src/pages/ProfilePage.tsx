@@ -1,31 +1,41 @@
-
-import React, { useState, useEffect } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Edit3, UploadCloud, Coins, Store, ArrowRight, Wallet, TrendingUp, Package, Eye } from 'lucide-react';
-import { Link, useLocation, useNavigate } from '@/lib/router-compat';
+import React, { useState, useEffect } from "react";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  User,
+  Edit3,
+  UploadCloud,
+  Coins,
+  Store,
+  ArrowRight,
+  Wallet,
+  TrendingUp,
+  Package,
+  Eye,
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from 'sonner';
-import WithdrawalModal from '@/components/wallet/WithdrawalModal';
-import TransactionHistory from '@/components/wallet/TransactionHistory';
-import { OrderModal } from '@/components/orders/OrderModal';
-import { useRogeBalance } from '@/hooks/useRogeBalance';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { formatKsh } from '@/lib/pricing';
+import { toast } from "sonner";
+import WithdrawalModal from "@/components/wallet/WithdrawalModal";
+import TransactionHistory from "@/components/wallet/TransactionHistory";
+import { OrderModal } from "@/components/orders/OrderModal";
+import { useRogeBalance } from "@/hooks/useRogeBalance";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { formatKsh } from "@/lib/pricing";
 
 // Define the structure for a saved design
 interface SavedDesign {
@@ -42,7 +52,7 @@ interface ResellerApplication {
   description: string;
   price: string;
   imageUrl: string | null;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   submittedAt: string;
 }
 
@@ -69,54 +79,60 @@ const ProfilePage = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // User data state
   const [username, setUsername] = useState("CreativeUser123");
-  
+
   // Blockchain-based Roge coin balance
-  const { totalBalance, availableBalance, pendingWithdrawals, isLoading: balanceLoading, refetchBalance } = useRogeBalance();
-  
+  const {
+    totalBalance,
+    availableBalance,
+    pendingWithdrawals,
+    isLoading: balanceLoading,
+    refetchBalance,
+  } = useRogeBalance();
+
   // Saved designs state
   const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
-  
+
   // Orders state
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  
+
   // Reseller applications state
   const [resellerApplications, setResellerApplications] = useState<ResellerApplication[]>([]);
-  
+
   // New application form state
   const [newApplication, setNewApplication] = useState({
-    productName: '',
-    description: '',
-    price: '',
-    image: null as File | null
+    productName: "",
+    description: "",
+    price: "",
+    image: null as File | null,
   });
-  
+
   // Dialog state
   const [isResellerDialogOpen, setIsResellerDialogOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
-  
+
   // Get state from navigation (for redirect from order submission)
   const locationState = location.state as { openOrdersTab?: boolean; newOrderId?: string } | null;
   const [activeTab, setActiveTab] = useState(locationState?.openOrdersTab ? "orders" : "wallet");
-  
+
   // Redirect to auth if not logged in
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate("/auth");
     }
   }, [user, navigate]);
 
   // Load saved designs from localStorage on component mount
   useEffect(() => {
-    const loadedDesigns = JSON.parse(localStorage.getItem('savedDesigns') || '[]');
+    const loadedDesigns = JSON.parse(localStorage.getItem("savedDesigns") || "[]");
     setSavedDesigns(loadedDesigns);
-    
+
     // Load reseller applications from localStorage
-    const loadedApplications = JSON.parse(localStorage.getItem('resellerApplications') || '[]');
+    const loadedApplications = JSON.parse(localStorage.getItem("resellerApplications") || "[]");
     setResellerApplications(loadedApplications);
   }, []);
 
@@ -130,7 +146,7 @@ const ProfilePage = () => {
   // Handle opening new order if redirected from order submission
   useEffect(() => {
     if (locationState?.newOrderId && orders.length > 0) {
-      const newOrder = orders.find(order => order.id === locationState.newOrderId);
+      const newOrder = orders.find((order) => order.id === locationState.newOrderId);
       if (newOrder) {
         setSelectedOrder(newOrder);
         setIsOrderModalOpen(true);
@@ -143,41 +159,43 @@ const ProfilePage = () => {
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('customer_id', user!.id)
-        .order('created_at', { ascending: false });
+        .from("orders")
+        .select("*")
+        .eq("customer_id", user!.id)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setOrders((data || []) as any);
     } catch (error) {
-      console.error('Error fetching orders:', error);
-      toast.error('Failed to load orders');
+      console.error("Error fetching orders:", error);
+      toast.error("Failed to load orders");
     }
   };
-  
+
   // Handle input changes for reseller application form
-  const handleApplicationInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleApplicationInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setNewApplication(prev => ({ ...prev, [name]: value }));
+    setNewApplication((prev) => ({ ...prev, [name]: value }));
   };
-  
+
   // Handle image upload for reseller application
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setNewApplication(prev => ({ ...prev, image: e.target.files?.[0] || null }));
+      setNewApplication((prev) => ({ ...prev, image: e.target.files?.[0] || null }));
     }
   };
-  
+
   // Submit a new reseller application
   const submitApplication = () => {
     if (!newApplication.productName || !newApplication.description || !newApplication.price) {
       toast.error("Please fill in all required fields");
       return;
     }
-    
+
     const reader = new FileReader();
-    
+
     const createApplication = (imageUrl: string | null) => {
       const application: ResellerApplication = {
         id: `app-${Date.now()}`,
@@ -185,26 +203,26 @@ const ProfilePage = () => {
         description: newApplication.description,
         price: newApplication.price,
         imageUrl,
-        status: 'pending',
-        submittedAt: new Date().toISOString()
+        status: "pending",
+        submittedAt: new Date().toISOString(),
       };
-      
+
       const updatedApplications = [application, ...resellerApplications];
       setResellerApplications(updatedApplications);
-      localStorage.setItem('resellerApplications', JSON.stringify(updatedApplications));
-      
+      localStorage.setItem("resellerApplications", JSON.stringify(updatedApplications));
+
       // Reset form
       setNewApplication({
-        productName: '',
-        description: '',
-        price: '',
-        image: null
+        productName: "",
+        description: "",
+        price: "",
+        image: null,
       });
-      
+
       setIsResellerDialogOpen(false);
       toast.success("Reseller application submitted successfully!");
     };
-    
+
     if (newApplication.image) {
       reader.onloadend = () => {
         createApplication(reader.result as string);
@@ -214,12 +232,12 @@ const ProfilePage = () => {
       createApplication(null);
     }
   };
-  
+
   // Function to delete a saved design
   const deleteDesign = (designId: string) => {
-    const updatedDesigns = savedDesigns.filter(design => design.id !== designId);
+    const updatedDesigns = savedDesigns.filter((design) => design.id !== designId);
     setSavedDesigns(updatedDesigns);
-    localStorage.setItem('savedDesigns', JSON.stringify(updatedDesigns));
+    localStorage.setItem("savedDesigns", JSON.stringify(updatedDesigns));
     toast.info("Design deleted successfully");
   };
 
@@ -257,15 +275,25 @@ const ProfilePage = () => {
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-muted-foreground mb-1">Username</label>
-                <Input 
-                  id="username" 
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
+                >
+                  Username
+                </label>
+                <Input
+                  id="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1">Email</label>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-muted-foreground mb-1"
+                >
+                  Email
+                </label>
                 <Input id="email" type="email" defaultValue="user@example.com" disabled />
               </div>
               <Button className="w-full">Update Profile</Button>
@@ -281,7 +309,7 @@ const ProfilePage = () => {
                   <Coins className="mr-2 h-5 w-5 text-primary" />
                   Blockchain Wallet
                 </h3>
-                <Button 
+                <Button
                   onClick={() => setIsWithdrawalModalOpen(true)}
                   disabled={availableBalance <= 0 || balanceLoading}
                   className="gap-2"
@@ -290,28 +318,28 @@ const ProfilePage = () => {
                   Withdraw
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="text-center p-4 bg-card/50 rounded-lg border">
                   <p className="text-2xl font-bold text-primary">
-                    {balanceLoading ? '...' : totalBalance.toLocaleString()} RC
+                    {balanceLoading ? "..." : totalBalance.toLocaleString()} RC
                   </p>
                   <p className="text-sm text-muted-foreground">Total Balance</p>
                 </div>
                 <div className="text-center p-4 bg-card/50 rounded-lg border">
                   <p className="text-2xl font-bold text-green-600">
-                    {balanceLoading ? '...' : availableBalance.toLocaleString()} RC
+                    {balanceLoading ? "..." : availableBalance.toLocaleString()} RC
                   </p>
                   <p className="text-sm text-muted-foreground">Available</p>
                 </div>
                 <div className="text-center p-4 bg-card/50 rounded-lg border">
                   <p className="text-2xl font-bold text-yellow-600">
-                    {balanceLoading ? '...' : pendingWithdrawals.toLocaleString()} RC
+                    {balanceLoading ? "..." : pendingWithdrawals.toLocaleString()} RC
                   </p>
                   <p className="text-sm text-muted-foreground">Pending</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <TrendingUp className="h-4 w-4" />
                 <span>Earn coins when others use your public designs on the blockchain!</span>
@@ -319,30 +347,40 @@ const ProfilePage = () => {
             </div>
 
             {/* Tabs for Orders, Wallet, Designs, and Reseller */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-card p-6 rounded-lg shadow-lg">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="bg-card p-6 rounded-lg shadow-lg"
+            >
               <TabsList className="mb-6">
                 <TabsTrigger value="orders">My Orders</TabsTrigger>
                 <TabsTrigger value="wallet">Transaction History</TabsTrigger>
                 <TabsTrigger value="designs">My Saved Designs</TabsTrigger>
                 <TabsTrigger value="reseller">Reseller Applications</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="orders">
                 {orders.length > 0 ? (
                   <div className="space-y-4">
-                    {orders.map(order => (
-                      <div key={order.id} className="flex items-center justify-between p-4 border border-border rounded-md hover:bg-muted/50 transition-colors">
+                    {orders.map((order) => (
+                      <div
+                        key={order.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-md hover:bg-muted/50 transition-colors"
+                      >
                         <div className="flex items-center gap-4">
                           <Package className="h-8 w-8 text-primary" />
                           <div>
-                            <p className="font-medium">{order.product_type} - Qty: {order.quantity}</p>
+                            <p className="font-medium">
+                              {order.product_type} - Qty: {order.quantity}
+                            </p>
                             <p className="text-sm text-muted-foreground">
-                              {formatKsh(order.total_cents / 100)} • Status: {order.status} • {new Date(order.created_at).toLocaleDateString()}
+                              {formatKsh(order.total_cents / 100)} • Status: {order.status} •{" "}
+                              {new Date(order.created_at).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           className="gap-2"
                           onClick={() => {
@@ -357,36 +395,46 @@ const ProfilePage = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">You haven't placed any orders yet. <Link to="/designer" className="text-primary hover:underline">Start creating!</Link></p>
+                  <p className="text-muted-foreground">
+                    You haven't placed any orders yet.{" "}
+                    <Link to="/designer" className="text-primary hover:underline">
+                      Start creating!
+                    </Link>
+                  </p>
                 )}
               </TabsContent>
 
               <TabsContent value="wallet">
                 <TransactionHistory currentBalance={totalBalance} />
               </TabsContent>
-              
+
               <TabsContent value="designs">
                 {savedDesigns.length > 0 ? (
                   <div className="space-y-4">
-                    {savedDesigns.map(design => (
-                      <div key={design.id} className="flex items-center justify-between p-4 border border-border rounded-md hover:bg-muted/50 transition-colors">
+                    {savedDesigns.map((design) => (
+                      <div
+                        key={design.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-md hover:bg-muted/50 transition-colors"
+                      >
                         <div className="flex items-center gap-4">
-                          <img src={design.imageUrl} alt={design.name} className="w-16 h-16 rounded object-cover bg-muted" />
+                          <img
+                            src={design.imageUrl}
+                            alt={design.name}
+                            className="w-16 h-16 rounded object-cover bg-muted"
+                          />
                           <div>
                             <p className="font-medium">{design.name}</p>
-                            <p className="text-sm text-muted-foreground">Last edited: {design.lastEdited}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Last edited: {design.lastEdited}
+                            </p>
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            asChild
-                          >
+                          <Button variant="outline" size="sm" asChild>
                             <Link to={`/designer?id=${design.id}`}>Edit</Link>
                           </Button>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
                             className="text-destructive hover:bg-destructive/10"
                             onClick={() => deleteDesign(design.id)}
@@ -398,10 +446,15 @@ const ProfilePage = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">You haven't saved any designs yet. <Link to="/designer" className="text-primary hover:underline">Start creating!</Link></p>
+                  <p className="text-muted-foreground">
+                    You haven't saved any designs yet.{" "}
+                    <Link to="/designer" className="text-primary hover:underline">
+                      Start creating!
+                    </Link>
+                  </p>
                 )}
               </TabsContent>
-              
+
               <TabsContent value="reseller">
                 <div className="flex justify-between items-center mb-6">
                   <h4 className="text-lg font-medium">Become a Reseller</h4>
@@ -419,10 +472,12 @@ const ProfilePage = () => {
                           Share your product details to get featured in our collection page.
                         </DialogDescription>
                       </DialogHeader>
-                      
+
                       <div className="grid gap-4 py-4">
                         <div>
-                          <label htmlFor="productName" className="block text-sm font-medium mb-1">Product Name</label>
+                          <label htmlFor="productName" className="block text-sm font-medium mb-1">
+                            Product Name
+                          </label>
                           <Input
                             id="productName"
                             name="productName"
@@ -431,9 +486,11 @@ const ProfilePage = () => {
                             placeholder="E.g. Vintage Graphic Tee"
                           />
                         </div>
-                        
+
                         <div>
-                          <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
+                          <label htmlFor="description" className="block text-sm font-medium mb-1">
+                            Description
+                          </label>
                           <Textarea
                             id="description"
                             name="description"
@@ -443,9 +500,11 @@ const ProfilePage = () => {
                             rows={3}
                           />
                         </div>
-                        
+
                         <div>
-                          <label htmlFor="price" className="block text-sm font-medium mb-1">Price</label>
+                          <label htmlFor="price" className="block text-sm font-medium mb-1">
+                            Price
+                          </label>
                           <Input
                             id="price"
                             name="price"
@@ -454,20 +513,24 @@ const ProfilePage = () => {
                             placeholder="E.g. $29.99"
                           />
                         </div>
-                        
+
                         <div>
-                          <label htmlFor="productImage" className="block text-sm font-medium mb-1">Product Image</label>
+                          <label htmlFor="productImage" className="block text-sm font-medium mb-1">
+                            Product Image
+                          </label>
                           <div className="flex items-center gap-2">
                             <Button
                               variant="outline"
-                              onClick={() => document.getElementById('productImage')?.click()}
+                              onClick={() => document.getElementById("productImage")?.click()}
                               type="button"
                             >
                               <UploadCloud className="h-4 w-4 mr-2" />
                               Upload Image
                             </Button>
                             <span className="text-sm text-muted-foreground">
-                              {newApplication.image ? newApplication.image.name : 'No file selected'}
+                              {newApplication.image
+                                ? newApplication.image.name
+                                : "No file selected"}
                             </span>
                             <input
                               type="file"
@@ -479,25 +542,27 @@ const ProfilePage = () => {
                           </div>
                         </div>
                       </div>
-                      
+
                       <DialogFooter>
-                        <Button variant="ghost" onClick={() => setIsResellerDialogOpen(false)}>Cancel</Button>
+                        <Button variant="ghost" onClick={() => setIsResellerDialogOpen(false)}>
+                          Cancel
+                        </Button>
                         <Button onClick={submitApplication}>Submit Application</Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
                 </div>
-                
+
                 {resellerApplications.length > 0 ? (
                   <div className="space-y-4">
-                    {resellerApplications.map(app => (
+                    {resellerApplications.map((app) => (
                       <div key={app.id} className="p-4 border border-border rounded-md">
                         <div className="flex items-center gap-4">
                           <div className="w-16 h-16 bg-muted rounded">
                             {app.imageUrl && (
-                              <img 
-                                src={app.imageUrl} 
-                                alt={app.productName} 
+                              <img
+                                src={app.imageUrl}
+                                alt={app.productName}
                                 className="w-full h-full object-cover rounded"
                               />
                             )}
@@ -505,11 +570,15 @@ const ProfilePage = () => {
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-medium">{app.productName}</p>
-                              <span className={`px-2 py-0.5 text-xs rounded ${
-                                app.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                app.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                'bg-amber-100 text-amber-800'
-                              }`}>
+                              <span
+                                className={`px-2 py-0.5 text-xs rounded ${
+                                  app.status === "approved"
+                                    ? "bg-green-100 text-green-800"
+                                    : app.status === "rejected"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-amber-100 text-amber-800"
+                                }`}
+                              >
                                 {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                               </span>
                             </div>
@@ -525,7 +594,9 @@ const ProfilePage = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <Store className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground mb-4">You haven't submitted any reseller applications yet.</p>
+                    <p className="text-muted-foreground mb-4">
+                      You haven't submitted any reseller applications yet.
+                    </p>
                     <Button onClick={() => setIsResellerDialogOpen(true)}>
                       Submit Your First Product <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -537,7 +608,7 @@ const ProfilePage = () => {
         </div>
       </main>
       <Footer />
-      
+
       {/* Order Modal */}
       <OrderModal
         order={selectedOrder}
@@ -551,8 +622,8 @@ const ProfilePage = () => {
       />
 
       {/* Withdrawal Modal */}
-      <WithdrawalModal 
-        isOpen={isWithdrawalModalOpen} 
+      <WithdrawalModal
+        isOpen={isWithdrawalModalOpen}
         onClose={() => setIsWithdrawalModalOpen(false)}
         currentBalance={availableBalance}
       />

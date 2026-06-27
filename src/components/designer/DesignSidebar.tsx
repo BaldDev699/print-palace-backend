@@ -1,32 +1,32 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { 
-  MousePointer2, 
-  Pencil, 
-  Square, 
-  Circle, 
-  Type, 
-  Image, 
-  Shapes, 
-  Lightbulb, 
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import {
+  MousePointer2,
+  Pencil,
+  Square,
+  Circle,
+  Type,
+  Image,
+  Shapes,
+  Lightbulb,
   Palette,
   Printer,
   Trash2,
   Save,
-  Layout
-} from 'lucide-react';
-import { ActiveTool } from './Toolbar';
-import { Canvas as FabricCanvas } from 'fabric';
-import { TextFormatMenu } from './TextFormatMenu';
-import { PrintingOptions } from './PrintingOptions';
-import { CollageControls } from './collage/CollageControls';
+  Layout,
+} from "lucide-react";
+import { ActiveTool } from "./Toolbar";
+import { Canvas as FabricCanvas } from "fabric";
+import { TextFormatMenu } from "./TextFormatMenu";
+import { PrintingOptions } from "./PrintingOptions";
+import { CollageControls } from "./collage/CollageControls";
 
 interface DesignSidebarProps {
   activeTool: ActiveTool;
-  onToolClick: (tool: Extract<ActiveTool, 'select' | 'draw' | 'rectangle' | 'circle'>) => void;
+  onToolClick: (tool: Extract<ActiveTool, "select" | "draw" | "rectangle" | "circle">) => void;
   onAddText: () => void;
   onImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
@@ -67,26 +67,41 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
   onCollageGutterChange,
   collageCornerRadius = 16,
   onCollageCornerRadiusChange,
-  collageBackgroundColor = '#ffffff',
+  collageBackgroundColor = "#ffffff",
   onCollageBackgroundColorChange,
   onCollageBackgroundImageUpload,
   onReplaceSelectedFrame,
   onSwapFrames,
   canSwapFrames = false,
-  onOpenCollageTemplates
+  onOpenCollageTemplates,
 }) => {
   const toolButtons = [
-    { id: 'select' as const, icon: MousePointer2, label: 'Select', tooltip: 'Select and move objects' },
-    { id: 'draw' as const, icon: Pencil, label: 'Draw', tooltip: 'Free drawing tool' },
-    { id: 'rectangle' as const, icon: Square, label: 'Rectangle', tooltip: 'Add rectangle shape' },
-    { id: 'circle' as const, icon: Circle, label: 'Circle', tooltip: 'Add circle shape' },
+    {
+      id: "select" as const,
+      icon: MousePointer2,
+      label: "Select",
+      tooltip: "Select and move objects",
+    },
+    { id: "draw" as const, icon: Pencil, label: "Draw", tooltip: "Free drawing tool" },
+    { id: "rectangle" as const, icon: Square, label: "Rectangle", tooltip: "Add rectangle shape" },
+    { id: "circle" as const, icon: Circle, label: "Circle", tooltip: "Add circle shape" },
   ];
 
   const insertButtons = [
-    { action: onAddText, icon: Type, label: 'Text', tooltip: 'Add text element' },
-    { action: () => document.getElementById('image-upload')?.click(), icon: Image, label: 'Image', tooltip: 'Upload image' },
-    { action: onOpenShapeLibrary, icon: Shapes, label: 'Shapes', tooltip: 'Shape library' },
-    { action: onOpenSuggestedDesigns, icon: Lightbulb, label: 'Ideas', tooltip: 'Design suggestions' },
+    { action: onAddText, icon: Type, label: "Text", tooltip: "Add text element" },
+    {
+      action: () => document.getElementById("image-upload")?.click(),
+      icon: Image,
+      label: "Image",
+      tooltip: "Upload image",
+    },
+    { action: onOpenShapeLibrary, icon: Shapes, label: "Shapes", tooltip: "Shape library" },
+    {
+      action: onOpenSuggestedDesigns,
+      icon: Lightbulb,
+      label: "Ideas",
+      tooltip: "Design suggestions",
+    },
   ];
 
   return (
@@ -94,12 +109,14 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
       <div className="p-4 border-b border-border">
         <h3 className="font-semibold text-foreground">Design Tools</h3>
       </div>
-      
+
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-6">
           {/* Basic Tools */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Tools</h4>
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Tools
+            </h4>
             <div className="grid grid-cols-2 gap-2">
               {toolButtons.map((tool) => (
                 <Button
@@ -121,7 +138,9 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Insert Elements */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Insert</h4>
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Insert
+            </h4>
             <div className="grid grid-cols-2 gap-2">
               {insertButtons.map((button, index) => (
                 <Button
@@ -143,7 +162,9 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Templates */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Templates</h4>
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Templates
+            </h4>
             <Button
               variant="outline"
               onClick={onOpenTemplates}
@@ -158,10 +179,16 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Collage */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Collage</h4>
-            {onOpenCollageTemplates && onCollageGutterChange && onCollageCornerRadiusChange && 
-             onCollageBackgroundColorChange && onCollageBackgroundImageUpload && 
-             onReplaceSelectedFrame && onSwapFrames ? (
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Collage
+            </h4>
+            {onOpenCollageTemplates &&
+            onCollageGutterChange &&
+            onCollageCornerRadiusChange &&
+            onCollageBackgroundColorChange &&
+            onCollageBackgroundImageUpload &&
+            onReplaceSelectedFrame &&
+            onSwapFrames ? (
               <CollageControls
                 gutter={collageGutter}
                 onGutterChange={onCollageGutterChange}
@@ -193,7 +220,9 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
           {fabricCanvas && (
             <>
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Format</h4>
+                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                  Format
+                </h4>
                 <TextFormatMenu fabricCanvas={fabricCanvas} />
               </div>
               <Separator />
@@ -202,7 +231,9 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Printing Options */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Print</h4>
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Print
+            </h4>
             <PrintingOptions onPrintingMethodSelect={onPrintingMethodSelect} />
           </div>
 
@@ -210,7 +241,9 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Canvas Actions */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Actions</h4>
+            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Actions
+            </h4>
             <div className="space-y-2">
               <Button
                 variant="outline"

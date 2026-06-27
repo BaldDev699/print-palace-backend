@@ -1,13 +1,12 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, MessageCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Send, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Message {
   id: string;
@@ -23,14 +22,14 @@ interface OrderChatProps {
   manufacturerName?: string;
 }
 
-export const OrderChat: React.FC<OrderChatProps> = ({ 
-  orderId, 
-  customerName, 
-  manufacturerName 
+export const OrderChat: React.FC<OrderChatProps> = ({
+  orderId,
+  customerName,
+  manufacturerName,
 }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -44,39 +43,39 @@ export const OrderChat: React.FC<OrderChatProps> = ({
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const fetchMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('order_messages')
-        .select('*')
-        .eq('order_id', orderId)
-        .order('created_at', { ascending: true });
+        .from("order_messages")
+        .select("*")
+        .eq("order_id", orderId)
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching messages:', error);
-      toast.error('Failed to load messages');
+      console.error("Error fetching messages:", error);
+      toast.error("Failed to load messages");
     }
   };
 
   const subscribeToMessages = () => {
     const channel = supabase
-      .channel('order-messages')
+      .channel("order-messages")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'order_messages',
-          filter: `order_id=eq.${orderId}`
+          event: "INSERT",
+          schema: "public",
+          table: "order_messages",
+          filter: `order_id=eq.${orderId}`,
         },
         (payload) => {
-          setMessages(prev => [...prev, payload.new as Message]);
-        }
+          setMessages((prev) => [...prev, payload.new as Message]);
+        },
       )
       .subscribe();
 
@@ -90,28 +89,26 @@ export const OrderChat: React.FC<OrderChatProps> = ({
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('order_messages')
-        .insert([
-          {
-            order_id: orderId,
-            sender_id: user.id,
-            message: newMessage.trim(),
-          }
-        ]);
+      const { error } = await supabase.from("order_messages").insert([
+        {
+          order_id: orderId,
+          sender_id: user.id,
+          message: newMessage.trim(),
+        },
+      ]);
 
       if (error) throw error;
-      setNewMessage('');
+      setNewMessage("");
     } catch (error) {
-      console.error('Error sending message:', error);
-      toast.error('Failed to send message');
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -119,7 +116,7 @@ export const OrderChat: React.FC<OrderChatProps> = ({
 
   const getMessageSenderName = (senderId: string) => {
     // This is a simplified approach - in a real app you'd want to fetch user profiles
-    return senderId === user?.id ? 'You' : (customerName || manufacturerName || 'Other party');
+    return senderId === user?.id ? "You" : customerName || manufacturerName || "Other party";
   };
 
   return (
@@ -141,27 +138,33 @@ export const OrderChat: React.FC<OrderChatProps> = ({
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${message.sender_id === user?.id ? "justify-end" : "justify-start"}`}
               >
-                <div className={`flex items-start gap-2 max-w-[70%] ${
-                  message.sender_id === user?.id ? 'flex-row-reverse' : 'flex-row'
-                }`}>
+                <div
+                  className={`flex items-start gap-2 max-w-[70%] ${
+                    message.sender_id === user?.id ? "flex-row-reverse" : "flex-row"
+                  }`}
+                >
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="text-xs">
                       {getMessageSenderName(message.sender_id)[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div className={`rounded-lg p-3 ${
-                    message.sender_id === user?.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}>
-                    <p className="text-sm">{message.message}</p>
-                    <p className={`text-xs mt-1 ${
+                  <div
+                    className={`rounded-lg p-3 ${
                       message.sender_id === user?.id
-                        ? 'text-primary-foreground/70'
-                        : 'text-muted-foreground'
-                    }`}>
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    <p className="text-sm">{message.message}</p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        message.sender_id === user?.id
+                          ? "text-primary-foreground/70"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {new Date(message.created_at).toLocaleTimeString()}
                     </p>
                   </div>

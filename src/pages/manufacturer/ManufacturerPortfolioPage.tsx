@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useManufacturer } from '@/hooks/useManufacturer';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { ImageIcon, Plus, Upload, Loader2, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState, useEffect } from "react";
+import { useManufacturer } from "@/hooks/useManufacturer";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { ImageIcon, Plus, Upload, Loader2, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface PortfolioItem {
   id: string;
@@ -28,12 +34,12 @@ export const ManufacturerPortfolioPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   // Form state
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [tags, setTags] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -42,15 +48,15 @@ export const ManufacturerPortfolioPage: React.FC = () => {
 
       try {
         const { data, error } = await supabase
-          .from('manufacturer_portfolio')
-          .select('*')
-          .eq('manufacturer_id', manufacturer.id)
-          .order('created_at', { ascending: false });
+          .from("manufacturer_portfolio")
+          .select("*")
+          .eq("manufacturer_id", manufacturer.id)
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setPortfolioItems((data || []) as any);
       } catch (error) {
-        console.error('Error fetching portfolio:', error);
+        console.error("Error fetching portfolio:", error);
       } finally {
         setLoading(false);
       }
@@ -71,56 +77,57 @@ export const ManufacturerPortfolioPage: React.FC = () => {
     if (!manufacturer || !selectedFile) return;
 
     setIsUploading(true);
-    
+
     try {
       // Upload image
-      const fileExt = selectedFile.name.split('.').pop();
+      const fileExt = selectedFile.name.split(".").pop();
       const fileName = `${manufacturer.user_id}/${Date.now()}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
-        .from('manufacturer-portfolio')
+        .from("manufacturer-portfolio")
         .upload(fileName, selectedFile);
 
       if (uploadError) throw uploadError;
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('manufacturer-portfolio')
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("manufacturer-portfolio").getPublicUrl(fileName);
 
       // Create portfolio item
-      const { error: insertError } = await supabase
-        .from('manufacturer_portfolio')
-        .insert({
-          manufacturer_id: manufacturer.id,
-          title,
-          description: description || null,
-          category: category || null,
-          tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
-          image_url: publicUrl,
-        });
+      const { error: insertError } = await supabase.from("manufacturer_portfolio").insert({
+        manufacturer_id: manufacturer.id,
+        title,
+        description: description || null,
+        category: category || null,
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        image_url: publicUrl,
+      });
 
       if (insertError) throw insertError;
 
       toast({
-        title: 'Portfolio item added',
-        description: 'Your portfolio item has been successfully added.',
+        title: "Portfolio item added",
+        description: "Your portfolio item has been successfully added.",
       });
 
       // Reset form and refresh
-      setTitle('');
-      setDescription('');
-      setCategory('');
-      setTags('');
+      setTitle("");
+      setDescription("");
+      setCategory("");
+      setTags("");
       setSelectedFile(null);
       setIsDialogOpen(false);
       window.location.reload();
     } catch (error: any) {
-      console.error('Error adding portfolio item:', error);
+      console.error("Error adding portfolio item:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to add portfolio item.',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to add portfolio item.",
+        variant: "destructive",
       });
     } finally {
       setIsUploading(false);
@@ -129,33 +136,30 @@ export const ManufacturerPortfolioPage: React.FC = () => {
 
   const deletePortfolioItem = async (item: PortfolioItem) => {
     try {
-      const { error } = await supabase
-        .from('manufacturer_portfolio')
-        .delete()
-        .eq('id', item.id);
+      const { error } = await supabase.from("manufacturer_portfolio").delete().eq("id", item.id);
 
       if (error) throw error;
 
       // Also delete the image
-      const fileName = item.image_url.split('/').pop();
+      const fileName = item.image_url.split("/").pop();
       if (fileName) {
         await supabase.storage
-          .from('manufacturer-portfolio')
+          .from("manufacturer-portfolio")
           .remove([`${manufacturer?.user_id}/${fileName}`]);
       }
 
       toast({
-        title: 'Item deleted',
-        description: 'Portfolio item has been removed.',
+        title: "Item deleted",
+        description: "Portfolio item has been removed.",
       });
 
-      setPortfolioItems(prev => prev.filter(p => p.id !== item.id));
+      setPortfolioItems((prev) => prev.filter((p) => p.id !== item.id));
     } catch (error: any) {
-      console.error('Error deleting item:', error);
+      console.error("Error deleting item:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to delete portfolio item.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete portfolio item.",
+        variant: "destructive",
       });
     }
   };
@@ -175,7 +179,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
           <ImageIcon className="h-8 w-8" />
           Portfolio
         </h1>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -187,7 +191,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
             <DialogHeader>
               <DialogTitle>Add Portfolio Item</DialogTitle>
             </DialogHeader>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Image</label>
@@ -203,7 +207,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
                   <label htmlFor="image-upload" className="cursor-pointer">
                     <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      {selectedFile ? selectedFile.name : 'Click to upload image'}
+                      {selectedFile ? selectedFile.name : "Click to upload image"}
                     </p>
                   </label>
                 </div>
@@ -254,7 +258,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
                     Adding...
                   </>
                 ) : (
-                  'Add to Portfolio'
+                  "Add to Portfolio"
                 )}
               </Button>
             </form>
@@ -278,11 +282,7 @@ export const ManufacturerPortfolioPage: React.FC = () => {
           {portfolioItems.map((item) => (
             <Card key={item.id} className="overflow-hidden group">
               <div className="relative">
-                <img 
-                  src={item.image_url} 
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                />
+                <img src={item.image_url} alt={item.title} className="w-full h-48 object-cover" />
                 <Button
                   variant="destructive"
                   size="sm"

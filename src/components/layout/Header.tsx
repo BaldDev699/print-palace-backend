@@ -1,16 +1,15 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Menu, User, LogOut, Package } from 'lucide-react';
-import { Link, useLocation, useNavigate } from '@/lib/router-compat';
-import { useAuth } from '@/contexts/AuthContext';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Menu, User, LogOut, Package } from "lucide-react";
+import { Link, useLocation, useNavigate } from "@/lib/router-compat";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -19,34 +18,34 @@ const Header = () => {
   const { user, signOut } = useAuth();
 
   const navItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Collection', href: '/collection' },
-    { name: 'Manufacturers', href: '/manufacturers' },
-    { name: 'Products', href: '#products' },
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: 'About Us', href: '#about-us' },
-    { name: 'FAQ', href: '#faq' },
+    { name: "Home", href: "/" },
+    { name: "Collection", href: "/collection" },
+    { name: "Manufacturers", href: "/manufacturers" },
+    { name: "Products", href: "#products" },
+    { name: "How It Works", href: "#how-it-works" },
+    { name: "About Us", href: "#about-us" },
+    { name: "FAQ", href: "#faq" },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith('/')) {
+    if (href.startsWith("/")) {
       return;
     }
-    
+
     e.preventDefault();
-    if (href.startsWith('#') && location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: href } });
-    } else if (href.startsWith('#') && location.pathname === '/') {
+    if (href.startsWith("#") && location.pathname !== "/") {
+      navigate("/", { state: { scrollTo: href } });
+    } else if (href.startsWith("#") && location.pathname === "/") {
       const element = document.querySelector(href);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     }
   };
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -59,8 +58,8 @@ const Header = () => {
             </Link>
           </div>
           <nav className="hidden md:flex space-x-6">
-            {navItems.map((item) => (
-              item.href.startsWith('/') ? (
+            {navItems.map((item) =>
+              item.href.startsWith("/") ? (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -77,14 +76,14 @@ const Header = () => {
                 >
                   {item.name}
                 </a>
-              )
-            ))}
+              ),
+            )}
           </nav>
           <div className="hidden md:flex items-center space-x-2">
             <Button asChild>
               <Link to="/designer">Get a Quote</Link>
             </Button>
-            
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -119,7 +118,11 @@ const Header = () => {
             )}
           </div>
           <div className="md:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
               <Menu className="h-6 w-6" />
               <span className="sr-only">Open menu</span>
             </Button>
@@ -130,8 +133,8 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-card border-t border-border">
           <nav className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
-              item.href.startsWith('/') ? (
+            {navItems.map((item) =>
+              item.href.startsWith("/") ? (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -152,8 +155,8 @@ const Header = () => {
                 >
                   {item.name}
                 </a>
-              )
-            ))}
+              ),
+            )}
             {user ? (
               <>
                 <Link
@@ -191,8 +194,8 @@ const Header = () => {
             )}
           </nav>
           <div className="pt-2 pb-3 px-4">
-             <Button className="w-full" asChild>
-               <Link to="/designer">Get a Quote</Link>
+            <Button className="w-full" asChild>
+              <Link to="/designer">Get a Quote</Link>
             </Button>
           </div>
         </div>

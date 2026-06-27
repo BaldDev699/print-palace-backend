@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import React from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface ColorPickerProps {
   color: string;
@@ -11,7 +10,9 @@ interface ColorPickerProps {
 export const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor="color-picker" className="text-sm">Color</Label>
+      <Label htmlFor="color-picker" className="text-sm">
+        Color
+      </Label>
       <Input
         type="color"
         id="color-picker"

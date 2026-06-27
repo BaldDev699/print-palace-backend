@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Clock, Package, CheckCircle, Plus } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { ManufacturerForm } from '@/components/manufacturers/ManufacturerForm';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from "react";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Clock, Package, CheckCircle, Plus } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { ManufacturerForm } from "@/components/manufacturers/ManufacturerForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Manufacturer {
   id: string;
@@ -44,22 +44,22 @@ const ManufacturersPage = () => {
     if (userManufacturer && user) {
       // If user has a manufacturer profile and came here directly, redirect to dashboard
       const urlParams = new URLSearchParams(window.location.search);
-      const fromAuth = urlParams.get('from') === 'auth';
+      const fromAuth = urlParams.get("from") === "auth";
       if (fromAuth) {
-        window.location.href = '/manufacturer-dashboard';
+        window.location.href = "/manufacturer-dashboard";
       }
     }
   }, [userManufacturer, user]);
 
   const fetchManufacturers = async () => {
     try {
-      const { data, error } = await supabase.rpc('get_public_manufacturers');
+      const { data, error } = await supabase.rpc("get_public_manufacturers");
 
       if (error) throw error;
       setManufacturers((data || []) as any);
     } catch (error) {
-      console.error('Error fetching manufacturers:', error);
-      toast.error('Failed to load manufacturers');
+      console.error("Error fetching manufacturers:", error);
+      toast.error("Failed to load manufacturers");
     } finally {
       setLoading(false);
     }
@@ -70,15 +70,15 @@ const ManufacturersPage = () => {
 
     try {
       const { data, error } = await supabase
-        .from('manufacturers')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("manufacturers")
+        .select("*")
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (error) throw error;
       setUserManufacturer(data as any);
     } catch (error) {
-      console.error('Error fetching user manufacturer:', error);
+      console.error("Error fetching user manufacturer:", error);
     }
   };
 
@@ -109,37 +109,42 @@ const ManufacturersPage = () => {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              Manufacturing Partners
-            </h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">Manufacturing Partners</h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Connect with verified manufacturers who can bring your custom designs to life with precision and quality.
+              Connect with verified manufacturers who can bring your custom designs to life with
+              precision and quality.
             </p>
-            
+
             {/* Call to Action for Registration */}
             <div className="bg-card border rounded-lg p-8 mb-8 max-w-4xl mx-auto">
               <h2 className="text-2xl font-semibold text-foreground mb-4">
                 Join Our Manufacturing Network
               </h2>
               <p className="text-muted-foreground mb-6">
-                Expand your business by connecting with customers who need custom manufacturing services. 
-                Showcase your capabilities, equipment, and expertise to reach new clients.
+                Expand your business by connecting with customers who need custom manufacturing
+                services. Showcase your capabilities, equipment, and expertise to reach new clients.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-sm">
                 <div className="text-center">
                   <div className="font-medium text-foreground">Get More Orders</div>
-                  <div className="text-muted-foreground">Connect with customers actively seeking manufacturing partners</div>
+                  <div className="text-muted-foreground">
+                    Connect with customers actively seeking manufacturing partners
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-foreground">Showcase Your Work</div>
-                  <div className="text-muted-foreground">Highlight your capabilities, equipment, and past projects</div>
+                  <div className="text-muted-foreground">
+                    Highlight your capabilities, equipment, and past projects
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="font-medium text-foreground">Verified Profile</div>
-                  <div className="text-muted-foreground">Build trust with customers through our verification process</div>
+                  <div className="text-muted-foreground">
+                    Build trust with customers through our verification process
+                  </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-center gap-4">
                 {user ? (
                   !userManufacturer ? (
@@ -149,7 +154,10 @@ const ManufacturersPage = () => {
                     </Button>
                   ) : (
                     <div className="space-y-4">
-                      <Button onClick={() => window.location.href = '/manufacturer-dashboard'} size="lg">
+                      <Button
+                        onClick={() => (window.location.href = "/manufacturer-dashboard")}
+                        size="lg"
+                      >
                         Go to Dashboard
                       </Button>
                       <Button onClick={() => setShowForm(true)} variant="outline" size="lg">
@@ -159,7 +167,13 @@ const ManufacturersPage = () => {
                   )
                 ) : (
                   <div className="space-y-4">
-                    <Button onClick={() => window.location.href = '/auth?redirect=manufacturers&from=manufacturers'} size="lg" className="gap-2">
+                    <Button
+                      onClick={() =>
+                        (window.location.href = "/auth?redirect=manufacturers&from=manufacturers")
+                      }
+                      size="lg"
+                      className="gap-2"
+                    >
                       <Plus className="h-5 w-5" />
                       Sign In to Register
                     </Button>
@@ -195,7 +209,7 @@ const ManufacturersPage = () => {
                         )}
                       </CardTitle>
                       <CardDescription className="mt-1">
-                        {manufacturer.description || 'Custom manufacturing services'}
+                        {manufacturer.description || "Custom manufacturing services"}
                       </CardDescription>
                     </div>
                   </div>
@@ -207,12 +221,12 @@ const ManufacturersPage = () => {
                       {manufacturer.address}
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="h-4 w-4" />
                     {manufacturer.lead_time_days} days lead time
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Package className="h-4 w-4" />
                     Min order: {manufacturer.minimum_order_quantity} units

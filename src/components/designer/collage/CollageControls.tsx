@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Card } from '@/components/ui/card';
-import { ColorPicker } from '../ColorPicker';
-import { Layout, Upload, Shuffle, RefreshCw } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Card } from "@/components/ui/card";
+import { ColorPicker } from "../ColorPicker";
+import { Layout, Upload, Shuffle, RefreshCw } from "lucide-react";
 
 interface CollageControlsProps {
   gutter: number;
@@ -31,7 +31,7 @@ export const CollageControls: React.FC<CollageControlsProps> = ({
   onReplaceSelectedFrame,
   onSwapFrames,
   canSwapFrames,
-  onOpenCollageTemplates
+  onOpenCollageTemplates,
 }) => {
   return (
     <div className="space-y-4">
@@ -92,12 +92,9 @@ export const CollageControls: React.FC<CollageControlsProps> = ({
         <div className="space-y-3">
           <div>
             <Label className="text-xs text-muted-foreground mb-1 block">Color</Label>
-            <ColorPicker
-              color={backgroundColor}
-              onChange={onBackgroundColorChange}
-            />
+            <ColorPicker color={backgroundColor} onChange={onBackgroundColorChange} />
           </div>
-          
+
           <div>
             <input
               type="file"
@@ -109,7 +106,7 @@ export const CollageControls: React.FC<CollageControlsProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => document.getElementById('background-image-upload')?.click()}
+              onClick={() => document.getElementById("background-image-upload")?.click()}
               className="w-full justify-start gap-2"
             >
               <Upload className="h-4 w-4" />
@@ -131,7 +128,7 @@ export const CollageControls: React.FC<CollageControlsProps> = ({
             <RefreshCw className="h-4 w-4" />
             Replace Image
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"

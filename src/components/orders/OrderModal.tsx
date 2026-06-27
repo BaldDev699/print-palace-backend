@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { OrderDetails } from './OrderDetails';
+import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { OrderDetails } from "./OrderDetails";
 
 interface Order {
   id: string;
@@ -34,7 +33,7 @@ export const OrderModal: React.FC<OrderModalProps> = ({
   isOpen,
   onClose,
   isManufacturer = false,
-  onOrderUpdate
+  onOrderUpdate,
 }) => {
   if (!order) return null;
 
@@ -42,15 +41,9 @@ export const OrderModal: React.FC<OrderModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            Order Details - {order.product_type}
-          </DialogTitle>
+          <DialogTitle>Order Details - {order.product_type}</DialogTitle>
         </DialogHeader>
-        <OrderDetails 
-          order={order} 
-          isManufacturer={isManufacturer}
-          onOrderUpdate={onOrderUpdate}
-        />
+        <OrderDetails order={order} isManufacturer={isManufacturer} onOrderUpdate={onOrderUpdate} />
       </DialogContent>
     </Dialog>
   );

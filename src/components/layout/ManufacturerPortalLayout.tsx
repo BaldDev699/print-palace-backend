@@ -1,25 +1,25 @@
-import React from 'react';
-import { Outlet } from '@/lib/router-compat';
-import { Header, Footer } from '@/components/layout';
-import { ManufacturerSidebar } from './ManufacturerSidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import React from "react";
+import { Outlet } from "@/lib/router-compat";
+import { Header, Footer } from "@/components/layout";
+import { ManufacturerSidebar } from "./ManufacturerSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const ManufacturerPortalLayout: React.FC = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex flex-col w-full">
         <Header />
-        
+
         <div className="flex flex-1 w-full">
           <ManufacturerSidebar />
-          
+
           <main className="flex-1 overflow-y-auto">
             <div className="container mx-auto px-4 py-6">
               <Outlet />
             </div>
           </main>
         </div>
-        
+
         <Footer />
       </div>
     </SidebarProvider>

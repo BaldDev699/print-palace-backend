@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Canvas as FabricCanvas } from 'fabric';
+import { useState, useCallback, useEffect } from "react";
+import { Canvas as FabricCanvas } from "fabric";
 
 interface HistoryState {
   canvasState: string;
@@ -21,26 +21,26 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
     const canvasState = JSON.stringify(fabricCanvas.toJSON());
     const newState: HistoryState = {
       canvasState,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
-    setHistory(prev => {
+    setHistory((prev) => {
       // Remove future states if we're not at the end
       const newHistory = prev.slice(0, historyIndex + 1);
-      
+
       // Add new state
       newHistory.push(newState);
-      
+
       // Limit history size
       if (newHistory.length > maxHistorySize) {
         newHistory.shift();
         return newHistory;
       }
-      
+
       return newHistory;
     });
 
-    setHistoryIndex(prev => {
+    setHistoryIndex((prev) => {
       const newIndex = Math.min(prev + 1, maxHistorySize - 1);
       return newIndex;
     });
@@ -52,7 +52,7 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
 
     const initialState: HistoryState = {
       canvasState: JSON.stringify(fabricCanvas.toJSON()),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     setHistory([initialState]);
@@ -74,17 +74,17 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
     const handleObjectModified = throttledSaveState;
     const handlePathCreated = throttledSaveState;
 
-    fabricCanvas.on('object:added', handleObjectAdded);
-    fabricCanvas.on('object:removed', handleObjectRemoved);
-    fabricCanvas.on('object:modified', handleObjectModified);
-    fabricCanvas.on('path:created', handlePathCreated);
+    fabricCanvas.on("object:added", handleObjectAdded);
+    fabricCanvas.on("object:removed", handleObjectRemoved);
+    fabricCanvas.on("object:modified", handleObjectModified);
+    fabricCanvas.on("path:created", handlePathCreated);
 
     return () => {
       clearTimeout(timeoutId);
-      fabricCanvas.off('object:added', handleObjectAdded);
-      fabricCanvas.off('object:removed', handleObjectRemoved);
-      fabricCanvas.off('object:modified', handleObjectModified);
-      fabricCanvas.off('path:created', handlePathCreated);
+      fabricCanvas.off("object:added", handleObjectAdded);
+      fabricCanvas.off("object:removed", handleObjectRemoved);
+      fabricCanvas.off("object:modified", handleObjectModified);
+      fabricCanvas.off("path:created", handlePathCreated);
     };
   }, [fabricCanvas, saveState]);
 
@@ -97,7 +97,7 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
     if (!targetState) return;
 
     setIsUndoing(true);
-    
+
     fabricCanvas.loadFromJSON(targetState.canvasState, () => {
       fabricCanvas.renderAll();
       setHistoryIndex(targetIndex);
@@ -128,18 +128,20 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "z") {
         e.preventDefault();
         undo();
-      } else if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Z') || 
-                 ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+      } else if (
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "Z") ||
+        ((e.ctrlKey || e.metaKey) && e.key === "y")
+      ) {
         e.preventDefault();
         redo();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [undo, redo]);
 
   return {
@@ -149,6 +151,6 @@ export const useCanvasHistory = (fabricCanvas: FabricCanvas | null) => {
     canRedo,
     saveState,
     historyLength: history.length,
-    currentIndex: historyIndex
+    currentIndex: historyIndex,
   };
 };

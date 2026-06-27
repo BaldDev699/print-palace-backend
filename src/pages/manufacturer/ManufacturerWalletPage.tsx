@@ -1,17 +1,18 @@
-import React from 'react';
-import { useManufacturer } from '@/hooks/useManufacturer';
-import { useRogeBalance } from '@/hooks/useRogeBalance';
-import TransactionHistory from '@/components/wallet/TransactionHistory';
-import WithdrawalModal from '@/components/wallet/WithdrawalModal';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Wallet, ArrowUpRight, DollarSign, Clock } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import React from "react";
+import { useManufacturer } from "@/hooks/useManufacturer";
+import { useRogeBalance } from "@/hooks/useRogeBalance";
+import TransactionHistory from "@/components/wallet/TransactionHistory";
+import WithdrawalModal from "@/components/wallet/WithdrawalModal";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Wallet, ArrowUpRight, DollarSign, Clock } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 export const ManufacturerWalletPage: React.FC = () => {
   const { manufacturer, loading: manufacturerLoading } = useManufacturer();
-  const { totalBalance, availableBalance, pendingWithdrawals, isLoading, refetchBalance } = useRogeBalance();
+  const { totalBalance, availableBalance, pendingWithdrawals, isLoading, refetchBalance } =
+    useRogeBalance();
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
 
   if (manufacturerLoading) {
@@ -89,7 +90,7 @@ export const ManufacturerWalletPage: React.FC = () => {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <Button 
+          <Button
             onClick={() => setIsWithdrawalModalOpen(true)}
             disabled={availableBalance <= 0}
             className="w-full sm:w-auto"

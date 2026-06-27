@@ -1,8 +1,7 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Shapes } from 'lucide-react'; // New icon
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Shapes } from "lucide-react"; // New icon
 
 interface ShapeLibraryButtonProps {
   onClick: () => void;
@@ -14,7 +13,7 @@ export const ShapeLibraryButton: React.FC<ShapeLibraryButtonProps> = ({ onClick,
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          variant={isActive ? 'secondary' : 'ghost'}
+          variant={isActive ? "secondary" : "ghost"}
           size="icon"
           onClick={onClick}
           aria-label="Open Shape Library"

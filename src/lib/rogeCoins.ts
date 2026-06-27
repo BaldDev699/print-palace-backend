@@ -1,6 +1,6 @@
 import { awardRogeCoinsFn } from "@/lib/roge-coins.functions";
 
-export type TransactionType = 'earned' | 'bonus' | 'referral';
+export type TransactionType = "earned" | "bonus" | "referral";
 
 interface AwardCoinsParams {
   userId: string;
@@ -18,7 +18,7 @@ export async function awardRogeCoins({
   type,
   amount,
   description,
-  referenceId
+  referenceId,
 }: AwardCoinsParams) {
   try {
     return await awardRogeCoinsFn({
@@ -31,7 +31,7 @@ export async function awardRogeCoins({
       },
     });
   } catch (error) {
-    console.error('Error awarding Roge coins:', error);
+    console.error("Error awarding Roge coins:", error);
     throw error;
   }
 }
@@ -42,10 +42,10 @@ export async function awardRogeCoins({
 export async function awardDesignUsageCoins(designCreatorId: string, designId: string) {
   return awardRogeCoins({
     userId: designCreatorId,
-    type: 'earned',
+    type: "earned",
     amount: 10, // 10 RC per design usage
-    description: 'Design used by another user',
-    referenceId: designId
+    description: "Design used by another user",
+    referenceId: designId,
   });
 }
 
@@ -55,9 +55,9 @@ export async function awardDesignUsageCoins(designCreatorId: string, designId: s
 export async function awardWelcomeBonus(userId: string) {
   return awardRogeCoins({
     userId,
-    type: 'bonus',
+    type: "bonus",
     amount: 100, // 100 RC welcome bonus
-    description: 'Welcome bonus for joining the platform'
+    description: "Welcome bonus for joining the platform",
   });
 }
 
@@ -67,25 +67,29 @@ export async function awardWelcomeBonus(userId: string) {
 export async function awardReferralBonus(referrerId: string, referredUserId: string) {
   return awardRogeCoins({
     userId: referrerId,
-    type: 'referral',
+    type: "referral",
     amount: 50, // 50 RC for successful referral
-    description: 'Referral bonus for inviting a new user',
-    referenceId: referredUserId
+    description: "Referral bonus for inviting a new user",
+    referenceId: referredUserId,
   });
 }
 
 /**
  * Award coins for completing an order
  */
-export async function awardOrderCompletionBonus(userId: string, orderId: string, orderValue: number) {
+export async function awardOrderCompletionBonus(
+  userId: string,
+  orderId: string,
+  orderValue: number,
+) {
   // Award 1% of order value as RC (minimum 5 RC)
   const amount = Math.max(5, Math.floor(orderValue * 0.01));
-  
+
   return awardRogeCoins({
     userId,
-    type: 'bonus',
+    type: "bonus",
     amount,
-    description: 'Order completion bonus',
-    referenceId: orderId
+    description: "Order completion bonus",
+    referenceId: orderId,
   });
 }
