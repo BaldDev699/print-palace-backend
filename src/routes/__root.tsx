@@ -85,13 +85,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "print-palace" },
       {
         name: "description",
-        content: "Forge Your Backend provides a robust backend for a print studio application.",
+        content: "Roge provides a robust backend for a print studio application.",
       },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "print-palace" },
       {
         property: "og:description",
-        content: "Forge Your Backend provides a robust backend for a print studio application.",
+        content: "Roge provides a robust backend for a print studio application.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -99,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "print-palace" },
       {
         name: "twitter:description",
-        content: "Forge Your Backend provides a robust backend for a print studio application.",
+        content: "Roge provides a robust backend for a print studio application.",
       },
       {
         property: "og:image",
