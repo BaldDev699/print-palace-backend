@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "@/lib/router-compat";
 import { Send, Package, Clock, Calculator, RefreshCw, AlertCircle } from "lucide-react";
 import { calculatePricing, formatKsh, kshToCents } from "@/lib/pricing";
+import { createCheckoutSession } from "@/lib/stripe-checkout.functions";
 import {
   getProductQuantityRule,
   isValidQuantity,
