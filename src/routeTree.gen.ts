@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
+import { Route as PaymentCancelledRouteImport } from './routes/payment-cancelled'
 import { Route as ManufacturersRouteImport } from './routes/manufacturers'
 import { Route as ManufacturerDashboardRouteImport } from './routes/manufacturer-dashboard'
 import { Route as ManufacturerRouteImport } from './routes/manufacturer'
@@ -22,6 +24,7 @@ import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.ind
 import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
 import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
 import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
+import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -31,6 +34,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment-success',
+  path: '/payment-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCancelledRoute = PaymentCancelledRouteImport.update({
+  id: '/payment-cancelled',
+  path: '/payment-cancelled',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManufacturersRoute = ManufacturersRouteImport.update({
@@ -88,6 +101,11 @@ const ManufacturerOrdersRoute = ManufacturerOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => ManufacturerRoute,
 } as any)
+const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
+  id: '/api/public/webhooks/stripe',
+  path: '/api/public/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -97,12 +115,15 @@ export interface FileRoutesByFullPath {
   '/manufacturer': typeof ManufacturerRouteWithChildren
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
+  '/payment-cancelled': typeof PaymentCancelledRoute
+  '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer/': typeof ManufacturerIndexRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -111,12 +132,15 @@ export interface FileRoutesByTo {
   '/designer': typeof DesignerRoute
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
+  '/payment-cancelled': typeof PaymentCancelledRoute
+  '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer': typeof ManufacturerIndexRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -127,12 +151,15 @@ export interface FileRoutesById {
   '/manufacturer': typeof ManufacturerRouteWithChildren
   '/manufacturer-dashboard': typeof ManufacturerDashboardRoute
   '/manufacturers': typeof ManufacturersRoute
+  '/payment-cancelled': typeof PaymentCancelledRoute
+  '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer/': typeof ManufacturerIndexRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,12 +171,15 @@ export interface FileRouteTypes {
     | '/manufacturer'
     | '/manufacturer-dashboard'
     | '/manufacturers'
+    | '/payment-cancelled'
+    | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer/'
+    | '/api/public/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -158,12 +188,15 @@ export interface FileRouteTypes {
     | '/designer'
     | '/manufacturer-dashboard'
     | '/manufacturers'
+    | '/payment-cancelled'
+    | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer'
+    | '/api/public/webhooks/stripe'
   id:
     | '__root__'
     | '/'
@@ -173,12 +206,15 @@ export interface FileRouteTypes {
     | '/manufacturer'
     | '/manufacturer-dashboard'
     | '/manufacturers'
+    | '/payment-cancelled'
+    | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer/'
+    | '/api/public/webhooks/stripe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -189,8 +225,11 @@ export interface RootRouteChildren {
   ManufacturerRoute: typeof ManufacturerRouteWithChildren
   ManufacturerDashboardRoute: typeof ManufacturerDashboardRoute
   ManufacturersRoute: typeof ManufacturersRoute
+  PaymentCancelledRoute: typeof PaymentCancelledRoute
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
   ProfileRoute: typeof ProfileRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -207,6 +246,20 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-success': {
+      id: '/payment-success'
+      path: '/payment-success'
+      fullPath: '/payment-success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-cancelled': {
+      id: '/payment-cancelled'
+      path: '/payment-cancelled'
+      fullPath: '/payment-cancelled'
+      preLoaderRoute: typeof PaymentCancelledRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manufacturers': {
@@ -286,6 +339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManufacturerOrdersRouteImport
       parentRoute: typeof ManufacturerRoute
     }
+    '/api/public/webhooks/stripe': {
+      id: '/api/public/webhooks/stripe'
+      path: '/api/public/webhooks/stripe'
+      fullPath: '/api/public/webhooks/stripe'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -315,8 +375,11 @@ const rootRouteChildren: RootRouteChildren = {
   ManufacturerRoute: ManufacturerRouteWithChildren,
   ManufacturerDashboardRoute: ManufacturerDashboardRoute,
   ManufacturersRoute: ManufacturersRoute,
+  PaymentCancelledRoute: PaymentCancelledRoute,
+  PaymentSuccessRoute: PaymentSuccessRoute,
   ProfileRoute: ProfileRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
