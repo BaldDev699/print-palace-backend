@@ -16,6 +16,7 @@ import { Package, Clock, Calendar, MapPin, CreditCard, Truck, Calculator } from 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatKsh } from "@/lib/pricing";
+import { createCheckoutSession } from "@/lib/stripe-checkout.functions";
 import { OrderChat } from "./OrderChat";
 
 interface Order {
@@ -191,6 +192,30 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
             <div>
               <h4 className="font-medium mb-2">Order Notes</h4>
               <p className="text-sm text-muted-foreground bg-muted p-3 rounded">{order.notes}</p>
+            </div>
+          )}
+
+          {!isManufacturer && order.payment_status !== "paid" && order.total_cents > 0 && (
+            <div className="pt-2">
+              <Button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await createCheckoutSession({ data: { orderId: order.id } });
+                    if (res?.url) window.location.href = res.url;
+                    else toast.error("Could not start payment");
+                  } catch (e: any) {
+                    toast.error(e?.message || "Payment failed to start");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="w-full"
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                {loading ? "Starting checkout…" : `Pay ${formatKsh(order.total_cents / 100)}`}
+              </Button>
             </div>
           )}
         </CardContent>

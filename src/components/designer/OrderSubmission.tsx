@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "@/lib/router-compat";
 import { Send, Package, Clock, Calculator, RefreshCw, AlertCircle } from "lucide-react";
 import { calculatePricing, formatKsh, kshToCents } from "@/lib/pricing";
+import { createCheckoutSession } from "@/lib/stripe-checkout.functions";
 import {
   getProductQuantityRule,
   isValidQuantity,
@@ -215,14 +216,27 @@ export const OrderSubmission: React.FC<OrderSubmissionProps> = ({
 
       if (error) throw error;
 
-      toast.success("Order submitted successfully! Redirecting to your profile...");
-      onClose();
-      navigate("/profile", {
-        state: {
-          openOrdersTab: true,
-          newOrderId: data.id,
-        },
-      });
+      toast.success("Order created — redirecting to secure checkout…");
+
+      try {
+        const checkout = await createCheckoutSession({ data: { orderId: data.id } });
+        if (checkout?.url) {
+          window.location.href = checkout.url;
+          return;
+        }
+        throw new Error("No checkout URL returned");
+      } catch (payErr: any) {
+        console.error("Checkout error:", payErr);
+        toast.error(
+          payErr?.message?.includes("not configured")
+            ? "Payments are not set up yet. Your order is saved — pay later from your profile."
+            : "Could not start payment. Your order is saved — retry from your profile.",
+        );
+        onClose();
+        navigate("/profile", {
+          state: { openOrdersTab: true, newOrderId: data.id },
+        });
+      }
     } catch (error) {
       console.error("Error submitting order:", error);
       toast.error("Failed to submit order");
