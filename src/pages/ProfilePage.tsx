@@ -347,9 +347,8 @@ const ProfilePage = () => {
                 )}
               </TabsContent>
 
-              <TabsContent value="wallet">
-                <TransactionHistory currentBalance={totalBalance} />
-              </TabsContent>
+
+
 
               <TabsContent value="designs">
                 {savedDesigns.length > 0 ? (
@@ -563,14 +562,8 @@ const ProfilePage = () => {
         isManufacturer={false}
         onOrderUpdate={fetchOrders}
       />
-
-      {/* Withdrawal Modal */}
-      <WithdrawalModal
-        isOpen={isWithdrawalModalOpen}
-        onClose={() => setIsWithdrawalModalOpen(false)}
-        currentBalance={availableBalance}
-      />
     </div>
+
   );
 };
 
