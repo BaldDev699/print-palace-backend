@@ -19,6 +19,7 @@ import { Route as ManufacturerRouteImport } from './routes/manufacturer'
 import { Route as DesignerRouteImport } from './routes/designer'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
 import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
@@ -76,6 +77,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -109,6 +115,7 @@ const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/designer': typeof DesignerRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/designer': typeof DesignerRoute
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/designer': typeof DesignerRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/auth'
     | '/collection'
     | '/designer'
@@ -183,6 +193,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
     | '/collection'
     | '/designer'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/auth'
     | '/collection'
     | '/designer'
@@ -219,6 +231,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRoute
   DesignerRoute: typeof DesignerRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -369,6 +389,7 @@ const ManufacturerRouteWithChildren = ManufacturerRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRoute,
   DesignerRoute: DesignerRoute,

@@ -9,11 +9,8 @@ import {
   User,
   Edit3,
   UploadCloud,
-  Coins,
   Store,
   ArrowRight,
-  Wallet,
-  TrendingUp,
   Package,
   Eye,
 } from "lucide-react";
@@ -29,13 +26,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import WithdrawalModal from "@/components/wallet/WithdrawalModal";
-import TransactionHistory from "@/components/wallet/TransactionHistory";
 import { OrderModal } from "@/components/orders/OrderModal";
-import { useRogeBalance } from "@/hooks/useRogeBalance";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatKsh } from "@/lib/pricing";
+
 
 // Define the structure for a saved design
 interface SavedDesign {
@@ -83,15 +78,6 @@ const ProfilePage = () => {
   // User data state
   const [username, setUsername] = useState("CreativeUser123");
 
-  // Blockchain-based Roge coin balance
-  const {
-    totalBalance,
-    availableBalance,
-    pendingWithdrawals,
-    isLoading: balanceLoading,
-    refetchBalance,
-  } = useRogeBalance();
-
   // Saved designs state
   const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
 
@@ -113,11 +99,12 @@ const ProfilePage = () => {
 
   // Dialog state
   const [isResellerDialogOpen, setIsResellerDialogOpen] = useState(false);
-  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
 
   // Get state from navigation (for redirect from order submission)
   const locationState = location.state as { openOrdersTab?: boolean; newOrderId?: string } | null;
-  const [activeTab, setActiveTab] = useState(locationState?.openOrdersTab ? "orders" : "wallet");
+  const [activeTab, setActiveTab] = useState("orders");
+  void locationState;
+
 
   // Redirect to auth if not logged in
   useEffect(() => {
