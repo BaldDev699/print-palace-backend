@@ -76,7 +76,7 @@ export type Database = {
           minimum_order_quantity: number | null
           specialties: string[] | null
           updated_at: string
-          user_id: string
+          user_id: string | null
           website_url: string | null
         }
         Insert: {
@@ -93,7 +93,7 @@ export type Database = {
           minimum_order_quantity?: number | null
           specialties?: string[] | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           website_url?: string | null
         }
         Update: {
@@ -110,7 +110,7 @@ export type Database = {
           minimum_order_quantity?: number | null
           specialties?: string[] | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           website_url?: string | null
         }
         Relationships: []
@@ -427,6 +427,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          is_admin: boolean
+          is_manufacturer: boolean
+          user_id: string
+        }[]
+      }
       get_pending_withdrawals: { Args: { user_uuid: string }; Returns: number }
       get_public_manufacturers: {
         Args: never
