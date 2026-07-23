@@ -289,51 +289,7 @@ const ProfilePage = () => {
 
           {/* Roge Coin, Saved Designs, and Reseller Sections */}
           <div className="md:col-span-2 space-y-8">
-            {/* Blockchain-Based Roge Coin Balance */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-lg shadow-lg border border-primary/20">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-semibold text-foreground flex items-center">
-                  <Coins className="mr-2 h-5 w-5 text-primary" />
-                  Blockchain Wallet
-                </h3>
-                <Button
-                  onClick={() => setIsWithdrawalModalOpen(true)}
-                  disabled={availableBalance <= 0 || balanceLoading}
-                  className="gap-2"
-                >
-                  <Wallet className="h-4 w-4" />
-                  Withdraw
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-4 bg-card/50 rounded-lg border">
-                  <p className="text-2xl font-bold text-primary">
-                    {balanceLoading ? "..." : totalBalance.toLocaleString()} RC
-                  </p>
-                  <p className="text-sm text-muted-foreground">Total Balance</p>
-                </div>
-                <div className="text-center p-4 bg-card/50 rounded-lg border">
-                  <p className="text-2xl font-bold text-green-600">
-                    {balanceLoading ? "..." : availableBalance.toLocaleString()} RC
-                  </p>
-                  <p className="text-sm text-muted-foreground">Available</p>
-                </div>
-                <div className="text-center p-4 bg-card/50 rounded-lg border">
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {balanceLoading ? "..." : pendingWithdrawals.toLocaleString()} RC
-                  </p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <TrendingUp className="h-4 w-4" />
-                <span>Earn coins when others use your public designs on the blockchain!</span>
-              </div>
-            </div>
-
-            {/* Tabs for Orders, Wallet, Designs, and Reseller */}
+            {/* Tabs for Orders, Designs, and Reseller */}
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
@@ -341,10 +297,10 @@ const ProfilePage = () => {
             >
               <TabsList className="mb-6">
                 <TabsTrigger value="orders">My Orders</TabsTrigger>
-                <TabsTrigger value="wallet">Transaction History</TabsTrigger>
                 <TabsTrigger value="designs">My Saved Designs</TabsTrigger>
                 <TabsTrigger value="reseller">Reseller Applications</TabsTrigger>
               </TabsList>
+
 
               <TabsContent value="orders">
                 {orders.length > 0 ? (
