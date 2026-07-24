@@ -3,11 +3,9 @@ import { createServerFn } from "@tanstack/react-start";
 /**
  * Order lifecycle events that should notify someone by email.
  *
- * This is currently a STUB: it logs the event to `notification_log` and
- * the server console instead of actually sending an email. Once an email
- * provider is chosen (Resend/SendGrid/Postmark), swap the body of
- * `sendEmail()` below for a real API call — nothing calling
- * `notifyOrderEvent` needs to change.
+ * Sends via Resend if RESEND_API_KEY is set; falls back to logging (and
+ * still recording to notification_log) if it's not configured, so the
+ * workflow keeps working end-to-end either way.
  */
 export type OrderNotificationEvent =
   // New order submitted -> notify the manufacturer to review feasibility
@@ -26,12 +24,37 @@ async function sendEmail(params: {
   subject: string;
   body: string;
 }): Promise<boolean> {
-  // TODO: replace with a real email provider call once one is chosen.
-  // Example (Resend):
-  //   const resend = new Resend(process.env.RESEND_API_KEY);
-  //   await resend.emails.send({ from: "orders@rogeprint.com", to: params.to, subject: params.subject, html: params.body });
-  console.log(`[stub email] to=${params.to ?? "unknown"} event=${params.event}`, params.subject);
-  return true;
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || !params.to) {
+    // No provider configured yet, or no recipient on file - log instead of
+    // silently failing so the workflow keeps working end-to-end.
+    console.log(`[stub email] to=${params.to ?? "unknown"} event=${params.event}`, params.subject);
+    return false;
+  }
+
+  try {
+    const { Resend } = await import("resend");
+    const resend = new Resend(apiKey);
+    // No custom domain verified yet - Resend's shared test sender only
+    // delivers to the account's own verified email. Swap this "from" once
+    // a domain (e.g. orders@rogeprint.com) is verified in the Resend
+    // dashboard - no other code needs to change.
+    const from = process.env.RESEND_FROM_EMAIL || "Roge Print Studio <onboarding@resend.dev>";
+    const { error } = await resend.emails.send({
+      from,
+      to: params.to,
+      subject: params.subject,
+      html: `<p>${params.body}</p>`,
+    });
+    if (error) {
+      console.error(`[email] Resend error for event=${params.event}:`, error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(`[email] Failed to send for event=${params.event}:`, err);
+    return false;
+  }
 }
 
 const EVENT_COPY: Record<
