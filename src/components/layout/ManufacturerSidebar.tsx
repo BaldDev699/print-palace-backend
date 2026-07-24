@@ -43,7 +43,7 @@ export const ManufacturerSidebar: React.FC = () => {
     `w-full ${isActive ? "bg-accent text-accent-foreground font-medium" : "hover:bg-accent/50"}`;
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar className={isCollapsed ? "w-14" : "w-60"} collapsible="icon">
       <div className="p-2">
         <SidebarTrigger className="w-full justify-start" />
       </div>
