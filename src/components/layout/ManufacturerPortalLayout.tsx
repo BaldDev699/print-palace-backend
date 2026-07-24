@@ -13,8 +13,8 @@ export const ManufacturerPortalLayout: React.FC = () => {
         <div className="flex flex-1 w-full">
           <ManufacturerSidebar />
 
-          <main className="flex-1 overflow-y-auto bg-red-100">
-            <div className="px-6 py-6">
+          <main className="flex-1 overflow-x-hidden overflow-y-auto">
+            <div className="w-full max-w-7xl mx-auto px-6 py-6">
               <Outlet />
             </div>
           </main>
