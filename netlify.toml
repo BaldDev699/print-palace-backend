@@ -2,7 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No manual [[redirects]] here: this is a full SSR app (TanStack Start),
+# not a static SPA. A blanket "/* -> /index.html" redirect would serve the
+# static shell for every request - including ones that need to hit the
+# server function (SSR pages, API routes, and all createServerFn calls
+# like email notifications and Stripe checkout) - silently breaking all of
+# them. Nitro's netlify preset wires routing to the generated function
+# automatically based on the .netlify/ output it produces during build.

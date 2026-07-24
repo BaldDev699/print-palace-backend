@@ -12,4 +12,15 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Pinned explicitly: this app is deployed on Netlify, but nitro's default
+  // preset auto-detection (Vercel/Netlify/Cloudflare Pages) can be forced to
+  // "cloudflare" when the build runs through Lovable's own pipeline. Without
+  // pinning this, `npm run build` can silently produce a Cloudflare Workers
+  // bundle (`.output/`) instead of Netlify Functions, which is why server
+  // functions (email notifications, Stripe checkout, the webhook route) were
+  // never actually running on the live Netlify deploy - there was no server
+  // runtime for them.
+  nitro: {
+    preset: "netlify",
+  },
 });
