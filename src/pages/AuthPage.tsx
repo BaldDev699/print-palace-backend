@@ -15,7 +15,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@/lib/router-compat";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { lovable } from "@/integrations/lovable/index";
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,23 +28,25 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-      if (result.error) {
-        toast.error("Could not sign in with Google. Please try again.");
-        setIsLoading(false);
-        return;
-      }
-      if (result.redirected) return;
-      navigate("/");
-    } catch {
-      toast.error("Could not sign in with Google. Please try again.");
+  setIsLoading(true);
+
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      toast.error(error.message);
       setIsLoading(false);
     }
-  };
+  } catch (err) {
+    toast.error("Could not sign in with Google.");
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     // Check if user is already logged in

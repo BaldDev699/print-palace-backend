@@ -35,7 +35,8 @@ export const OrderChat: React.FC<OrderChatProps> = ({
 
   useEffect(() => {
     fetchMessages();
-    subscribeToMessages();
+    const unsubscribe = subscribeToMessages();
+    return unsubscribe;
   }, [orderId]);
 
   useEffect(() => {
@@ -63,26 +64,26 @@ export const OrderChat: React.FC<OrderChatProps> = ({
   };
 
   const subscribeToMessages = () => {
-    const channel = supabase
-      .channel("order-messages")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "order_messages",
-          filter: `order_id=eq.${orderId}`,
-        },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
-        },
-      )
-      .subscribe();
+  const channel = supabase
+    .channel(`order-messages-${orderId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "order_messages",
+        filter: `order_id=eq.${orderId}`,
+      },
+      (payload) => {
+        setMessages((prev) => [...prev, payload.new as Message]);
+      },
+    )
+    .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+  return () => {
+    supabase.removeChannel(channel);
   };
+};
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !user) return;
