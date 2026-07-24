@@ -18,9 +18,9 @@ export const ManufacturerPortalLayout: React.FC = () => {
               <Outlet />
             </div>
           </main>
-           <Footer />
         </div>
 
+        <Footer />
       </div>
     </SidebarProvider>
   );
