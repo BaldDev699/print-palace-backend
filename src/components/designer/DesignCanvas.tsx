@@ -286,14 +286,21 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
       {/* Bottom Panel - stacked under the canvas on desktop/tablet only.
           On mobile these live behind the "Preview" button in the bottom
           toolbar (see DesignerPage) so the canvas keeps the full screen. */}
-      <div className="h-[450px]">
-        <ThreeDCanvas
-          canvasData={fabricCanvas?.toDataURL({
-            format: "png",
-            quality: 0.8,
-            multiplier: 1,
-          })}
-          productType={activeMockupObject?.data?.productType}
+      {/* Bottom Panel - Desktop only */}
+      <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div className="h-[450px]">
+          <ThreeDCanvas
+            canvasData={fabricCanvas?.toDataURL({
+              format: "png",
+              quality: 0.8,
+              multiplier: 1,
+            })}
+            productType={activeMockupObject?.data?.productType}
+          />
+        </div>
+
+        <Measurements
+          onMeasurementsChange={onMeasurementsChange || (() => {})}
         />
       </div>
 
@@ -339,14 +346,21 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           <SheetHeader className="p-4 border-b">
             <SheetTitle>Preview & Measurements</SheetTitle>
           </SheetHeader>
-          <div className="h-[400px]">
-            <ThreeDCanvas
-              canvasData={fabricCanvas?.toDataURL({
-                format: "png",
-                quality: 0.8,
-                multiplier: 1,
-              })}
-              productType={activeMockupObject?.data?.productType}
+
+          <div className="h-full overflow-y-auto p-4 flex flex-col gap-4">
+            <div className="h-[400px]">
+              <ThreeDCanvas
+                canvasData={fabricCanvas?.toDataURL({
+                  format: "png",
+                  quality: 0.8,
+                  multiplier: 1,
+                })}
+                productType={activeMockupObject?.data?.productType}
+              />
+            </div>
+
+            <Measurements
+              onMeasurementsChange={onMeasurementsChange || (() => {})}
             />
           </div>
         </SheetContent>
