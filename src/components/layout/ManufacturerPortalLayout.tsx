@@ -17,10 +17,10 @@ export const ManufacturerPortalLayout: React.FC = () => {
             <div className="w-full max-w-7xl mx-auto px-6 py-6">
               <Outlet />
             </div>
-          </main>
-        </div>
 
         <Footer />
+        </main>
+      </div>
       </div>
     </SidebarProvider>
   );
