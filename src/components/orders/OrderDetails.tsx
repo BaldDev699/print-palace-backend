@@ -35,6 +35,9 @@ interface Order {
   shipping_final_cents: number;
   total_cents: number;
   tracking_number?: string;
+  manufacturer_notes?: string | null;
+  decline_reason?: string | null;
+  delivery_notes?: string | null;
 }
 
 interface OrderDetailsProps {
@@ -195,7 +198,42 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({
             </div>
           )}
 
-          {!isManufacturer && order.payment_status !== "paid" && order.total_cents > 0 && (
+          {order.status === "pending" && (
+            <div className="text-sm bg-yellow-50 text-yellow-800 border border-yellow-200 rounded p-3">
+              Waiting on the manufacturer to review feasibility. You'll be notified once they
+              confirm and you can proceed to payment.
+            </div>
+          )}
+
+          {order.status === "manufacturer_confirmed" && order.manufacturer_notes && (
+            <div>
+              <h4 className="font-medium mb-2">Manufacturer's Notes</h4>
+              <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                {order.manufacturer_notes}
+              </p>
+            </div>
+          )}
+
+          {order.status === "manufacturer_declined" && (
+            <div className="text-sm bg-red-50 text-red-800 border border-red-200 rounded p-3">
+              <p className="font-medium mb-1">This manufacturer couldn't take on the order.</p>
+              {order.decline_reason && <p>{order.decline_reason}</p>}
+            </div>
+          )}
+
+          {order.status === "completed" && order.delivery_notes && (
+            <div>
+              <h4 className="font-medium mb-2">Delivery Details</h4>
+              <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+                {order.delivery_notes}
+              </p>
+            </div>
+          )}
+
+          {!isManufacturer &&
+            order.status === "manufacturer_confirmed" &&
+            order.payment_status !== "paid" &&
+            order.total_cents > 0 && (
             <div className="pt-2">
               <Button
                 onClick={async () => {
