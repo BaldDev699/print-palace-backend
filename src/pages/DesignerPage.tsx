@@ -152,7 +152,9 @@ const DesignerPage = () => {
       {/* Main workspace */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar */}
-        <div className="hidden md:flex">{sidebar}</div>
+        <div className="bg-red-500 text-white p-4">
+          IF YOU CAN SEE THIS, YOU ARE EDITING THE CORRECT FILE
+        </div>
 
         <main className="flex-1 flex flex-col min-w-0">
           <div className="flex-1 p-3 md:p-6 flex flex-col min-h-0 pb-24 md:pb-6">
