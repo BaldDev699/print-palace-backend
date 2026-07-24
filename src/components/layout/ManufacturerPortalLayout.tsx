@@ -6,7 +6,6 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const ManufacturerPortalLayout: React.FC = () => {
   return (
-    <SidebarProvider>
       <div className="min-h-screen flex flex-col w-full">
         <Header />
 
@@ -22,6 +21,5 @@ export const ManufacturerPortalLayout: React.FC = () => {
 
         <Footer />
       </div>
-    </SidebarProvider>
   );
 };
