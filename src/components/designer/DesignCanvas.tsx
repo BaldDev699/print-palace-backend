@@ -19,6 +19,7 @@ import { ThreeDView } from "./ThreeDView";
 import { Measurements } from "./Measurements";
 import { toast } from "sonner";
 import { Group, FabricObject, Textbox, Rect, Circle, Canvas as FabricCanvas } from "fabric";
+import ThreeDCanvas from "./ThreeDCanvas";
 
 export { type ActiveTool } from "./Toolbar";
 
@@ -285,12 +286,15 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
       {/* Bottom Panel - stacked under the canvas on desktop/tablet only.
           On mobile these live behind the "Preview" button in the bottom
           toolbar (see DesignerPage) so the canvas keeps the full screen. */}
-      <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <ThreeDView
-          canvasData={fabricCanvas?.toDataURL({ format: "png", quality: 0.8, multiplier: 1 })}
+      <div className="h-[450px]">
+        <ThreeDCanvas
+          canvasData={fabricCanvas?.toDataURL({
+            format: "png",
+            quality: 0.8,
+            multiplier: 1,
+          })}
           productType={activeMockupObject?.data?.productType}
         />
-        <Measurements onMeasurementsChange={onMeasurementsChange || (() => {})} />
       </div>
 
       {/* Modals */}
@@ -335,12 +339,15 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           <SheetHeader className="p-4 border-b">
             <SheetTitle>Preview & Measurements</SheetTitle>
           </SheetHeader>
-          <div className="h-full overflow-y-auto p-4 flex flex-col gap-4">
-            <ThreeDView
-              canvasData={fabricCanvas?.toDataURL({ format: "png", quality: 0.8, multiplier: 1 })}
+          <div className="h-[400px]">
+            <ThreeDCanvas
+              canvasData={fabricCanvas?.toDataURL({
+                format: "png",
+                quality: 0.8,
+                multiplier: 1,
+              })}
               productType={activeMockupObject?.data?.productType}
             />
-            <Measurements onMeasurementsChange={onMeasurementsChange || (() => {})} />
           </div>
         </SheetContent>
       </Sheet>
