@@ -16,25 +16,14 @@ const ProductModel3D: React.FC<ProductModel3DProps> = ({ productType, canvasData
   const designTexture = useMemo(() => {
     if (!canvasData) return null;
 
-    try {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return null;
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(canvasData);
 
-      canvas.width = 512;
-      canvas.height = 512;
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
 
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      };
-      img.src = canvasData;
-
-      return new CanvasTexture(canvas);
-    } catch (error) {
-      console.error("Error creating texture:", error);
-      return null;
-    }
+    return texture;
   }, [canvasData]);
 
   // Auto-rotate the model
@@ -103,8 +92,8 @@ const ProductModel3D: React.FC<ProductModel3DProps> = ({ productType, canvasData
       {/* Design overlay */}
       {designTexture && (
         <mesh position={designPosition}>
-          <planeGeometry args={[0.8, 0.8]} />
-          <meshStandardMaterial map={designTexture} transparent opacity={0.9} />
+          <planeGeometry args={[0.65, 0.65]} />
+          <meshStandardMaterial map={designTexture} transparent opacity={1} side={THREE.DoubleSide} />
         </mesh>
       )}
     </group>
