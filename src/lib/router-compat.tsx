@@ -21,20 +21,23 @@ function parse(to: string) {
 
 export function useNavigate() {
   const router = useRouter();
-  return (to: string | number, opts?: NavOptions) => {
-    if (typeof to === "number") {
-      if (typeof window !== "undefined") window.history.go(to);
-      return;
-    }
-    const { pathname, search, hash } = parse(to);
-    router.navigate({
-      to: pathname as string,
-      search: search as Record<string, unknown>,
-      hash,
-      replace: opts?.replace,
-      state: opts?.state as never,
-    } as never);
-  };
+  return React.useCallback(
+    (to: string | number, opts?: NavOptions) => {
+      if (typeof to === "number") {
+        if (typeof window !== "undefined") window.history.go(to);
+        return;
+      }
+      const { pathname, search, hash } = parse(to);
+      router.navigate({
+        to: pathname as string,
+        search: search as Record<string, unknown>,
+        hash,
+        replace: opts?.replace,
+        state: opts?.state as never,
+      } as never);
+    },
+    [router],
+  );
 }
 
 export function useLocation() {
