@@ -13,6 +13,7 @@ import { Templates } from "./Templates";
 import { ShapeLibrary } from "./ShapeLibrary";
 import { SuggestedDesigns, SuggestedDesign } from "./SuggestedDesigns";
 import { CollageTemplates, CollageLayout } from "./collage/CollageTemplates";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { CanvasTopbar } from "./CanvasTopbar";
 import { ThreeDView } from "./ThreeDView";
 import { Measurements } from "./Measurements";
@@ -88,6 +89,7 @@ declare global {
       setIsShapeLibraryOpen: (open: boolean) => void;
       setIsSuggestedDesignsOpen: (open: boolean) => void;
       setIsTemplateDrawerOpen: (open: boolean) => void;
+      setIsPreviewSheetOpen: (open: boolean) => void;
       applyTemplate: (template: any) => void;
       templates: any[];
       currentMockup: any;
@@ -121,6 +123,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const [isShapeLibraryOpen, setIsShapeLibraryOpen] = useState<boolean>(false);
   const [isSuggestedDesignsOpen, setIsSuggestedDesignsOpen] = useState<boolean>(false);
   const [isCollageTemplatesOpen, setIsCollageTemplatesOpen] = useState<boolean>(false);
+  const [isPreviewSheetOpen, setIsPreviewSheetOpen] = useState<boolean>(false);
 
   const { fabricCanvas, initCanvas } = useDesignCanvas();
   const { addShape, addEmblem } = useCanvasShapes(fabricCanvas);
@@ -248,6 +251,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
         setIsSuggestedDesignsOpen,
         setIsTemplateDrawerOpen,
         setIsCollageTemplatesOpen,
+        setIsPreviewSheetOpen,
         applyTemplate,
         templates,
         currentMockup: externalCurrentMockup || currentMockup,
@@ -271,13 +275,17 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
         currentCanvasSize={{ width: 1080, height: 1080 }}
       />
 
-      {/* Canvas Container */}
-      <div className="flex-1 border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-4">
+      {/* Canvas Container - min-h ensures the fabric canvas always has real
+          space to measure against on mobile, instead of collapsing to 0 and
+          then overflowing once content is drawn. */}
+      <div className="flex-1 min-h-[320px] border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-2 overflow-hidden">
         <canvas ref={canvasRef} className="max-w-full max-h-full shadow-lg" />
       </div>
 
-      {/* Bottom Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+      {/* Bottom Panel - stacked under the canvas on desktop/tablet only.
+          On mobile these live behind the "Preview" button in the bottom
+          toolbar (see DesignerPage) so the canvas keeps the full screen. */}
+      <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <ThreeDView
           canvasData={fabricCanvas?.toDataURL({ format: "png", quality: 0.8, multiplier: 1 })}
           productType={activeMockupObject?.data?.productType}
@@ -318,6 +326,24 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           setIsCollageTemplatesOpen(false);
         }}
       />
+
+      {/* Mobile-only: 3D View + Measurements, opened from the bottom toolbar
+          "Preview" button instead of being permanently stacked under the
+          canvas (which is what was pushing content off small screens). */}
+      <Sheet open={isPreviewSheetOpen} onOpenChange={setIsPreviewSheetOpen}>
+        <SheetContent side="bottom" className="h-[85vh] p-0 md:hidden">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>Preview & Measurements</SheetTitle>
+          </SheetHeader>
+          <div className="h-full overflow-y-auto p-4 flex flex-col gap-4">
+            <ThreeDView
+              canvasData={fabricCanvas?.toDataURL({ format: "png", quality: 0.8, multiplier: 1 })}
+              productType={activeMockupObject?.data?.productType}
+            />
+            <Measurements onMeasurementsChange={onMeasurementsChange || (() => {})} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

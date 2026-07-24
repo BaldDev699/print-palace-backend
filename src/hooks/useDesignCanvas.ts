@@ -16,9 +16,21 @@ export const useDesignCanvas = (): FabricCanvasHook => {
         return undefined;
       }
 
+      // Size the canvas to whatever space its container actually has,
+      // instead of a hardcoded 600px that overflows small phone screens.
+      const getContainerSize = () => {
+        const container = canvasRef.current?.parentElement;
+        if (!container) return { width: 760, height: 480 };
+        const width = Math.max(container.clientWidth - 16, 240);
+        const height = Math.max(container.clientHeight - 16, 240);
+        return { width, height };
+      };
+
+      const initialSize = getContainerSize();
+
       const canvasInstance = new FabricCanvas(canvasRef.current, {
-        width: 800,
-        height: 600,
+        width: initialSize.width,
+        height: initialSize.height,
         backgroundColor: "#ffffff",
         selectionColor: "rgba(100, 100, 255, 0.3)",
         selectionLineWidth: 2,
@@ -34,29 +46,29 @@ export const useDesignCanvas = (): FabricCanvasHook => {
 
       setFabricCanvas(canvasInstance);
 
-      const handleResize = () => {
-        const container = canvasRef.current?.parentElement;
-        if (container && canvasInstance) {
-          canvasInstance.setDimensions({
-            width: container.clientWidth,
-            height: container.clientHeight > 300 ? container.clientHeight : 600,
-          });
-          canvasInstance.renderAll();
-        }
+      const applySize = () => {
+        if (!canvasInstance || canvasInstance.disposed) return;
+        const { width, height } = getContainerSize();
+        canvasInstance.setDimensions({ width, height });
+        canvasInstance.renderAll();
       };
 
-      const parentElement = canvasRef.current?.parentElement;
-      if (parentElement) {
-        const initialWidth = parentElement.clientWidth > 50 ? parentElement.clientWidth - 40 : 760;
-        const initialHeight = 600;
-        canvasInstance.setDimensions({ width: initialWidth, height: initialHeight });
-        canvasInstance.renderAll();
+      // ResizeObserver catches container size changes from CSS/layout
+      // (orientation change, mobile browser chrome show/hide, sheet open/close)
+      // which a plain window "resize" listener misses.
+      const container = canvasRef.current?.parentElement;
+      let resizeObserver: ResizeObserver | undefined;
+      if (container && typeof ResizeObserver !== "undefined") {
+        resizeObserver = new ResizeObserver(() => applySize());
+        resizeObserver.observe(container);
       }
-
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", applySize);
+      window.addEventListener("orientationchange", applySize);
 
       return () => {
-        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("resize", applySize);
+        window.removeEventListener("orientationchange", applySize);
+        resizeObserver?.disconnect();
         if (canvasInstance && !canvasInstance.disposed) {
           canvasInstance.dispose();
           setFabricCanvas(null);

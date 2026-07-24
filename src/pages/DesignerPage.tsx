@@ -100,6 +100,8 @@ const DesignerPage = () => {
     (window as any).designCanvasAPI?.setIsTemplateDrawerOpen(true);
   const handleOpenCollageTemplates = () =>
     (window as any).designCanvasAPI?.setIsCollageTemplatesOpen?.(true);
+  const handleOpenPreview = () =>
+    (window as any).designCanvasAPI?.setIsPreviewSheetOpen?.(true);
 
   // The sidebar component (reused for desktop rail and mobile sheet)
   const sidebar = (
@@ -129,7 +131,7 @@ const DesignerPage = () => {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col h-[100dvh] overflow-hidden md:h-auto md:min-h-screen md:overflow-visible bg-background">
       <Header />
 
       {/* Top action bar */}
@@ -173,8 +175,8 @@ const DesignerPage = () => {
       </div>
 
       {/* Mobile bottom toolbar (Picsart-style) */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border shadow-lg">
-        <div className="grid grid-cols-6 gap-0">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-7 gap-0">
           <Sheet open={toolsSheetOpen} onOpenChange={setToolsSheetOpen}>
             <SheetTrigger asChild>
               <button className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted">
@@ -236,10 +238,20 @@ const DesignerPage = () => {
               <div className="h-full overflow-auto">{inspector}</div>
             </SheetContent>
           </Sheet>
+
+          <button
+            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
+            onClick={handleOpenPreview}
+          >
+            <Layout className="h-5 w-5" />
+            Preview
+          </button>
         </div>
       </div>
 
-      <Footer />
+      <div className="hidden md:block">
+        <Footer />
+      </div>
 
       {isCheckoutOpen && (
         <OrderSubmission
