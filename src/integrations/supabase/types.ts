@@ -153,14 +153,20 @@ export type Database = {
       orders: {
         Row: {
           base_price_cents: number
+          completed_at: string | null
           created_at: string
           currency: string
           customer_id: string
+          decline_reason: string | null
+          delivery_notes: string | null
           delivery_status: string
           design_coverage_adjustment_cents: number
           design_data: Json
           id: string
+          manufacturer_confirmed_at: string | null
+          manufacturer_declined_at: string | null
           manufacturer_id: string | null
+          manufacturer_notes: string | null
           measurements: Json
           notes: string | null
           paid_at: string | null
@@ -184,14 +190,20 @@ export type Database = {
         }
         Insert: {
           base_price_cents?: number
+          completed_at?: string | null
           created_at?: string
           currency?: string
           customer_id: string
+          decline_reason?: string | null
+          delivery_notes?: string | null
           delivery_status?: string
           design_coverage_adjustment_cents?: number
           design_data: Json
           id?: string
+          manufacturer_confirmed_at?: string | null
+          manufacturer_declined_at?: string | null
           manufacturer_id?: string | null
+          manufacturer_notes?: string | null
           measurements: Json
           notes?: string | null
           paid_at?: string | null
@@ -215,14 +227,20 @@ export type Database = {
         }
         Update: {
           base_price_cents?: number
+          completed_at?: string | null
           created_at?: string
           currency?: string
           customer_id?: string
+          decline_reason?: string | null
+          delivery_notes?: string | null
           delivery_status?: string
           design_coverage_adjustment_cents?: number
           design_data?: Json
           id?: string
+          manufacturer_confirmed_at?: string | null
+          manufacturer_declined_at?: string | null
           manufacturer_id?: string | null
+          manufacturer_notes?: string | null
           measurements?: Json
           notes?: string | null
           paid_at?: string | null
@@ -250,6 +268,44 @@ export type Database = {
             columns: ["manufacturer_id"]
             isOneToOne: false
             referencedRelation: "manufacturers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_log: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          order_id: string | null
+          payload: Json | null
+          recipient_email: string | null
+          sent: boolean
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          recipient_email?: string | null
+          sent?: boolean
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          recipient_email?: string | null
+          sent?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_log_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]

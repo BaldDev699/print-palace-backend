@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useManufacturer } from "@/hooks/useManufacturer";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyOrderEvent, type OrderNotificationEvent } from "@/lib/notifications.functions";
 import { OrderModal } from "@/components/orders/OrderModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Loader2, CheckCircle2, XCircle, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 
 interface Order {
@@ -25,6 +35,35 @@ interface Order {
   total_cents: number;
   tracking_number?: string;
 }
+
+type PendingAction = {
+  orderId: string;
+  kind: "confirm" | "decline" | "complete";
+} | null;
+
+const ACTION_COPY: Record<
+  NonNullable<PendingAction>["kind"],
+  { title: string; label: string; placeholder: string; event: OrderNotificationEvent }
+> = {
+  confirm: {
+    title: "Confirm feasibility",
+    label: "Notes for the customer (optional)",
+    placeholder: "e.g. confirmed, lead time is 10 days as quoted",
+    event: "quote_ready",
+  },
+  decline: {
+    title: "Decline order",
+    label: "Reason for declining",
+    placeholder: "e.g. quantity below our minimum order for this product",
+    event: "order_declined",
+  },
+  complete: {
+    title: "Mark order complete",
+    label: "Delivery details for the customer",
+    placeholder: "e.g. shipped via courier, expect delivery in 3-5 days, tracking below",
+    event: "order_completed",
+  },
+};
 
 export const ManufacturerOrdersPage: React.FC = () => {
   const { manufacturer, loading: manufacturerLoading } = useManufacturer();
@@ -55,24 +94,86 @@ export const ManufacturerOrdersPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manufacturer]);
 
-  const updateStatus = async (orderId: string, newStatus: string) => {
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [actionNote, setActionNote] = useState("");
+  const [submittingAction, setSubmittingAction] = useState(false);
+
+  const openAction = (orderId: string, kind: NonNullable<PendingAction>["kind"]) => {
+    setActionNote("");
+    setPendingAction({ orderId, kind });
+  };
+
+  const submitAction = async () => {
+    if (!pendingAction) return;
+    const { orderId, kind } = pendingAction;
+    if (kind === "decline" && !actionNote.trim()) {
+      toast.error("Please give the customer a reason for declining.");
+      return;
+    }
+
+    setSubmittingAction(true);
+    setUpdatingId(orderId);
+
+    const updates: import("@/integrations/supabase/types").TablesUpdate<"orders"> =
+      kind === "confirm"
+        ? {
+            status: "manufacturer_confirmed",
+            manufacturer_notes: actionNote.trim() || null,
+            manufacturer_confirmed_at: new Date().toISOString(),
+          }
+        : kind === "decline"
+          ? {
+              status: "manufacturer_declined",
+              decline_reason: actionNote.trim(),
+              manufacturer_declined_at: new Date().toISOString(),
+            }
+          : {
+              status: "completed",
+              delivery_notes: actionNote.trim() || null,
+              completed_at: new Date().toISOString(),
+            };
+
+    const { error } = await supabase.from("orders").update(updates).eq("id", orderId);
+
+    if (error) {
+      toast.error(error.message);
+      setSubmittingAction(false);
+      setUpdatingId(null);
+      return;
+    }
+
+    try {
+      await notifyOrderEvent({ data: { orderId, event: ACTION_COPY[kind].event } });
+    } catch (notifyErr) {
+      console.error("Notification failed:", notifyErr);
+    }
+
+    toast.success(
+      kind === "confirm"
+        ? "Order accepted — the customer has been notified to pay."
+        : kind === "decline"
+          ? "Order declined — the customer has been notified."
+          : "Order marked complete — the customer has been notified with delivery details.",
+    );
+
+    setSubmittingAction(false);
+    setUpdatingId(null);
+    setPendingAction(null);
+    fetchOrders();
+  };
+
+  const startProduction = async (orderId: string) => {
     setUpdatingId(orderId);
     const { error } = await supabase
       .from("orders")
-      .update({ status: newStatus })
+      .update({ status: "in_production" })
       .eq("id", orderId);
     setUpdatingId(null);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success(
-      newStatus === "manufacturer_confirmed"
-        ? "Order accepted — customer can now proceed to pay."
-        : newStatus === "manufacturer_declined"
-          ? "Order declined."
-          : "Order updated",
-    );
+    toast.success("Production started.");
     fetchOrders();
   };
 
@@ -155,7 +256,7 @@ export const ManufacturerOrdersPage: React.FC = () => {
                           <Button
                             size="sm"
                             disabled={updatingId === order.id}
-                            onClick={() => updateStatus(order.id, "manufacturer_confirmed")}
+                            onClick={() => openAction(order.id, "confirm")}
                           >
                             <CheckCircle2 className="h-4 w-4 mr-1" /> Accept
                           </Button>
@@ -163,7 +264,7 @@ export const ManufacturerOrdersPage: React.FC = () => {
                             size="sm"
                             variant="destructive"
                             disabled={updatingId === order.id}
-                            onClick={() => updateStatus(order.id, "manufacturer_declined")}
+                            onClick={() => openAction(order.id, "decline")}
                           >
                             <XCircle className="h-4 w-4 mr-1" /> Decline
                           </Button>
@@ -174,7 +275,8 @@ export const ManufacturerOrdersPage: React.FC = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateStatus(order.id, "in_production")}
+                            disabled={updatingId === order.id}
+                            onClick={() => startProduction(order.id)}
                           >
                             Start Production
                           </Button>
@@ -183,9 +285,10 @@ export const ManufacturerOrdersPage: React.FC = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateStatus(order.id, "completed")}
+                          disabled={updatingId === order.id}
+                          onClick={() => openAction(order.id, "complete")}
                         >
-                          Mark Completed
+                          <PackageCheck className="h-4 w-4 mr-1" /> Mark Completed
                         </Button>
                       )}
                       <Button variant="secondary" size="sm" onClick={() => handleViewOrder(order)}>
@@ -207,6 +310,43 @@ export const ManufacturerOrdersPage: React.FC = () => {
         isManufacturer={true}
         onOrderUpdate={fetchOrders}
       />
+
+      <Dialog open={!!pendingAction} onOpenChange={(open) => !open && setPendingAction(null)}>
+        <DialogContent>
+          {pendingAction && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{ACTION_COPY[pendingAction.kind].title}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="action-note">{ACTION_COPY[pendingAction.kind].label}</Label>
+                <Textarea
+                  id="action-note"
+                  value={actionNote}
+                  onChange={(e) => setActionNote(e.target.value)}
+                  placeholder={ACTION_COPY[pendingAction.kind].placeholder}
+                  rows={4}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The customer will be notified with this message.
+                </p>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setPendingAction(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={submitAction}
+                  disabled={submittingAction}
+                  variant={pendingAction.kind === "decline" ? "destructive" : "default"}
+                >
+                  {submittingAction ? "Submitting..." : ACTION_COPY[pendingAction.kind].title}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
