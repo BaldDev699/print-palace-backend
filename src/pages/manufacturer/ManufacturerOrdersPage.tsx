@@ -228,9 +228,9 @@ export const ManufacturerOrdersPage: React.FC = () => {
             return (
               <Card key={order.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                  <div className="grid gap-4 md:grid-cols-[1fr_auto] items-start">
                     <div className="space-y-2 flex-1 min-w-0">
-                      <div className="flex items-center gap-3 flex-wrap">
+                      <div className="flex flex-wrap items-center gap-2">
                         <h3 className="font-semibold text-lg">{order.product_type}</h3>
                         <Badge className={`text-white ${getStatusColor(order.status)}`}>
                           {order.status.replace(/_/g, " ")}
@@ -250,7 +250,7 @@ export const ManufacturerOrdersPage: React.FC = () => {
                         </p>
                       )}
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 md:flex-shrink-0">
                       {isPending && (
                         <>
                           <Button
