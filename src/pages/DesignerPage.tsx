@@ -137,7 +137,7 @@ const DesignerPage = () => {
       {/* Top action bar */}
       <div className="p-3 md:p-4 border-b border-border bg-card">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">Product Designer</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-foreground">Product Designer - TES 12345</h1>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
               <Link to="/">Home</Link>
@@ -152,9 +152,7 @@ const DesignerPage = () => {
       {/* Main workspace */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar */}
-        <div className="bg-red-500 text-white p-4">
-          IF YOU CAN SEE THIS, YOU ARE EDITING THE CORRECT FILE
-        </div>
+        <div className="hidden md:flex">{sidebar}</div>
 
         <main className="flex-1 flex flex-col min-w-0">
           <div className="flex-1 p-3 md:p-6 flex flex-col min-h-0 pb-24 md:pb-6">
