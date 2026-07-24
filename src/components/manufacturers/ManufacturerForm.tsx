@@ -16,10 +16,10 @@ interface Manufacturer {
   contact_email: string;
   contact_phone?: string;
   address?: string;
-  specialties: string[];
+  specialties: string[] | null;
   minimum_order_quantity: number;
   lead_time_days: number;
-  certifications: string[];
+  certifications: string[] | null;
   website_url?: string;
   description?: string;
   is_verified: boolean;

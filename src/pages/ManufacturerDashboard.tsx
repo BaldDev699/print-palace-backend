@@ -20,10 +20,10 @@ interface Manufacturer {
   contact_email: string;
   contact_phone?: string;
   address?: string;
-  specialties: string[];
+  specialties: string[] | null;
   minimum_order_quantity: number;
   lead_time_days: number;
-  certifications: string[];
+  certifications: string[] | null;
   website_url?: string;
   description?: string;
   is_verified: boolean;
@@ -313,11 +313,11 @@ const ManufacturerDashboard = () => {
                     Min order: {manufacturer.minimum_order_quantity} units
                   </div>
 
-                  {manufacturer.specialties.length > 0 && (
+                  {(manufacturer.specialties?.length ?? 0) > 0 && (
                     <div>
                       <p className="text-sm font-medium mb-2">Specialties:</p>
                       <div className="flex flex-wrap gap-2">
-                        {manufacturer.specialties.map((specialty, index) => (
+                        {manufacturer.specialties?.map((specialty, index) => (
                           <Badge key={index} variant="secondary">
                             {specialty}
                           </Badge>
@@ -326,11 +326,11 @@ const ManufacturerDashboard = () => {
                     </div>
                   )}
 
-                  {manufacturer.certifications.length > 0 && (
+                  {(manufacturer.certifications?.length ?? 0) > 0 && (
                     <div>
                       <p className="text-sm font-medium mb-2">Certifications:</p>
                       <div className="flex flex-wrap gap-2">
-                        {manufacturer.certifications.map((cert, index) => (
+                        {manufacturer.certifications?.map((cert, index) => (
                           <Badge key={index} variant="outline">
                             {cert}
                           </Badge>
