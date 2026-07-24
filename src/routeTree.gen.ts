@@ -9,72 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
-import { Route as PaymentCancelledRouteImport } from './routes/payment-cancelled'
-import { Route as ManufacturersRouteImport } from './routes/manufacturers'
-import { Route as ManufacturerDashboardRouteImport } from './routes/manufacturer-dashboard'
-import { Route as ManufacturerRouteImport } from './routes/manufacturer'
-import { Route as DesignerRouteImport } from './routes/designer'
-import { Route as CollectionRouteImport } from './routes/collection'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as DesignerRouteImport } from './routes/designer'
+import { Route as ManufacturerRouteImport } from './routes/manufacturer'
+import { Route as ManufacturerDashboardRouteImport } from './routes/manufacturer-dashboard'
+import { Route as ManufacturersRouteImport } from './routes/manufacturers'
+import { Route as PaymentCancelledRouteImport } from './routes/payment-cancelled'
+import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
-import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
-import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
 import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
+import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
+import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
-  id: '/payment-success',
-  path: '/payment-success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentCancelledRoute = PaymentCancelledRouteImport.update({
-  id: '/payment-cancelled',
-  path: '/payment-cancelled',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManufacturersRoute = ManufacturersRouteImport.update({
-  id: '/manufacturers',
-  path: '/manufacturers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManufacturerDashboardRoute = ManufacturerDashboardRouteImport.update({
-  id: '/manufacturer-dashboard',
-  path: '/manufacturer-dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManufacturerRoute = ManufacturerRouteImport.update({
-  id: '/manufacturer',
-  path: '/manufacturer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DesignerRoute = DesignerRouteImport.update({
-  id: '/designer',
-  path: '/designer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CollectionRoute = CollectionRouteImport.update({
-  id: '/collection',
-  path: '/collection',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -82,9 +37,54 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignerRoute = DesignerRouteImport.update({
+  id: '/designer',
+  path: '/designer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturerRoute = ManufacturerRouteImport.update({
+  id: '/manufacturer',
+  path: '/manufacturer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturerDashboardRoute = ManufacturerDashboardRouteImport.update({
+  id: '/manufacturer-dashboard',
+  path: '/manufacturer-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManufacturersRoute = ManufacturersRouteImport.update({
+  id: '/manufacturers',
+  path: '/manufacturers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCancelledRoute = PaymentCancelledRouteImport.update({
+  id: '/payment-cancelled',
+  path: '/payment-cancelled',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment-success',
+  path: '/payment-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManufacturerIndexRoute = ManufacturerIndexRouteImport.update({
@@ -92,9 +92,9 @@ const ManufacturerIndexRoute = ManufacturerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ManufacturerRoute,
 } as any)
-const ManufacturerWalletRoute = ManufacturerWalletRouteImport.update({
-  id: '/wallet',
-  path: '/wallet',
+const ManufacturerOrdersRoute = ManufacturerOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => ManufacturerRoute,
 } as any)
 const ManufacturerPortfolioRoute = ManufacturerPortfolioRouteImport.update({
@@ -102,9 +102,9 @@ const ManufacturerPortfolioRoute = ManufacturerPortfolioRouteImport.update({
   path: '/portfolio',
   getParentRoute: () => ManufacturerRoute,
 } as any)
-const ManufacturerOrdersRoute = ManufacturerOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
+const ManufacturerWalletRoute = ManufacturerWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
   getParentRoute: () => ManufacturerRoute,
 } as any)
 const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
@@ -247,74 +247,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment-success': {
-      id: '/payment-success'
-      path: '/payment-success'
-      fullPath: '/payment-success'
-      preLoaderRoute: typeof PaymentSuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment-cancelled': {
-      id: '/payment-cancelled'
-      path: '/payment-cancelled'
-      fullPath: '/payment-cancelled'
-      preLoaderRoute: typeof PaymentCancelledRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manufacturers': {
-      id: '/manufacturers'
-      path: '/manufacturers'
-      fullPath: '/manufacturers'
-      preLoaderRoute: typeof ManufacturersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manufacturer-dashboard': {
-      id: '/manufacturer-dashboard'
-      path: '/manufacturer-dashboard'
-      fullPath: '/manufacturer-dashboard'
-      preLoaderRoute: typeof ManufacturerDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manufacturer': {
-      id: '/manufacturer'
-      path: '/manufacturer'
-      fullPath: '/manufacturer'
-      preLoaderRoute: typeof ManufacturerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/designer': {
-      id: '/designer'
-      path: '/designer'
-      fullPath: '/designer'
-      preLoaderRoute: typeof DesignerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/collection': {
-      id: '/collection'
-      path: '/collection'
-      fullPath: '/collection'
-      preLoaderRoute: typeof CollectionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -324,11 +261,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designer': {
+      id: '/designer'
+      path: '/designer'
+      fullPath: '/designer'
+      preLoaderRoute: typeof DesignerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturer': {
+      id: '/manufacturer'
+      path: '/manufacturer'
+      fullPath: '/manufacturer'
+      preLoaderRoute: typeof ManufacturerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturer-dashboard': {
+      id: '/manufacturer-dashboard'
+      path: '/manufacturer-dashboard'
+      fullPath: '/manufacturer-dashboard'
+      preLoaderRoute: typeof ManufacturerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manufacturers': {
+      id: '/manufacturers'
+      path: '/manufacturers'
+      fullPath: '/manufacturers'
+      preLoaderRoute: typeof ManufacturersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-cancelled': {
+      id: '/payment-cancelled'
+      path: '/payment-cancelled'
+      fullPath: '/payment-cancelled'
+      preLoaderRoute: typeof PaymentCancelledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-success': {
+      id: '/payment-success'
+      path: '/payment-success'
+      fullPath: '/payment-success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manufacturer/': {
@@ -338,11 +338,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManufacturerIndexRouteImport
       parentRoute: typeof ManufacturerRoute
     }
-    '/manufacturer/wallet': {
-      id: '/manufacturer/wallet'
-      path: '/wallet'
-      fullPath: '/manufacturer/wallet'
-      preLoaderRoute: typeof ManufacturerWalletRouteImport
+    '/manufacturer/orders': {
+      id: '/manufacturer/orders'
+      path: '/orders'
+      fullPath: '/manufacturer/orders'
+      preLoaderRoute: typeof ManufacturerOrdersRouteImport
       parentRoute: typeof ManufacturerRoute
     }
     '/manufacturer/portfolio': {
@@ -352,11 +352,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManufacturerPortfolioRouteImport
       parentRoute: typeof ManufacturerRoute
     }
-    '/manufacturer/orders': {
-      id: '/manufacturer/orders'
-      path: '/orders'
-      fullPath: '/manufacturer/orders'
-      preLoaderRoute: typeof ManufacturerOrdersRouteImport
+    '/manufacturer/wallet': {
+      id: '/manufacturer/wallet'
+      path: '/wallet'
+      fullPath: '/manufacturer/wallet'
+      preLoaderRoute: typeof ManufacturerWalletRouteImport
       parentRoute: typeof ManufacturerRoute
     }
     '/api/public/webhooks/stripe': {
