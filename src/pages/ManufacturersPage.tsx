@@ -259,8 +259,14 @@ const ManufacturersPage = () => {
                   )}
 
                   <div className="pt-4 border-t">
-                    <Button className="w-full" variant="outline">
-                      Contact Manufacturer
+                    <Button className="w-full" variant="outline" asChild>
+                      <a
+                        href={`mailto:${manufacturer.contact_email}?subject=${encodeURIComponent(
+                          `Inquiry from Roge Print Studio — ${manufacturer.company_name}`,
+                        )}`}
+                      >
+                        Contact Manufacturer
+                      </a>
                     </Button>
                   </div>
                 </CardContent>
