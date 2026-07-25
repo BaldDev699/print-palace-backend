@@ -17,7 +17,14 @@ async function getOwnManufacturer(context: { userId: string; supabase: any }) {
     .select("id, contact_email, stripe_account_id, stripe_onboarding_complete")
     .eq("user_id", context.userId)
     .single();
-  if (error || !manufacturer) throw new Error("No manufacturer profile found for this account");
+  if (error || !manufacturer) {
+    console.error("getOwnManufacturer failed:", error);
+    throw new Error(
+      error?.message
+        ? `Could not load your manufacturer profile: ${error.message}`
+        : "No manufacturer profile found for this account",
+    );
+  }
   return manufacturer;
 }
 
