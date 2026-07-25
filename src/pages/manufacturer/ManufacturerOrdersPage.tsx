@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useManufacturer } from "@/hooks/useManufacturer";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyOrderEvent, type OrderNotificationEvent } from "@/lib/notifications.functions";
+import { getConnectAccountStatus } from "@/lib/stripe-connect.functions";
+import { Link } from "@/lib/router-compat";
 import { OrderModal } from "@/components/orders/OrderModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Loader2, CheckCircle2, XCircle, PackageCheck } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, PackageCheck, CreditCard, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 interface Order {
@@ -92,6 +94,18 @@ export const ManufacturerOrdersPage: React.FC = () => {
   useEffect(() => {
     fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manufacturer]);
+
+  const [stripeConnected, setStripeConnected] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!manufacturer) return;
+    getConnectAccountStatus()
+      .then((result) => setStripeConnected(!!result?.chargesEnabled))
+      .catch((err) => {
+        console.error("Could not check Stripe Connect status:", err);
+        setStripeConnected(null);
+      });
   }, [manufacturer]);
 
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
@@ -214,6 +228,29 @@ export const ManufacturerOrdersPage: React.FC = () => {
           {orders.length} Total
         </Badge>
       </div>
+
+      {stripeConnected === false && (
+        <Card className="border-amber-300 bg-amber-50">
+          <CardContent className="py-4 flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium text-amber-900">Connect Stripe to get paid</p>
+                <p className="text-sm text-amber-800">
+                  Customers can't pay for your orders until you finish setting up your Stripe
+                  account.
+                </p>
+              </div>
+            </div>
+            <Button asChild size="sm" className="shrink-0">
+              <Link to="/manufacturer/payments">
+                <CreditCard className="h-4 w-4 mr-2" />
+                Connect Stripe
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {orders.length === 0 ? (
         <Card>
