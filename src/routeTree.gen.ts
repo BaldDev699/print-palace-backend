@@ -23,6 +23,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
 import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
+import { Route as ManufacturerPaymentsRouteImport } from './routes/manufacturer.payments'
 import { Route as ManufacturerPortfolioRouteImport } from './routes/manufacturer.portfolio'
 import { Route as ManufacturerWalletRouteImport } from './routes/manufacturer.wallet'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
@@ -97,6 +98,11 @@ const ManufacturerOrdersRoute = ManufacturerOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => ManufacturerRoute,
 } as any)
+const ManufacturerPaymentsRoute = ManufacturerPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => ManufacturerRoute,
+} as any)
 const ManufacturerPortfolioRoute = ManufacturerPortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer/': typeof ManufacturerIndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer': typeof ManufacturerIndexRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
+  '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
   '/manufacturer/wallet': typeof ManufacturerWalletRoute
   '/manufacturer/': typeof ManufacturerIndexRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
+    | '/manufacturer/payments'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer/'
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
+    | '/manufacturer/payments'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/sitemap.xml'
     | '/manufacturer/orders'
+    | '/manufacturer/payments'
     | '/manufacturer/portfolio'
     | '/manufacturer/wallet'
     | '/manufacturer/'
@@ -345,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManufacturerOrdersRouteImport
       parentRoute: typeof ManufacturerRoute
     }
+    '/manufacturer/payments': {
+      id: '/manufacturer/payments'
+      path: '/payments'
+      fullPath: '/manufacturer/payments'
+      preLoaderRoute: typeof ManufacturerPaymentsRouteImport
+      parentRoute: typeof ManufacturerRoute
+    }
     '/manufacturer/portfolio': {
       id: '/manufacturer/portfolio'
       path: '/portfolio'
@@ -371,6 +390,7 @@ declare module '@tanstack/react-router' {
 
 interface ManufacturerRouteChildren {
   ManufacturerOrdersRoute: typeof ManufacturerOrdersRoute
+  ManufacturerPaymentsRoute: typeof ManufacturerPaymentsRoute
   ManufacturerPortfolioRoute: typeof ManufacturerPortfolioRoute
   ManufacturerWalletRoute: typeof ManufacturerWalletRoute
   ManufacturerIndexRoute: typeof ManufacturerIndexRoute
@@ -378,6 +398,7 @@ interface ManufacturerRouteChildren {
 
 const ManufacturerRouteChildren: ManufacturerRouteChildren = {
   ManufacturerOrdersRoute: ManufacturerOrdersRoute,
+  ManufacturerPaymentsRoute: ManufacturerPaymentsRoute,
   ManufacturerPortfolioRoute: ManufacturerPortfolioRoute,
   ManufacturerWalletRoute: ManufacturerWalletRoute,
   ManufacturerIndexRoute: ManufacturerIndexRoute,

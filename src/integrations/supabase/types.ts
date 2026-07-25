@@ -65,6 +65,7 @@ export type Database = {
         Row: {
           address: string | null
           certifications: string[] | null
+          commission_rate: number
           company_name: string
           contact_email: string
           contact_phone: string | null
@@ -75,6 +76,8 @@ export type Database = {
           lead_time_days: number | null
           minimum_order_quantity: number | null
           specialties: string[] | null
+          stripe_account_id: string | null
+          stripe_onboarding_complete: boolean
           updated_at: string
           user_id: string | null
           website_url: string | null
@@ -82,6 +85,7 @@ export type Database = {
         Insert: {
           address?: string | null
           certifications?: string[] | null
+          commission_rate?: number
           company_name: string
           contact_email: string
           contact_phone?: string | null
@@ -92,6 +96,8 @@ export type Database = {
           lead_time_days?: number | null
           minimum_order_quantity?: number | null
           specialties?: string[] | null
+          stripe_account_id?: string | null
+          stripe_onboarding_complete?: boolean
           updated_at?: string
           user_id?: string | null
           website_url?: string | null
@@ -99,6 +105,7 @@ export type Database = {
         Update: {
           address?: string | null
           certifications?: string[] | null
+          commission_rate?: number
           company_name?: string
           contact_email?: string
           contact_phone?: string | null
@@ -109,6 +116,8 @@ export type Database = {
           lead_time_days?: number | null
           minimum_order_quantity?: number | null
           specialties?: string[] | null
+          stripe_account_id?: string | null
+          stripe_onboarding_complete?: boolean
           updated_at?: string
           user_id?: string | null
           website_url?: string | null
@@ -171,6 +180,7 @@ export type Database = {
           notes: string | null
           paid_at: string | null
           payment_status: string
+          platform_fee_cents: number | null
           pricing_breakdown: Json | null
           printing_method: string | null
           printing_surcharge_cents: number
@@ -208,6 +218,7 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           payment_status?: string
+          platform_fee_cents?: number | null
           pricing_breakdown?: Json | null
           printing_method?: string | null
           printing_surcharge_cents?: number
@@ -245,6 +256,7 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           payment_status?: string
+          platform_fee_cents?: number | null
           pricing_breakdown?: Json | null
           printing_method?: string | null
           printing_surcharge_cents?: number

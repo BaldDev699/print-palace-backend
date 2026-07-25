@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "@/lib/router-compat";
-import { Package, ImageIcon, Menu } from "lucide-react";
+import { Package, ImageIcon, Menu, CreditCard } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,11 @@ const menuItems = [
     title: "Orders",
     url: "/manufacturer/orders",
     icon: Package,
+  },
+  {
+    title: "Payments",
+    url: "/manufacturer/payments",
+    icon: CreditCard,
   },
   {
     title: "Portfolio",

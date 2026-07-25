@@ -42,7 +42,6 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
                   .update({
                     payment_status: "paid",
                     paid_at: new Date().toISOString(),
-                    status: "confirmed",
                     stripe_session_id: session.id,
                   })
                   .eq("id", orderId);
