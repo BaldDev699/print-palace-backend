@@ -287,7 +287,7 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Roge Coin, Saved Designs, and Reseller Sections */}
+          {/* Saved Designs and Reseller Sections */}
           <div className="md:col-span-2 space-y-8">
             {/* Tabs for Orders, Designs, and Reseller */}
             <Tabs
