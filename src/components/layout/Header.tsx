@@ -185,6 +185,15 @@ const Header = () => {
                 >
                   Manufacturer Portal
                 </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
