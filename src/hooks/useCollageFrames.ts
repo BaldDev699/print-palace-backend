@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Canvas as FabricCanvas, Rect, Image as FabricImage, TCrossOrigin } from "fabric";
 import { toast } from "sonner";
 import type { CollageLayout } from "@/components/designer/collage/CollageTemplates";
@@ -85,7 +85,9 @@ export const useCollageFrames = (fabricCanvas: FabricCanvas | null) => {
 
       setFrames(newFrames);
       fabricCanvas.renderAll();
-      toast.success(`${layout.name} layout ${mode === "apply" ? "applied" : "added"}!`);
+      toast.success(
+        `${layout.name} layout ${mode === "apply" ? "applied" : "added"}! Click a frame to add an image.`,
+      );
     },
     [fabricCanvas, frames, gutter, cornerRadius, backgroundColor, calculateFrameBounds],
   );
@@ -179,36 +181,41 @@ export const useCollageFrames = (fabricCanvas: FabricCanvas | null) => {
       if (!frame || !fabricCanvas) return;
 
       const loadImage = (imageUrl: string) => {
-        FabricImage.fromURL(imageUrl, { crossOrigin: "anonymous" as TCrossOrigin }, (img: any) => {
-          if (!img) {
+        FabricImage.fromURL(imageUrl, { crossOrigin: "anonymous" as TCrossOrigin })
+          .then((img) => {
+            if (!img) {
+              toast.error("Failed to load image");
+              return;
+            }
+
+            // Remove old image if exists
+            if (frame.image) {
+              fabricCanvas.remove(frame.image);
+            }
+
+            scaleImageToFit(img, frame.rect);
+
+            // Add custom data
+            (img as any).data = {
+              isCollageImage: true,
+              frameId: frameId,
+            };
+
+            fabricCanvas.add(img);
+            fabricCanvas.sendObjectToBack(img);
+            fabricCanvas.bringObjectToFront(frame.rect);
+
+            // Update frame data
+            const updatedFrame = { ...frame, image: img, imageUrl };
+            setFrames((prev) => new Map(prev.set(frameId, updatedFrame)));
+
+            fabricCanvas.renderAll();
+            toast.success("Image added to frame!");
+          })
+          .catch((err) => {
+            console.error("Failed to load collage frame image:", err);
             toast.error("Failed to load image");
-            return;
-          }
-
-          // Remove old image if exists
-          if (frame.image) {
-            fabricCanvas.remove(frame.image);
-          }
-
-          scaleImageToFit(img, frame.rect);
-
-          // Add custom data
-          (img as any).data = {
-            isCollageImage: true,
-            frameId: frameId,
-          };
-
-          fabricCanvas.add(img);
-          fabricCanvas.sendObjectToBack(img);
-          fabricCanvas.bringObjectToFront(frame.rect);
-
-          // Update frame data
-          const updatedFrame = { ...frame, image: img, imageUrl };
-          setFrames((prev) => new Map(prev.set(frameId, updatedFrame)));
-
-          fabricCanvas.renderAll();
-          toast.success("Image added to frame!");
-        });
+          });
       };
 
       if (typeof file === "string") {
@@ -290,40 +297,72 @@ export const useCollageFrames = (fabricCanvas: FabricCanvas | null) => {
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
         if (imageUrl) {
-          FabricImage.fromURL(
-            imageUrl,
-            { crossOrigin: "anonymous" as TCrossOrigin },
-            (img: any) => {
-              if (img) {
-                // Scale to cover canvas
-                const canvasWidth = fabricCanvas.width || 1080;
-                const canvasHeight = fabricCanvas.height || 1080;
-                const scaleX = canvasWidth / (img.width || 1);
-                const scaleY = canvasHeight / (img.height || 1);
-                const scale = Math.max(scaleX, scaleY);
-
-                img.set({
-                  scaleX: scale,
-                  scaleY: scale,
-                  left: canvasWidth / 2,
-                  top: canvasHeight / 2,
-                  originX: "center",
-                  originY: "center",
-                  selectable: false,
-                });
-
-                fabricCanvas.backgroundImage = img;
-                fabricCanvas.renderAll();
-                toast.success("Background image set!");
+          FabricImage.fromURL(imageUrl, { crossOrigin: "anonymous" as TCrossOrigin })
+            .then((img) => {
+              if (!img) {
+                toast.error("Failed to load background image");
+                return;
               }
-            },
-          );
+              // Scale to cover canvas
+              const canvasWidth = fabricCanvas.width || 1080;
+              const canvasHeight = fabricCanvas.height || 1080;
+              const scaleX = canvasWidth / (img.width || 1);
+              const scaleY = canvasHeight / (img.height || 1);
+              const scale = Math.max(scaleX, scaleY);
+
+              img.set({
+                scaleX: scale,
+                scaleY: scale,
+                left: canvasWidth / 2,
+                top: canvasHeight / 2,
+                originX: "center",
+                originY: "center",
+                selectable: false,
+              });
+
+              fabricCanvas.backgroundImage = img;
+              fabricCanvas.renderAll();
+              toast.success("Background image set!");
+            })
+            .catch((err) => {
+              console.error("Failed to load background image:", err);
+              toast.error("Failed to load background image");
+            });
         }
       };
       reader.readAsDataURL(file);
     },
     [fabricCanvas],
   );
+
+  // fillFrame existed but nothing ever called it - selecting a collage
+  // layout drew empty dashed placeholder frames with no way to put an
+  // image into one. Clicking a frame (filled or empty - the frame's
+  // outline rect is always kept on top, per fillFrame above) now opens a
+  // file picker and fills/replaces that frame's image.
+  useEffect(() => {
+    if (!fabricCanvas) return;
+
+    const handleFrameClick = (e: { target?: any }) => {
+      const frameId = e.target?.data?.frameId;
+      const isFrame = e.target?.data?.isCollageFrame;
+      if (!isFrame || !frameId) return;
+
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (file) fillFrame(frameId, file);
+      };
+      input.click();
+    };
+
+    fabricCanvas.on("mouse:down", handleFrameClick);
+    return () => {
+      fabricCanvas.off("mouse:down", handleFrameClick);
+    };
+  }, [fabricCanvas, fillFrame]);
 
   return {
     frames,
