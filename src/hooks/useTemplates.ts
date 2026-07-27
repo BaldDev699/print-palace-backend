@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Canvas as FabricCanvas, Group, Rect, FabricObject } from "fabric";
+import { Canvas as FabricCanvas, Group, Rect, FabricObject, Image as FabricImage, filters } from "fabric";
 import { toast } from "sonner";
 import tshirtBasicImage from "@/assets/template-tshirt-basic.jpg";
 import hoodieClassicImage from "@/assets/template-hoodie-classic.jpg";
@@ -82,7 +82,43 @@ export interface Template {
   tags: string[];
 }
 
-// Simple shape-based mockups for instant rendering
+// Fallback shape-based mockup for templates without a real product photo
+// (currently: scrubs, jumpsuit, apron - their thumbnail is still a
+// placeholder). Kept as-is from the original implementation.
+function createShapeMockup(productType: Template["productType"], defaultColor: string): FabricObject {
+  const base = { fill: defaultColor, stroke: "#e5e7eb", strokeWidth: 2 };
+
+  if (productType === "t-shirt" || productType === "long-sleeve") {
+    return new Rect({ ...base, left: 100, top: 100, width: 200, height: 250, rx: 20, ry: 20 });
+  } else if (productType === "hoodie") {
+    return new Rect({ ...base, left: 80, top: 80, width: 240, height: 280, rx: 25, ry: 25 });
+  } else if (productType === "cap") {
+    return new Rect({ ...base, left: 120, top: 120, width: 160, height: 80, rx: 40, ry: 40 });
+  } else if (productType === "scrubs") {
+    return new Rect({ ...base, left: 90, top: 90, width: 220, height: 220, rx: 20, ry: 20 });
+  } else if (productType === "jumpsuit") {
+    return new Rect({ ...base, left: 100, top: 70, width: 200, height: 320, rx: 15, ry: 15 });
+  } else if (productType === "apron") {
+    return new Rect({ ...base, left: 110, top: 100, width: 180, height: 260, rx: 30, ry: 30 });
+  } else if (productType === "flag") {
+    return new Rect({ ...base, left: 80, top: 120, width: 240, height: 160, rx: 5, ry: 5 });
+  } else if (productType === "water-bottle") {
+    return new Rect({ ...base, left: 130, top: 80, width: 80, height: 200, rx: 40, ry: 40 });
+  } else if (productType === "key-holder") {
+    return new Rect({ ...base, left: 140, top: 150, width: 80, height: 60, rx: 20, ry: 20 });
+  } else if (productType === "wristband") {
+    return new Rect({ ...base, left: 100, top: 175, width: 160, height: 40, rx: 20, ry: 20 });
+  } else if (productType === "packaging-bag") {
+    return new Rect({ ...base, left: 110, top: 120, width: 160, height: 180, rx: 10, ry: 10 });
+  } else if (productType === "ticketing-band") {
+    return new Rect({ ...base, left: 90, top: 180, width: 200, height: 30, rx: 15, ry: 15 });
+  } else if (productType === "business-card") {
+    return new Rect({ ...base, left: 120, top: 155, width: 120, height: 70, rx: 5, ry: 5 });
+  } else if (productType === "teardrop-banner") {
+    return new Rect({ ...base, left: 110, top: 80, width: 120, height: 200, rx: 60, ry: 30 });
+  }
+  return new Rect({ ...base, left: 100, top: 100, width: 200, height: 200, rx: 10, ry: 10 });
+}
 
 // Enhanced sample templates with complete data structure
 const sampleTemplates: Template[] = [
@@ -529,6 +565,21 @@ export const useTemplates = (
   const changeMockupColor = (color: string, notify: boolean = false) => {
     if (!fabricCanvas || !currentMockup) return;
 
+    const isImageMockup = currentMockup.type === "image";
+
+    if (isImageMockup) {
+      // Real product photos can't be recolored via `fill` - apply a tint
+      // filter instead. This is an approximation (a color overlay on the
+      // photo), not a true fabric-color change, but keeps the existing
+      // color-picker UI working with real template images.
+      const imgMockup = currentMockup as unknown as InstanceType<typeof FabricImage>;
+      imgMockup.filters = [new filters.BlendColor({ color, mode: "tint", alpha: 0.6 })];
+      imgMockup.applyFilters();
+      fabricCanvas.renderAll();
+      if (notify) toast.success("Mockup color updated!");
+      return;
+    }
+
     // Early return if color hasn't changed
     if (currentMockup.get("fill") === color) return;
 
@@ -542,7 +593,7 @@ export const useTemplates = (
     }
   };
 
-  const applyTemplate = (template: Template) => {
+  const applyTemplate = async (template: Template) => {
     if (!fabricCanvas) return;
 
     // Clear existing mockup first
@@ -565,209 +616,43 @@ export const useTemplates = (
       return;
     }
 
-    // Create simple shape mockups instead of complex SVG
-    let mockupShape: FabricObject;
     const defaultColor = template.availableColors[0] || activeColor;
+    const hasRealPhoto = !!template.thumbnail && template.thumbnail !== "/placeholder.svg";
 
-    if (template.productType === "t-shirt" || template.productType === "long-sleeve") {
-      // Simple rectangle for t-shirt mockup
-      mockupShape = new Rect({
-        left: 100,
-        top: 100,
-        width: 200,
-        height: 250,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 20,
-        ry: 20,
-      });
-    } else if (template.productType === "hoodie") {
-      // Simple rectangle for hoodie mockup
-      mockupShape = new Rect({
-        left: 80,
-        top: 80,
-        width: 240,
-        height: 280,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 25,
-        ry: 25,
-      });
-    } else if (template.productType === "cap") {
-      // Simple rectangle for cap mockup
-      mockupShape = new Rect({
-        left: 120,
-        top: 120,
-        width: 160,
-        height: 80,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 40,
-        ry: 40,
-      });
-    } else if (template.productType === "scrubs") {
-      // Simple rectangle for scrubs mockup
-      mockupShape = new Rect({
-        left: 90,
-        top: 90,
-        width: 220,
-        height: 220,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 20,
-        ry: 20,
-      });
-    } else if (template.productType === "jumpsuit") {
-      // Taller rectangle for jumpsuit mockup
-      mockupShape = new Rect({
-        left: 100,
-        top: 70,
-        width: 200,
-        height: 320,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 15,
-        ry: 15,
-      });
-    } else if (template.productType === "apron") {
-      // Softer rectangle for apron mockup
-      mockupShape = new Rect({
-        left: 110,
-        top: 100,
-        width: 180,
-        height: 260,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 30,
-        ry: 30,
-      });
-    } else if (template.productType === "flag") {
-      // Wide rectangle for flag mockup
-      mockupShape = new Rect({
-        left: 80,
-        top: 120,
-        width: 240,
-        height: 160,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 5,
-        ry: 5,
-      });
-    } else if (template.productType === "water-bottle") {
-      // Tall narrow rectangle for water bottle mockup
-      mockupShape = new Rect({
-        left: 130,
-        top: 80,
-        width: 80,
-        height: 200,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 40,
-        ry: 40,
-      });
-    } else if (template.productType === "key-holder") {
-      // Small rectangle for key holder mockup
-      mockupShape = new Rect({
-        left: 140,
-        top: 150,
-        width: 80,
-        height: 60,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 20,
-        ry: 20,
-      });
-    } else if (template.productType === "wristband") {
-      // Long thin rectangle for wristband mockup
-      mockupShape = new Rect({
-        left: 100,
-        top: 175,
-        width: 160,
-        height: 40,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 20,
-        ry: 20,
-      });
-    } else if (template.productType === "packaging-bag") {
-      // Medium rectangle for packaging bag mockup
-      mockupShape = new Rect({
-        left: 110,
-        top: 120,
-        width: 160,
-        height: 180,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 10,
-        ry: 10,
-      });
-    } else if (template.productType === "ticketing-band") {
-      // Very thin rectangle for ticketing band mockup
-      mockupShape = new Rect({
-        left: 90,
-        top: 180,
-        width: 200,
-        height: 30,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 15,
-        ry: 15,
-      });
-    } else if (template.productType === "business-card") {
-      // Standard business card rectangle
-      mockupShape = new Rect({
-        left: 120,
-        top: 155,
-        width: 120,
-        height: 70,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 5,
-        ry: 5,
-      });
-    } else if (template.productType === "teardrop-banner") {
-      // Tall teardrop-like rectangle for banner mockup
-      mockupShape = new Rect({
-        left: 110,
-        top: 80,
-        width: 120,
-        height: 200,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 60,
-        ry: 30,
-      });
+    let mockupObject: FabricObject;
+
+    if (hasRealPhoto) {
+      try {
+        // Load the actual product photo onto the canvas, instead of a
+        // plain placeholder shape, so the design areas below are guides
+        // drawn over a real garment/product image.
+        const img = await FabricImage.fromURL(template.thumbnail, { crossOrigin: "anonymous" });
+
+        // Fit the image into a reasonable canvas area while preserving
+        // its natural aspect ratio (source images vary in size/shape).
+        const maxWidth = 320;
+        const maxHeight = 380;
+        const naturalWidth = img.width || maxWidth;
+        const naturalHeight = img.height || maxHeight;
+        const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 1);
+
+        img.set({
+          left: 100,
+          top: 60,
+          scaleX: scale,
+          scaleY: scale,
+        });
+        mockupObject = img;
+      } catch (err) {
+        console.error(`Failed to load template image for ${template.id}, using shape fallback:`, err);
+        mockupObject = createShapeMockup(template.productType, defaultColor);
+      }
     } else {
-      // Default rectangle
-      mockupShape = new Rect({
-        left: 100,
-        top: 100,
-        width: 200,
-        height: 200,
-        fill: defaultColor,
-        stroke: "#e5e7eb",
-        strokeWidth: 2,
-        rx: 10,
-        ry: 10,
-      });
+      mockupObject = createShapeMockup(template.productType, defaultColor);
     }
 
     // Add custom properties for mockup identification
-    const customMockup = Object.assign(mockupShape, {
+    const customMockup = Object.assign(mockupObject, {
       data: {
         isMockup: true,
         productType: template.productType,
