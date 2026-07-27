@@ -135,6 +135,12 @@ function createTShirtGeometry(): THREE.BufferGeometry {
 
   group.children.forEach((child) => {
     const mesh = child as THREE.Mesh;
+    // Position/rotation set via .position.set()/.rotation.z aren't reflected
+    // in mesh.matrix until a render loop updates it - these meshes are never
+    // actually rendered standalone, so without this call every sub-part
+    // (sleeves, hood, pocket, etc.) would merge at the origin instead of its
+    // intended offset, hiding inside the main body shape.
+    mesh.updateMatrix();
     const geometry = mesh.geometry.clone();
     geometry.applyMatrix4(mesh.matrix);
     geometries.push(geometry);
@@ -180,6 +186,12 @@ function createHoodieGeometry(): THREE.BufferGeometry {
   const geometries: THREE.BufferGeometry[] = [];
   group.children.forEach((child) => {
     const mesh = child as THREE.Mesh;
+    // Position/rotation set via .position.set()/.rotation.z aren't reflected
+    // in mesh.matrix until a render loop updates it - these meshes are never
+    // actually rendered standalone, so without this call every sub-part
+    // (sleeves, hood, pocket, etc.) would merge at the origin instead of its
+    // intended offset, hiding inside the main body shape.
+    mesh.updateMatrix();
     const geometry = mesh.geometry.clone();
     geometry.applyMatrix4(mesh.matrix);
     geometries.push(geometry);
@@ -215,6 +227,12 @@ function createCapGeometry(): THREE.BufferGeometry {
   const geometries: THREE.BufferGeometry[] = [];
   group.children.forEach((child) => {
     const mesh = child as THREE.Mesh;
+    // Position/rotation set via .position.set()/.rotation.z aren't reflected
+    // in mesh.matrix until a render loop updates it - these meshes are never
+    // actually rendered standalone, so without this call every sub-part
+    // (sleeves, hood, pocket, etc.) would merge at the origin instead of its
+    // intended offset, hiding inside the main body shape.
+    mesh.updateMatrix();
     const geometry = mesh.geometry.clone();
     geometry.applyMatrix4(mesh.matrix);
     geometries.push(geometry);
