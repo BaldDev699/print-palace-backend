@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Mesh, PlaneGeometry, MeshStandardMaterial, CanvasTexture } from "three";
 import * as THREE from "three";
@@ -12,18 +12,32 @@ interface ProductModel3DProps {
 const ProductModel3D: React.FC<ProductModel3DProps> = ({ productType, canvasData }) => {
   const meshRef = useRef<Mesh>(null);
 
-  // Create texture from canvas data
-  const designTexture = useMemo(() => {
-    if (!canvasData) return null;
+  // Create texture from canvas data. Every design edit produces new
+  // canvasData, so this must properly dispose the PREVIOUS texture -
+  // otherwise each edit leaks GPU texture memory that's never freed,
+  // eventually exhausting the WebGL context entirely ("WebGL context was
+  // lost" in the console) and silently breaking rendering elsewhere on the
+  // page (e.g. Fabric.js's own WebGL-backed image filters). useMemo has no
+  // cleanup mechanism, so this needs useState+useEffect instead.
+  const [designTexture, setDesignTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    if (!canvasData) {
+      setDesignTexture(null);
+      return;
+    }
 
     const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load(canvasData);
-
     texture.flipY = false;
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.needsUpdate = true;
 
-    return texture;
+    setDesignTexture(texture);
+
+    return () => {
+      texture.dispose();
+    };
   }, [canvasData]);
 
   // Auto-rotate the model
