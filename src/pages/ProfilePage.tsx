@@ -26,6 +26,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { OrderModal } from "@/components/orders/OrderModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -221,6 +231,8 @@ const ProfilePage = () => {
   };
 
   // Function to delete a saved design
+  const [designPendingDelete, setDesignPendingDelete] = useState<SavedDesign | null>(null);
+
   const deleteDesign = (designId: string) => {
     const updatedDesigns = savedDesigns.filter((design) => design.id !== designId);
     setSavedDesigns(updatedDesigns);
@@ -379,7 +391,7 @@ const ProfilePage = () => {
                             variant="outline"
                             size="sm"
                             className="text-destructive hover:bg-destructive/10"
-                            onClick={() => deleteDesign(design.id)}
+                            onClick={() => setDesignPendingDelete(design)}
                           >
                             Delete
                           </Button>
@@ -562,6 +574,39 @@ const ProfilePage = () => {
         isManufacturer={false}
         onOrderUpdate={fetchOrders}
       />
+
+      {/* Delete Design Confirmation */}
+      <AlertDialog
+        open={!!designPendingDelete}
+        onOpenChange={(open) => !open && setDesignPendingDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this design?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {designPendingDelete && (
+                <>
+                  "{designPendingDelete.name}" will be permanently deleted. This can't be undone.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (designPendingDelete) {
+                  deleteDesign(designPendingDelete.id);
+                  setDesignPendingDelete(null);
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
 
   );

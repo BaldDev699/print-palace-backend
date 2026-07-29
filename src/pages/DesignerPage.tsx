@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { Link } from "@/lib/router-compat";
+import { Link, useLocation } from "@/lib/router-compat";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DesignCanvas } from "@/components/designer/DesignCanvas";
@@ -23,6 +23,7 @@ import {
 
 const DesignerPage = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [measurements, setMeasurements] = useState<Record<string, number>>({});
@@ -36,6 +37,42 @@ const DesignerPage = () => {
 
   const [toolsSheetOpen, setToolsSheetOpen] = useState(false);
   const [inspectorSheetOpen, setInspectorSheetOpen] = useState(false);
+
+  // If we got here via the "Edit" button on a saved design
+  // (/designer?id=...), load that design's actual editable canvas state
+  // back onto the canvas. Previously this query param was completely
+  // ignored - the designer always started fresh with the template picker,
+  // discarding whatever design the user meant to edit.
+  useEffect(() => {
+    if (!fabricCanvas) return;
+    const params = new URLSearchParams(location.search);
+    const designId = params.get("id");
+    if (!designId) return;
+
+    const existingDesigns = JSON.parse(localStorage.getItem("savedDesigns") || "[]");
+    const design = existingDesigns.find((d: any) => d.id === designId);
+
+    if (!design) {
+      toast.error("Couldn't find that saved design.");
+      return;
+    }
+    if (!design.canvasJSON) {
+      toast.error(
+        "This design was saved before editing was supported, so it can't be reopened for editing. You can delete it and start a new one.",
+      );
+      return;
+    }
+
+    // The template drawer auto-opens on canvas init - close it since we're
+    // restoring an existing design, not starting a fresh one.
+    (window as any).designCanvasAPI?.setIsTemplateDrawerOpen?.(false);
+
+    fabricCanvas.loadFromJSON(design.canvasJSON).then(() => {
+      fabricCanvas.renderAll();
+      toast.success(`Loaded "${design.name}" for editing.`);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fabricCanvas]);
 
   const handleProceedToCheckout = () => {
     if (!user) {

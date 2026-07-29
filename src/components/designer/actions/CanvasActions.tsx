@@ -32,12 +32,18 @@ export const CanvasActions: React.FC<CanvasActionsProps> = ({ fabricCanvas }) =>
     // Get current date for the "last edited" info
     const currentDate = new Date().toISOString().split("T")[0];
 
+    // Store the actual editable canvas state (not just a flat image) so
+    // this design can be loaded back onto the canvas for real editing
+    // later, via the "Edit" button on the profile page.
+    const canvasJSON = fabricCanvas.toObject(["data", "name", "id"]);
+
     // Create a new design object
     const newDesign = {
       id: `design-${Date.now()}`,
       name: `Design ${new Date().toLocaleTimeString()}`,
       imageUrl: thumbnail,
       lastEdited: currentDate,
+      canvasJSON,
     };
 
     // Get existing designs from localStorage or initialize empty array
