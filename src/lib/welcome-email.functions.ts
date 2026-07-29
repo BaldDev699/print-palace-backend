@@ -1,59 +1,93 @@
 import { createServerFn } from "@tanstack/react-start";
+import nodemailer from "nodemailer";
 
 // Sends the "how to access Roge" welcome email when someone scans the QR
-// code and submits their email on /welcome. Public/unauthenticated -
-// anyone with the QR code can trigger this, no login required.
+// code and submits their email on /welcome.
 export const sendWelcomeEmail = createServerFn({ method: "POST" })
   .inputValidator((data: { email: string }) => {
     const email = data?.email?.trim();
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       throw new Error("Please enter a valid email address.");
     }
+
     return { email };
   })
   .handler(async ({ data }) => {
-    const apiKey = process.env.RESEND_API_KEY;
-    const siteUrl = process.env.SITE_URL || "https://print-palace-backend.vercel.app";
+    const siteUrl =
+      process.env.SITE_URL || "https://print-palace-backend.vercel.app";
 
-    const subject = "Welcome to Roge — here's how to get started";
+    // Configure SMTP transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
     const html = `
-      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2 style="color: #111;">Welcome to Roge Print Studio</h2>
-        <p>Thanks for scanning our QR code! You can start designing and ordering custom prints right away:</p>
-        <p><a href="${siteUrl}" style="display:inline-block; background:#111; color:#fff; padding:12px 20px; border-radius:6px; text-decoration:none;">Visit Roge Print Studio</a></p>
-        <p style="color:#555; font-size: 14px;">Once there:</p>
-        <ol style="color:#555; font-size: 14px;">
-          <li>Create a free account or sign in</li>
-          <li>Head to the Design Studio and pick a product template</li>
-          <li>Customize it with your own designs, text, or images</li>
-          <li>Submit your order — a manufacturer will confirm and you'll be notified when it's ready to pay</li>
+      <div style="font-family: Arial, sans-serif; max-width:600px; margin:auto; padding:20px;">
+        <h2 style="color:#111;">Welcome to Roge Print Studio 🎉</h2>
+
+        <p>Thank you for scanning our QR code!</p>
+
+        <p>
+          Click the button below to begin creating your custom designs.
+        </p>
+
+        <p style="text-align:center; margin:30px 0;">
+          <a
+            href="${siteUrl}"
+            style="
+              background:#111;
+              color:#fff;
+              padding:12px 24px;
+              text-decoration:none;
+              border-radius:6px;
+              display:inline-block;
+            "
+          >
+            Visit Roge Print Studio
+          </a>
+        </p>
+
+        <h3>Getting Started</h3>
+
+        <ol>
+          <li>Create a free account.</li>
+          <li>Choose a product to customize.</li>
+          <li>Add your text, images, and designs.</li>
+          <li>Submit your order.</li>
+          <li>A manufacturer will review it and notify you when it's ready.</li>
         </ol>
-        <p style="color:#888; font-size: 12px;">If you didn't request this, you can safely ignore this email.</p>
+
+        <p>If you didn't request this email, you can safely ignore it.</p>
+
+        <hr>
+
+        <p style="font-size:12px;color:#666;">
+          Roge Print Studio
+        </p>
       </div>
     `;
 
-    if (!apiKey) {
-      console.log(`[stub email] Welcome email to=${data.email} (RESEND_API_KEY not set)`);
-      return { sent: false };
-    }
-
     try {
-      const { Resend } = await import("resend");
-      const resend = new Resend(apiKey);
-      const from = process.env.RESEND_FROM_EMAIL || "Roge Print Studio <onboarding@resend.dev>";
-      const { error } = await resend.emails.send({
-        from,
+      await transporter.sendMail({
+        from: `"Roge Print Studio" <${process.env.SMTP_USER}>`,
         to: data.email,
-        subject,
+        subject: "Welcome to Roge Print Studio",
         html,
       });
-      if (error) {
-        console.error("[welcome email] Resend error:", error);
-        throw new Error("Could not send the email. Please try again.");
-      }
-      return { sent: true };
+
+      return {
+        sent: true,
+      };
     } catch (err) {
-      console.error("[welcome email] Failed to send:", err);
+      console.error("Email sending failed:", err);
+
       throw new Error("Could not send the email. Please try again.");
     }
   });
