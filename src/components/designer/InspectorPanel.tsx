@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { ColorPicker } from "./ColorPicker";
+import { useCanvasFilters } from "@/hooks/useCanvasFilters";
 import { Canvas as FabricCanvas, FabricObject, Image as FabricImage } from "fabric";
 import { Settings, Layers, Type, Palette, RotateCcw } from "lucide-react";
 
@@ -24,6 +25,13 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
 }) => {
   const [selectedObject, setSelectedObject] = useState<FabricObject | null>(null);
   const [objectProperties, setObjectProperties] = useState<any>({});
+  const { setBrightness, setContrast, setSaturation, setHue, setBlur, resetFilters, getImageFilters } =
+    useCanvasFilters(fabricCanvas ?? null);
+  // UI sliders work in -100..100 (0..100 for blur) for a nicer step size;
+  // the underlying Fabric filters expect -1..1 (0..1 for blur), converted
+  // at the call sites below.
+  const DEFAULT_IMAGE_ADJUSTMENTS = { brightness: 0, contrast: 0, saturation: 0, hue: 0, blur: 0 };
+  const [imageAdjustments, setImageAdjustments] = useState(DEFAULT_IMAGE_ADJUSTMENTS);
 
   useEffect(() => {
     if (!fabricCanvas) return;
@@ -45,6 +53,19 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
           stroke: activeObject.stroke || "",
           strokeWidth: activeObject.strokeWidth || 0,
         });
+
+        if (activeObject.type === "image") {
+          const current = getImageFilters(activeObject as FabricImage);
+          setImageAdjustments({
+            brightness: Math.round(current.brightness * 100),
+            contrast: Math.round(current.contrast * 100),
+            saturation: Math.round(current.saturation * 100),
+            hue: Math.round(current.hue),
+            blur: Math.round(current.blur * 100),
+          });
+        } else {
+          setImageAdjustments(DEFAULT_IMAGE_ADJUSTMENTS);
+        }
       }
     };
 
@@ -280,8 +301,8 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          // Reset filters functionality would be implemented here
-                          console.log("Reset filters");
+                          resetFilters(selectedObject as FabricImage);
+                          setImageAdjustments(DEFAULT_IMAGE_ADJUSTMENTS);
                         }}
                         className="h-6 px-2"
                       >
@@ -293,8 +314,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                       <div>
                         <Label className="text-xs text-muted-foreground">Brightness</Label>
                         <Slider
-                          value={[0]}
-                          onValueChange={(value) => console.log("Brightness:", value)}
+                          value={[imageAdjustments.brightness]}
+                          onValueChange={([value]) => {
+                            setImageAdjustments((prev) => ({ ...prev, brightness: value }));
+                            setBrightness(selectedObject as FabricImage, value / 100);
+                          }}
                           min={-100}
                           max={100}
                           step={1}
@@ -305,8 +329,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                       <div>
                         <Label className="text-xs text-muted-foreground">Contrast</Label>
                         <Slider
-                          value={[0]}
-                          onValueChange={(value) => console.log("Contrast:", value)}
+                          value={[imageAdjustments.contrast]}
+                          onValueChange={([value]) => {
+                            setImageAdjustments((prev) => ({ ...prev, contrast: value }));
+                            setContrast(selectedObject as FabricImage, value / 100);
+                          }}
                           min={-100}
                           max={100}
                           step={1}
@@ -317,8 +344,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                       <div>
                         <Label className="text-xs text-muted-foreground">Saturation</Label>
                         <Slider
-                          value={[0]}
-                          onValueChange={(value) => console.log("Saturation:", value)}
+                          value={[imageAdjustments.saturation]}
+                          onValueChange={([value]) => {
+                            setImageAdjustments((prev) => ({ ...prev, saturation: value }));
+                            setSaturation(selectedObject as FabricImage, value / 100);
+                          }}
                           min={-100}
                           max={100}
                           step={1}
@@ -329,8 +359,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                       <div>
                         <Label className="text-xs text-muted-foreground">Hue</Label>
                         <Slider
-                          value={[0]}
-                          onValueChange={(value) => console.log("Hue:", value)}
+                          value={[imageAdjustments.hue]}
+                          onValueChange={([value]) => {
+                            setImageAdjustments((prev) => ({ ...prev, hue: value }));
+                            setHue(selectedObject as FabricImage, value);
+                          }}
                           min={0}
                           max={360}
                           step={1}
@@ -341,8 +374,11 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
                       <div>
                         <Label className="text-xs text-muted-foreground">Blur</Label>
                         <Slider
-                          value={[0]}
-                          onValueChange={(value) => console.log("Blur:", value)}
+                          value={[imageAdjustments.blur]}
+                          onValueChange={([value]) => {
+                            setImageAdjustments((prev) => ({ ...prev, blur: value }));
+                            setBlur(selectedObject as FabricImage, value / 100);
+                          }}
                           min={0}
                           max={100}
                           step={1}

@@ -100,11 +100,16 @@ const DesignerPage = () => {
     if (!fabricCanvas) return;
     const thumbnail = fabricCanvas.toDataURL({ format: "png", quality: 0.8, multiplier: 0.5 });
     const currentDate = new Date().toISOString().split("T")[0];
+    // Store the actual editable canvas state (not just a flat thumbnail)
+    // so this design can be loaded back onto the canvas via the load
+    // effect above, when the user clicks "Edit" from their profile page.
+    const canvasJSON = fabricCanvas.toObject(["data", "name", "id"]);
     const newDesign = {
       id: `design-${Date.now()}`,
       name: `Design ${new Date().toLocaleTimeString()}`,
       imageUrl: thumbnail,
       lastEdited: currentDate,
+      canvasJSON,
     };
     const existingDesigns = JSON.parse(localStorage.getItem("savedDesigns") || "[]");
     localStorage.setItem("savedDesigns", JSON.stringify([newDesign, ...existingDesigns]));
