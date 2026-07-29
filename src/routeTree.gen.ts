@@ -21,6 +21,7 @@ import { Route as PaymentCancelledRouteImport } from './routes/payment-cancelled
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
 import { Route as ManufacturerOrdersRouteImport } from './routes/manufacturer.orders'
 import { Route as ManufacturerPaymentsRouteImport } from './routes/manufacturer.payments'
@@ -88,6 +89,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ManufacturerIndexRoute = ManufacturerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
   '/manufacturer/payments': typeof ManufacturerPaymentsRoute
   '/manufacturer/portfolio': typeof ManufacturerPortfolioRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
+    | '/welcome'
     | '/manufacturer/orders'
     | '/manufacturer/payments'
     | '/manufacturer/portfolio'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
+    | '/welcome'
     | '/manufacturer/orders'
     | '/manufacturer/payments'
     | '/manufacturer/portfolio'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/payment-success'
     | '/profile'
     | '/sitemap.xml'
+    | '/welcome'
     | '/manufacturer/orders'
     | '/manufacturer/payments'
     | '/manufacturer/portfolio'
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   ProfileRoute: typeof ProfileRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  WelcomeRoute: typeof WelcomeRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
 }
 
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/manufacturer/': {
       id: '/manufacturer/'
       path: '/'
@@ -421,6 +441,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentSuccessRoute: PaymentSuccessRoute,
   ProfileRoute: ProfileRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  WelcomeRoute: WelcomeRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
