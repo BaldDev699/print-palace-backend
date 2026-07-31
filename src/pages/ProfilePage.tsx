@@ -222,9 +222,7 @@ const ProfilePage = () => {
       const ext = file.name.split(".").pop();
       const filePath = `${user.id}/avatar-${Date.now()}.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true });
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(filePath, file);
       if (uploadError) throw uploadError;
 
       const {
