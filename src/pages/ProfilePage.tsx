@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Package,
   Eye,
+  Loader2,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -85,8 +86,14 @@ const ProfilePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // User data state
-  const [username, setUsername] = useState("CreativeUser123");
+  // User data state - loaded from the profiles table below, not hardcoded
+  const [username, setUsername] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [joinedDate, setJoinedDate] = useState<string>("");
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = React.useRef<HTMLInputElement>(null);
 
   // Saved designs state
   const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
@@ -139,6 +146,106 @@ const ProfilePage = () => {
       fetchOrders();
     }
   }, [user]);
+
+  // Load the real profile (display name, avatar, joined date) - this was
+  // previously hardcoded and never actually read from the database.
+  useEffect(() => {
+    if (!user) return;
+
+    const loadProfile = async () => {
+      setProfileLoading(true);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url, created_at")
+        .eq("id", user.id)
+        .single();
+
+      if (error || !data) {
+        // No profile row yet - create one so future updates have
+        // something to update, rather than failing silently.
+        const { data: created } = await supabase
+          .from("profiles")
+          .insert({ id: user.id, email: user.email, display_name: user.email?.split("@")[0] })
+          .select("display_name, avatar_url, created_at")
+          .single();
+        if (created) {
+          setUsername(created.display_name || "");
+          setAvatarUrl(created.avatar_url);
+          setJoinedDate(created.created_at);
+        }
+      } else {
+        setUsername(data.display_name || "");
+        setAvatarUrl(data.avatar_url);
+        setJoinedDate(data.created_at);
+      }
+      setProfileLoading(false);
+    };
+
+    loadProfile();
+  }, [user]);
+
+  const handleUpdateProfile = async () => {
+    if (!user) return;
+    if (!username.trim()) {
+      toast.error("Username can't be empty.");
+      return;
+    }
+    setSavingProfile(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ display_name: username.trim() })
+      .eq("id", user.id);
+    setSavingProfile(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Profile updated!");
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be smaller than 5MB.");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const filePath = `${user.id}/avatar-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+      if (updateError) throw updateError;
+
+      setAvatarUrl(publicUrl);
+      toast.success("Profile picture updated!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Could not upload image.");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   // Handle opening new order if redirected from order submission
   useEffect(() => {
@@ -258,19 +365,41 @@ const ProfilePage = () => {
           <div className="md:col-span-1 bg-card p-6 rounded-lg shadow-lg">
             <div className="flex flex-col items-center mb-6">
               <Avatar className="w-32 h-32 mb-4">
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarImage src={avatarUrl || undefined} alt={username || "Profile"} />
                 <AvatarFallback>
                   <User className="w-16 h-16" />
                 </AvatarFallback>
               </Avatar>
-              <Button variant="outline" size="sm" className="gap-2">
-                <UploadCloud className="h-4 w-4" />
-                Change Picture
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled={uploadingAvatar}
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                {uploadingAvatar ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="h-4 w-4" />
+                )}
+                {uploadingAvatar ? "Uploading..." : "Change Picture"}
               </Button>
-              <input type="file" className="hidden" accept="image/*" />
+              <input
+                ref={avatarInputRef}
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleAvatarChange}
+              />
             </div>
-            <h2 className="text-2xl font-semibold text-center mb-2">{username}</h2>
-            <p className="text-muted-foreground text-center mb-6">Joined May 2024</p>
+            <h2 className="text-2xl font-semibold text-center mb-2">
+              {profileLoading ? "..." : username || "Unnamed"}
+            </h2>
+            <p className="text-muted-foreground text-center mb-6">
+              {joinedDate
+                ? `Joined ${new Date(joinedDate).toLocaleString("en-US", { month: "long", year: "numeric" })}`
+                : ""}
+            </p>
 
             <div className="space-y-4">
               <div>
@@ -284,6 +413,7 @@ const ProfilePage = () => {
                   id="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  disabled={profileLoading}
                 />
               </div>
               <div>
@@ -293,9 +423,17 @@ const ProfilePage = () => {
                 >
                   Email
                 </label>
-                <Input id="email" type="email" defaultValue="user@example.com" disabled />
+                <Input id="email" type="email" value={user?.email || ""} disabled />
               </div>
-              <Button className="w-full">Update Profile</Button>
+              <Button className="w-full" onClick={handleUpdateProfile} disabled={savingProfile || profileLoading}>
+                {savingProfile ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  "Update Profile"
+                )}
+              </Button>
             </div>
           </div>
 
