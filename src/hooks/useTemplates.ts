@@ -628,13 +628,14 @@ export const useTemplates = (
         // drawn over a real garment/product image.
         const img = await FabricImage.fromURL(template.thumbnail, { crossOrigin: "anonymous" });
 
-        // Fit the image into a reasonable canvas area while preserving
-        // its natural aspect ratio (source images vary in size/shape).
-        const maxWidth = 320;
-        const maxHeight = 380;
+        const canvasWidth = fabricCanvas.getWidth();
+        const canvasHeight = fabricCanvas.getHeight();
+        const margin = 0.12; // ~12% breathing room on each side
+        const maxWidth = Math.max(canvasWidth * (1 - margin * 2), 160);
+        const maxHeight = Math.max(canvasHeight * (1 - margin * 2), 160);
         const naturalWidth = img.width || maxWidth;
         const naturalHeight = img.height || maxHeight;
-        const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 1);
+        const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 2);
 
         img.set({
           left: 100,
