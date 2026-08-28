@@ -1,10 +1,15 @@
-import { RefObject, useState, useCallback } from "react"; // Added useCallback
+import { RefObject, useState, useCallback } from "react";
 import { Canvas as FabricCanvas } from "fabric";
 
 export type FabricCanvasHook = {
   fabricCanvas: FabricCanvas | null;
-  initCanvas: (canvasRef: RefObject<HTMLCanvasElement>) => (() => void) | undefined;
+  initCanvas: (
+    canvasRef: RefObject<HTMLCanvasElement>
+  ) => (() => void) | undefined;
 };
+
+const DESIGN_WIDTH = 1080;
+const DESIGN_HEIGHT = 1080;
 
 export const useDesignCanvas = (): FabricCanvasHook => {
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
@@ -16,29 +21,26 @@ export const useDesignCanvas = (): FabricCanvasHook => {
         return undefined;
       }
 
-      // Size the canvas to whatever space its container actually has,
-      // instead of a hardcoded 600px that overflows small phone screens.
-      const getContainerSize = () => {
-        const container = canvasRef.current?.parentElement;
-        if (!container) return { width: 760, height: 480 };
-        const width = Math.max(container.clientWidth - 16, 240);
-        const height = Math.max(container.clientHeight - 16, 240);
-        return { width, height };
-      };
-
-      const initialSize = getContainerSize();
-
+      /*
+       * IMPORTANT:
+       * The actual Fabric canvas is ALWAYS 1080 × 1080.
+       *
+       * We only scale its visual representation to fit
+       * inside the available editor area.
+       */
       const canvasInstance = new FabricCanvas(canvasRef.current, {
-        width: initialSize.width,
-        height: initialSize.height,
+        width: DESIGN_WIDTH,
+        height: DESIGN_HEIGHT,
         backgroundColor: "#ffffff",
         selectionColor: "rgba(100, 100, 255, 0.3)",
         selectionLineWidth: 2,
         preserveObjectStacking: true,
       });
 
-      // Initialize the freeDrawingBrush properly with PencilBrush
+      // Initialize drawing brush
       import("fabric").then(({ PencilBrush }) => {
+        if (canvasInstance.disposed) return;
+
         canvasInstance.freeDrawingBrush = new PencilBrush(canvasInstance);
         canvasInstance.freeDrawingBrush.color = "#000000";
         canvasInstance.freeDrawingBrush.width = 3;
@@ -46,37 +48,70 @@ export const useDesignCanvas = (): FabricCanvasHook => {
 
       setFabricCanvas(canvasInstance);
 
-      const applySize = () => {
-        if (!canvasInstance || canvasInstance.disposed) return;
-        const { width, height } = getContainerSize();
-        canvasInstance.setDimensions({ width, height });
+      /*
+       * Resize the VISUAL canvas to fit the container.
+       *
+       * The Fabric canvas itself remains 1080 × 1080.
+       */
+      const updateDisplaySize = () => {
+        if (!canvasRef.current || canvasInstance.disposed) return;
+
+        const container = canvasRef.current.parentElement;
+        if (!container) return;
+
+        const availableWidth = Math.max(container.clientWidth - 32, 240);
+        const availableHeight = Math.max(container.clientHeight - 32, 240);
+
+        const scale = Math.min(
+          availableWidth / DESIGN_WIDTH,
+          availableHeight / DESIGN_HEIGHT
+        );
+
+        /*
+         * CSS dimensions control how large the 1080×1080
+         * canvas appears on screen.
+         */
+        canvasRef.current.style.width = `${DESIGN_WIDTH * scale}px`;
+        canvasRef.current.style.height = `${DESIGN_HEIGHT * scale}px`;
+
+        canvasRef.current.style.display = "block";
+
         canvasInstance.renderAll();
       };
 
-      // ResizeObserver catches container size changes from CSS/layout
-      // (orientation change, mobile browser chrome show/hide, sheet open/close)
-      // which a plain window "resize" listener misses.
-      const container = canvasRef.current?.parentElement;
+      // Initial sizing
+      requestAnimationFrame(updateDisplaySize);
+
+      // Watch container changes
+      const container = canvasRef.current.parentElement;
+
       let resizeObserver: ResizeObserver | undefined;
+
       if (container && typeof ResizeObserver !== "undefined") {
-        resizeObserver = new ResizeObserver(() => applySize());
+        resizeObserver = new ResizeObserver(() => {
+          updateDisplaySize();
+        });
+
         resizeObserver.observe(container);
       }
-      window.addEventListener("resize", applySize);
-      window.addEventListener("orientationchange", applySize);
+
+      window.addEventListener("resize", updateDisplaySize);
+      window.addEventListener("orientationchange", updateDisplaySize);
 
       return () => {
-        window.removeEventListener("resize", applySize);
-        window.removeEventListener("orientationchange", applySize);
+        window.removeEventListener("resize", updateDisplaySize);
+        window.removeEventListener("orientationchange", updateDisplaySize);
+
         resizeObserver?.disconnect();
+
         if (canvasInstance && !canvasInstance.disposed) {
           canvasInstance.dispose();
           setFabricCanvas(null);
         }
       };
     },
-    [],
-  ); // setFabricCanvas is stable, so empty dependency array is fine.
+    []
+  );
 
   return {
     fabricCanvas,

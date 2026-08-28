@@ -21,26 +21,36 @@ export const useCanvasImage = (fabricCanvas: FabricCanvas | null) => {
 
       const imageOptions: LoadImageOptions = { crossOrigin: "anonymous" };
 
-      // fromURL returns a Promise<FabricImage> in this Fabric version - it
-      // does not take a completion callback as a third argument. Passing a
-      // callback there (as the previous implementation did) meant it was
-      // silently ignored, the Promise was never awaited, and uploaded
-      // images never actually got added to the canvas.
       FabricImage.fromURL(data, imageOptions)
         .then((img) => {
           if (!img) {
             toast.error("Failed to load image onto canvas.");
             return;
           }
+
+          // Fit to a reasonable portion of the canvas instead of a fixed
+          // 50% scale - a large photo (e.g. straight from a phone camera)
+          // at 50% of its original size can still be far bigger than the
+          // canvas itself, covering the whole design area.
+          const canvasWidth = fabricCanvas.getWidth();
+          const canvasHeight = fabricCanvas.getHeight();
+          const maxWidth = canvasWidth * 0.45;
+          const maxHeight = canvasHeight * 0.45;
+          const naturalWidth = img.width || maxWidth;
+          const naturalHeight = img.height || maxHeight;
+          const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 1);
+
           img.set({
             left: 100,
             top: 100,
-            scaleX: 0.5,
-            scaleY: 0.5,
+            scaleX: scale,
+            scaleY: scale,
             hasControls: true,
             hasBorders: true,
           });
           fabricCanvas.add(img);
+          fabricCanvas.centerObject(img);
+          img.setCoords();
           fabricCanvas.setActiveObject(img);
           fabricCanvas.renderAll();
           toast.success("Image added to canvas!");
