@@ -59,22 +59,22 @@ export const useDesignCanvas = (): FabricCanvasHook => {
         const container = canvasRef.current.parentElement;
         if (!container) return;
 
-        const availableWidth = Math.max(container.clientWidth - 32, 240);
-        const availableHeight = Math.max(container.clientHeight - 32, 240);
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+
+        const availableWidth = Math.max(containerWidth - 32, 1);
+        const availableHeight = Math.max(containerHeight - 32, 1);
 
         const scale = Math.min(
           availableWidth / DESIGN_WIDTH,
           availableHeight / DESIGN_HEIGHT
         );
 
-        /*
-         * CSS dimensions control how large the 1080×1080
-         * canvas appears on screen.
-         */
         canvasRef.current.style.width = `${DESIGN_WIDTH * scale}px`;
         canvasRef.current.style.height = `${DESIGN_HEIGHT * scale}px`;
 
         canvasRef.current.style.display = "block";
+        canvasRef.current.style.flexShrink = "0";
 
         canvasInstance.renderAll();
       };

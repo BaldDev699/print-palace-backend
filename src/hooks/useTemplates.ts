@@ -638,11 +638,10 @@ export const useTemplates = (
         const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight, 2);
 
         img.set({
-          left: 100,
-          top: 60,
           scaleX: scale,
           scaleY: scale,
         });
+
         mockupObject = img;
       } catch (err) {
         console.error(`Failed to load template image for ${template.id}, using shape fallback:`, err);

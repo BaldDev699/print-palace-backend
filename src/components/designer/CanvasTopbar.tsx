@@ -83,7 +83,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 py-2 bg-card border-b border-border">
+      <div className="w-full flex flex-wrap items-center justify-between gap-2 p-2">
         <div className="flex items-center gap-2">
           {/* Zoom Controls */}
           <div className="flex items-center gap-1 border border-border rounded-md">
@@ -216,7 +216,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
               </div>
             )}
 
-            <Button onClick={handleExport} className="w-full">
+            <Button onClick={handleExport} className="shrink-0">
               <Download className="h-4 w-4 mr-2" />
               Export {exportFormat.toUpperCase()}
             </Button>
