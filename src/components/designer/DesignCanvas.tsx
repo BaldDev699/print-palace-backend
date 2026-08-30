@@ -126,12 +126,21 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const [isCollageTemplatesOpen, setIsCollageTemplatesOpen] = useState<boolean>(false);
   const [isPreviewSheetOpen, setIsPreviewSheetOpen] = useState<boolean>(false);
 
-  const { fabricCanvas, initCanvas } = useDesignCanvas();
+  const { fabricCanvas, initCanvas, setDesignSize, designSize, refreshDisplaySize } =
+    useDesignCanvas();
   const { addShape, addEmblem } = useCanvasShapes(fabricCanvas);
   const { addText } = useCanvasText(fabricCanvas);
   const { handleImageUpload } = useCanvasImage(fabricCanvas);
   const collageFrames = useCollageFrames(fabricCanvas);
   const canvasHistory = useCanvasHistory(fabricCanvas);
+  const [zoom, setZoom] = useState(1);
+
+  const handleZoomChange = (newZoom: number) => {
+    if (!fabricCanvas) return;
+    setZoom(newZoom);
+    fabricCanvas.setZoom(newZoom);
+    fabricCanvas.renderAll();
+  };
   const canvasFilters = useCanvasFilters(fabricCanvas);
   const canvasGuides = useCanvasGuides(fabricCanvas);
 
@@ -263,17 +272,17 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   return (
     <div className="w-full h-full flex flex-col">
       <CanvasTopbar
-        zoom={1}
-        onZoomChange={() => {}}
+        zoom={zoom}
+        onZoomChange={handleZoomChange}
         isPanMode={false}
         onPanModeToggle={() => {}}
         canUndo={canvasHistory.canUndo}
         canRedo={canvasHistory.canRedo}
         onUndo={canvasHistory.undo}
         onRedo={canvasHistory.redo}
-        onCanvasSizeChange={() => {}}
+        onCanvasSizeChange={setDesignSize}
         onExport={() => {}}
-        currentCanvasSize={{ width: 1080, height: 1080 }}
+        currentCanvasSize={designSize}
       />
 
       {/* Canvas Container - min-h ensures the fabric canvas always has real
@@ -317,6 +326,13 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           if (onProductTypeChange) {
             onProductTypeChange(template.productType);
           }
+          // The template picker sheet closes as part of applying a
+          // template, and its closing animation changes how much visible
+          // space the canvas container actually has (especially on
+          // mobile, where it's a large bottom sheet). Re-measure once
+          // that's settled instead of relying only on ResizeObserver,
+          // which can occasionally miss animated size changes.
+          setTimeout(refreshDisplaySize, 350);
         }}
       />
 
