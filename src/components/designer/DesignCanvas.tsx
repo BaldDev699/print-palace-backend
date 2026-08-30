@@ -285,13 +285,18 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
         currentCanvasSize={designSize}
       />
 
-      {/* Canvas Container - min-h ensures the fabric canvas always has real
-          space to measure against on mobile, instead of collapsing to 0 and
-          then overflowing once content is drawn. */}
-      <div className="flex-1 min-h-[500px] w-full border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-4 mt-4 overflow-hidden">
+      {/* Canvas Container - this stays flex-1 (large) because it's what
+          updateDisplaySize() measures to decide how big to render the
+          canvas - it must NOT shrink to match the canvas's own size, or
+          that measurement becomes circular. The visible border/background
+          is applied to the canvas element itself instead, so what the
+          user actually SEES hugs the canvas's real rendered size rather
+          than this full measurement region (which is often much taller
+          than a square design on a narrow mobile screen). */}
+      <div className="flex-1 min-h-[500px] w-full relative flex items-center justify-center p-4 mt-4 overflow-hidden">
         <canvas
           ref={canvasRef}
-          className="shadow-lg shrink-0"
+          className="shadow-lg shrink-0 border-2 border-border rounded-lg bg-white"
       />
       </div>
 
