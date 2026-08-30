@@ -288,7 +288,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
       {/* Canvas Container - min-h ensures the fabric canvas always has real
           space to measure against on mobile, instead of collapsing to 0 and
           then overflowing once content is drawn. */}
-      <div className="flex-1 min-h-[500px] w-full border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-4 overflow-hidden">
+      <div className="flex-1 min-h-[500px] w-full border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-4 mt-4 overflow-hidden">
         <canvas
           ref={canvasRef}
           className="shadow-lg shrink-0"
