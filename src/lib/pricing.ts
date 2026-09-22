@@ -17,29 +17,34 @@ export interface PricingResult {
 // Base unit prices in KSh
 const BASE_PRICES: Record<string, number> = {
   "t-shirt": 800,
-  hoodie: 1800,
+  hoodie: 2000,
   cap: 600,
   apron: 700,
   scrubs: 1200,
   jumpsuit: 2000,
   "long-sleeve": 900,
   "tank-top": 700,
-  flag: 1000,
+  flag: 5000,
   "water-bottle": 1200,
-  "key-holder": 300,
-  wristband: 200,
-  "packaging-bag": 800,
+  "key-holder": 200,
+  wristband: 50,
+  "packaging-bag": 200,
   "ticketing-band": 150,
   "business-card": 100,
   "teardrop-banner": 1500,
+  poster: 2000,
+  mug: 200,
+  "tote-bag": 700,
+  "advertising-banner": 25000,
   general: 500,
 };
 
-// Printing method surcharges in KSh
-const PRINTING_SURCHARGES: Record<string, number> = {
-  DTG: 150,
-  "No Cut": 100,
-  Embroidery: 200,
+// Printing method surcharge, as a percentage of the item's base price
+// (previously a fixed KSh amount per unit).
+const PRINTING_SURCHARGE_RATES: Record<string, number> = {
+  DTG: 0.5,
+  "No Cut": 0.25,
+  Embroidery: 0.5,
 };
 
 // Quantity discount tiers
@@ -68,9 +73,11 @@ export function calculatePricing(
   const baseUnitPrice = BASE_PRICES[productType] || BASE_PRICES["t-shirt"];
   const basePrice = baseUnitPrice * quantity;
 
-  // Get printing surcharge
-  const printingSurchargeUnit = PRINTING_SURCHARGES[printingMethod] || 0;
-  const printingSurcharge = printingSurchargeUnit * quantity;
+  // Get printing surcharge - a percentage of the base price, not a fixed
+  // per-unit amount (e.g. No Cut = 25% of the item price, DTG/Embroidery
+  // = 50%).
+  const printingSurchargeRate = PRINTING_SURCHARGE_RATES[printingMethod] || 0;
+  const printingSurcharge = basePrice * printingSurchargeRate;
 
   // Calculate quantity discount
   let discountRate = 0;

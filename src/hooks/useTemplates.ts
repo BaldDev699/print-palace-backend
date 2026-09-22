@@ -65,7 +65,11 @@ export interface Template {
     | "packaging-bag"
     | "ticketing-band"
     | "business-card"
-    | "teardrop-banner";
+    | "teardrop-banner"
+    | "poster"
+    | "mug"
+    | "tote-bag"
+    | "advertising-banner";
   svgString?: string;
   designAreas: {
     id: string;
@@ -116,6 +120,14 @@ function createShapeMockup(productType: Template["productType"], defaultColor: s
     return new Rect({ ...base, left: 120, top: 155, width: 120, height: 70, rx: 5, ry: 5 });
   } else if (productType === "teardrop-banner") {
     return new Rect({ ...base, left: 110, top: 80, width: 120, height: 200, rx: 60, ry: 30 });
+  } else if (productType === "poster") {
+    return new Rect({ ...base, left: 90, top: 60, width: 220, height: 280, rx: 5, ry: 5 });
+  } else if (productType === "mug") {
+    return new Rect({ ...base, left: 110, top: 110, width: 180, height: 180, rx: 15, ry: 15 });
+  } else if (productType === "tote-bag") {
+    return new Rect({ ...base, left: 100, top: 90, width: 200, height: 220, rx: 10, ry: 10 });
+  } else if (productType === "advertising-banner") {
+    return new Rect({ ...base, left: 60, top: 130, width: 280, height: 140, rx: 5, ry: 5 });
   }
   return new Rect({ ...base, left: 100, top: 100, width: 200, height: 200, rx: 10, ry: 10 });
 }
@@ -550,6 +562,98 @@ const sampleTemplates: Template[] = [
     availableColors: ["#ffffff", "#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"],
     popular: true,
     tags: ["banner", "advertising", "outdoor", "events", "promotional", "feather"],
+  },
+  {
+    id: "poster-standard",
+    name: "Standard Poster",
+    category: "Posters",
+    description: "A3 poster for promotions and announcements",
+    thumbnail: "/placeholder.svg",
+    productType: "poster",
+    designAreas: [
+      {
+        id: "main",
+        name: "Full Poster",
+        x: 90,
+        y: 60,
+        width: 220,
+        height: 280,
+        maxWidth: 220,
+        maxHeight: 280,
+      },
+    ],
+    availableColors: ["#ffffff", "#f8fafc", "#0f172a"],
+    popular: false,
+    tags: ["poster", "print", "a3", "promotional"],
+  },
+  {
+    id: "mug-ceramic",
+    name: "Ceramic Mug",
+    category: "Drinkware",
+    description: "Classic ceramic mug with a wraparound print area",
+    thumbnail: "/placeholder.svg",
+    productType: "mug",
+    designAreas: [
+      {
+        id: "main",
+        name: "Print Area",
+        x: 120,
+        y: 130,
+        width: 160,
+        height: 140,
+        maxWidth: 170,
+        maxHeight: 150,
+      },
+    ],
+    availableColors: ["#ffffff", "#0f172a", "#ef4444"],
+    popular: false,
+    tags: ["mug", "cup", "drinkware", "ceramic"],
+  },
+  {
+    id: "tote-bag-canvas",
+    name: "Canvas Tote Bag",
+    category: "Bags",
+    description: "Reusable canvas tote bag with a large front print area",
+    thumbnail: "/placeholder.svg",
+    productType: "tote-bag",
+    designAreas: [
+      {
+        id: "main",
+        name: "Front Panel",
+        x: 100,
+        y: 90,
+        width: 200,
+        height: 220,
+        maxWidth: 210,
+        maxHeight: 230,
+      },
+    ],
+    availableColors: ["#ffffff", "#f5f5f4", "#78716c", "#0f172a"],
+    popular: false,
+    tags: ["tote", "bag", "canvas", "reusable"],
+  },
+  {
+    id: "advertising-banner-large",
+    name: "Advertising Banner",
+    category: "Advertising",
+    description: "Large format banner for events and storefronts",
+    thumbnail: "/placeholder.svg",
+    productType: "advertising-banner",
+    designAreas: [
+      {
+        id: "main",
+        name: "Full Banner",
+        x: 60,
+        y: 130,
+        width: 280,
+        height: 140,
+        maxWidth: 280,
+        maxHeight: 140,
+      },
+    ],
+    availableColors: ["#ffffff", "#ef4444", "#1d4ed8", "#0f172a"],
+    popular: false,
+    tags: ["banner", "advertising", "large-format", "storefront"],
   },
 ];
 
