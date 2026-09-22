@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import DesignerPage from "@/pages/DesignerPage";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const Route = createFileRoute("/designer")({
   ssr: false,
@@ -12,5 +13,9 @@ export const Route = createFileRoute("/designer")({
       },
     ],
   }),
-  component: DesignerPage,
+  component: () => (
+    <ProtectedRoute>
+      <DesignerPage />
+    </ProtectedRoute>
+  ),
 });
