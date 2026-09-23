@@ -38,6 +38,20 @@ const DesignerPage = () => {
   const [toolsSheetOpen, setToolsSheetOpen] = useState(false);
   const [inspectorSheetOpen, setInspectorSheetOpen] = useState(false);
 
+  // Radix Dialog/Sheet/Popover content renders via a portal attached
+  // directly to document.body, outside this page's own DOM tree - so a
+  // theme class applied only to this page's root div wouldn't reach them,
+  // leaving things like the Choose Template dialog stuck in the light
+  // theme. Toggling the class on body itself while this page is mounted
+  // covers both cases, and removing it on unmount keeps the rest of the
+  // site completely unaffected.
+  useEffect(() => {
+    document.body.classList.add("designer-dark");
+    return () => {
+      document.body.classList.remove("designer-dark");
+    };
+  }, []);
+
   // If we got here via the "Edit" button on a saved design
   // (/designer?id=...), load that design's actual editable canvas state
   // back onto the canvas. Previously this query param was completely
@@ -173,7 +187,7 @@ const DesignerPage = () => {
   );
 
   return (
-    <div className="flex flex-col h-[100dvh] overflow-hidden md:h-auto md:min-h-screen md:overflow-visible bg-background">
+    <div className="designer-dark flex flex-col h-[100dvh] overflow-hidden md:h-auto md:min-h-screen md:overflow-visible bg-background text-foreground">
       <Header />
 
       {/* Top action bar */}

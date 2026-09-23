@@ -120,6 +120,48 @@
   --sidebar-ring: hsl(0 0% 98%);
 }
 
+/*
+ * Designer page theme (Picsart-style): near-black background, pink/magenta
+ * accent. Scoped to .designer-dark (applied only on the /designer page
+ * root) rather than the generic .dark above, which is a separate
+ * monochrome theme reserved for elsewhere - this keeps the rest of the
+ * site completely unaffected.
+ */
+.designer-dark {
+  --background: hsl(0 0% 5%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(0 0% 9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(0 0% 9%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(336 100% 60%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(0 0% 16%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(0 0% 14%);
+  --muted-foreground: hsl(0 0% 65%);
+  --accent: hsl(336 100% 60%);
+  --accent-foreground: hsl(0 0% 100%);
+  --destructive: hsl(0 72% 55%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(0 0% 20%);
+  --input: hsl(0 0% 18%);
+  --ring: hsl(336 100% 60%);
+  --chart-1: hsl(336 100% 60%);
+  --chart-2: hsl(0 0% 80%);
+  --chart-3: hsl(0 0% 65%);
+  --chart-4: hsl(0 0% 50%);
+  --chart-5: hsl(0 0% 35%);
+  --sidebar: hsl(0 0% 7%);
+  --sidebar-foreground: hsl(0 0% 98%);
+  --sidebar-primary: hsl(336 100% 60%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(0 0% 14%);
+  --sidebar-accent-foreground: hsl(0 0% 98%);
+  --sidebar-border: hsl(0 0% 20%);
+  --sidebar-ring: hsl(336 100% 60%);
+}
+
 @utility container {
   margin-inline: auto;
   padding-inline: 2rem;
