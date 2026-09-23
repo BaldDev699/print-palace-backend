@@ -72,7 +72,7 @@ export const Templates: React.FC<TemplatesProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl max-h-[85vh] flex flex-col z-50 bg-background">
+      <DialogContent className="max-w-7xl h-[92dvh] max-h-[92dvh] sm:h-auto sm:max-h-[85vh] flex flex-col z-50 bg-background">
         <DialogHeader className="pb-3">
           <DialogTitle className="text-xl text-center flex items-center justify-center gap-2">
             <Palette className="w-5 h-5" />
