@@ -73,7 +73,7 @@ export const useDesignCanvas = (): FabricCanvasHook => {
         height: initialHeight,
         backgroundColor: "#ffffff",
         selectionColor: "rgba(100, 100, 255, 0.3)",
-        selectionLineWidth: 2,
+        selectionLineWidth: 5,
         preserveObjectStacking: true,
       });
       canvasInstanceRef.current = canvasInstance;
@@ -124,14 +124,6 @@ export const useDesignCanvas = (): FabricCanvasHook => {
       };
       updateDisplaySizeRef.current = updateDisplaySize;
 
-      // Initial sizing. A single requestAnimationFrame can still fire
-      // before mobile browsers finish settling the container's real
-      // layout (address bar show/hide, sheet open/close animations,
-      // dynamic viewport units) - and since ResizeObserver below only
-      // reacts to subsequent size CHANGES, a wrong first measurement had
-      // nothing to ever correct it, silently leaving the canvas mis-sized.
-      // Chain two rAFs (lets one full paint cycle complete first) plus a
-      // short settle timeout as a belt-and-suspenders fallback.
       requestAnimationFrame(() => {
         requestAnimationFrame(updateDisplaySize);
       });
