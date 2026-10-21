@@ -16,7 +16,7 @@ const HowItWorksStep: React.FC<HowItWorksStepProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md">
-      <div className="bg-primary text-primary-foreground rounded-full p-4 mb-6 inline-flex">
+      <div className="bg-primary/10 text-primary rounded-full p-4 mb-6 inline-flex">
         <IconComponent size={32} />
       </div>
       <div className="mb-2 text-sm font-semibold text-primary">STEP {stepNumber}</div>

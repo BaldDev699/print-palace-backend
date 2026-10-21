@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { ColorPicker } from "./ColorPicker";
 import { useCanvasFilters } from "@/hooks/useCanvasFilters";
 import { Canvas as FabricCanvas, FabricObject, Image as FabricImage } from "fabric";
-import { Settings, Layers, Type, Palette, RotateCcw } from "lucide-react";
+import {
+  SlidersHorizontal,
+  Layers,
+  Palette,
+  RotateCcw,
+  Copy,
+  ArrowUp,
+  ArrowDown,
+  Trash2,
+  MousePointerClick,
+  Move,
+  Droplet,
+  ImageIcon,
+} from "lucide-react";
 
 interface InspectorPanelProps {
   fabricCanvas?: FabricCanvas | null;
@@ -16,6 +26,92 @@ interface InspectorPanelProps {
   mockupColor: string;
   onMockupColorChange: (color: string) => void;
 }
+
+/* ---------- small building blocks ---------- */
+
+const Section: React.FC<{
+  icon: React.ElementType;
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ icon: Icon, title, action, children }) => (
+  <section className="rounded-xl border border-border bg-background/40 p-3.5 space-y-3">
+    <div className="flex items-center justify-between">
+      <h4 className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+        <Icon className="h-3.5 w-3.5" />
+        {title}
+      </h4>
+      {action}
+    </div>
+    {children}
+  </section>
+);
+
+const NumberField: React.FC<{
+  label: string;
+  value: number;
+  onChange: (v: string) => void;
+}> = ({ label, value, onChange }) => (
+  <label className="relative block">
+    <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-muted-foreground">
+      {label}
+    </span>
+    <Input
+      type="number"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="h-9 pl-7 text-xs rounded-lg"
+    />
+  </label>
+);
+
+const SliderRow: React.FC<{
+  label: string;
+  value: number;
+  min?: number;
+  max?: number;
+  unit?: string;
+  onChange: (v: number) => void;
+}> = ({ label, value, min = 0, max = 100, unit = "", onChange }) => (
+  <div className="space-y-2">
+    <div className="flex items-center justify-between text-xs">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="tabular-nums font-medium text-foreground">
+        {Math.round(value)}
+        {unit}
+      </span>
+    </div>
+    <Slider value={[value]} min={min} max={max} step={1} onValueChange={([v]) => onChange(v)} />
+  </div>
+);
+
+const toHex = (v: unknown, fallback = "#000000") =>
+  typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v) ? v : fallback;
+
+const ColorField: React.FC<{
+  label: string;
+  value: unknown;
+  onChange: (hex: string) => void;
+}> = ({ label, value, onChange }) => {
+  const hex = toHex(value);
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <label className="flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-1 cursor-pointer hover:border-foreground/40 transition-colors">
+        <span className="h-5 w-5 rounded-md border border-border" style={{ backgroundColor: hex }} />
+        <span className="text-xs font-mono uppercase">{hex}</span>
+        <input
+          type="color"
+          value={hex}
+          onChange={(e) => onChange(e.target.value)}
+          className="sr-only"
+        />
+      </label>
+    </div>
+  );
+};
+
+/* ---------- main panel ---------- */
 
 export const InspectorPanel: React.FC<InspectorPanelProps> = ({
   fabricCanvas,
@@ -27,9 +123,8 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
   const [objectProperties, setObjectProperties] = useState<any>({});
   const { setBrightness, setContrast, setSaturation, setHue, setBlur, resetFilters, getImageFilters } =
     useCanvasFilters(fabricCanvas ?? null);
-  // UI sliders work in -100..100 (0..100 for blur) for a nicer step size;
-  // the underlying Fabric filters expect -1..1 (0..1 for blur), converted
-  // at the call sites below.
+
+  // UI sliders work in -100..100 (0..100 for blur); Fabric filters expect -1..1 (0..1 for blur).
   const DEFAULT_IMAGE_ADJUSTMENTS = { brightness: 0, contrast: 0, saturation: 0, hue: 0, blur: 0 };
   const [imageAdjustments, setImageAdjustments] = useState(DEFAULT_IMAGE_ADJUSTMENTS);
 
@@ -48,7 +143,7 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
           height: Math.round(activeObject.height || 0),
           scaleX: activeObject.scaleX || 1,
           scaleY: activeObject.scaleY || 1,
-          opacity: (activeObject.opacity || 1) * 100,
+          opacity: (activeObject.opacity ?? 1) * 100,
           fill: activeObject.fill || "#000000",
           stroke: activeObject.stroke || "",
           strokeWidth: activeObject.strokeWidth || 0,
@@ -69,20 +164,18 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
       }
     };
 
-    const handleObjectModified = () => {
-      handleSelection();
-    };
+    const handleCleared = () => setSelectedObject(null);
 
     fabricCanvas.on("selection:created", handleSelection);
     fabricCanvas.on("selection:updated", handleSelection);
-    fabricCanvas.on("selection:cleared", () => setSelectedObject(null));
-    fabricCanvas.on("object:modified", handleObjectModified);
+    fabricCanvas.on("selection:cleared", handleCleared);
+    fabricCanvas.on("object:modified", handleSelection);
 
     return () => {
       fabricCanvas.off("selection:created", handleSelection);
       fabricCanvas.off("selection:updated", handleSelection);
-      fabricCanvas.off("selection:cleared", () => setSelectedObject(null));
-      fabricCanvas.off("object:modified", handleObjectModified);
+      fabricCanvas.off("selection:cleared", handleCleared);
+      fabricCanvas.off("object:modified", handleSelection);
     };
   }, [fabricCanvas]);
 
@@ -90,321 +183,216 @@ export const InspectorPanel: React.FC<InspectorPanelProps> = ({
     if (!selectedObject || !fabricCanvas) return;
 
     const updates: any = {};
-
-    if (property === "opacity") {
-      updates.opacity = value / 100;
-    } else if (property === "left" || property === "top") {
-      updates[property] = parseInt(value);
-    } else {
-      updates[property] = value;
-    }
+    if (property === "opacity") updates.opacity = value / 100;
+    else if (property === "left" || property === "top") updates[property] = parseInt(value) || 0;
+    else updates[property] = value;
 
     selectedObject.set(updates);
+    selectedObject.setCoords();
     fabricCanvas.renderAll();
-
     setObjectProperties((prev: any) => ({ ...prev, [property]: value }));
   };
 
   const deleteSelectedObject = () => {
     if (!selectedObject || !fabricCanvas) return;
     fabricCanvas.remove(selectedObject);
+    fabricCanvas.discardActiveObject();
     fabricCanvas.renderAll();
+    setSelectedObject(null);
+  };
+
+  const duplicateSelectedObject = async () => {
+    if (!selectedObject || !fabricCanvas) return;
+    const cloned = await selectedObject.clone();
+    cloned.set({ left: (cloned.left || 0) + 24, top: (cloned.top || 0) + 24 });
+    fabricCanvas.add(cloned);
+    fabricCanvas.setActiveObject(cloned);
+    fabricCanvas.renderAll();
+  };
+
+  const bringForward = () => {
+    if (!selectedObject || !fabricCanvas) return;
+    fabricCanvas.bringObjectForward(selectedObject);
+    fabricCanvas.renderAll();
+  };
+
+  const sendBackward = () => {
+    if (!selectedObject || !fabricCanvas) return;
+    fabricCanvas.sendObjectBackwards(selectedObject);
+    fabricCanvas.renderAll();
+  };
+
+  const isImage = selectedObject?.type === "image";
+
+  const adjust = (
+    key: keyof typeof DEFAULT_IMAGE_ADJUSTMENTS,
+    value: number,
+    apply: (img: FabricImage, v: number) => void,
+    divisor: number,
+  ) => {
+    setImageAdjustments((prev) => ({ ...prev, [key]: value }));
+    apply(selectedObject as FabricImage, value / divisor);
   };
 
   return (
     <div className="w-80 bg-card border-l border-border flex flex-col h-full">
-      <div className="p-4 border-b border-border">
-        <h3 className="font-semibold text-foreground flex items-center gap-2">
-          <Settings className="h-4 w-4" />
+      {/* Header */}
+      <div className="px-4 py-3.5 border-b border-border flex items-center justify-between">
+        <h3 className="flex items-center gap-2 font-semibold text-foreground">
+          <SlidersHorizontal className="h-4 w-4 text-primary" />
           Properties
         </h3>
+        {selectedObject && (
+          <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+            {selectedObject.type}
+          </span>
+        )}
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-6">
-          {/* Template Properties */}
+        <div className="p-4 space-y-4">
+          {/* Product color */}
           {currentMockup && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                <h4 className="text-sm font-medium text-foreground">Template</h4>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Product Color</Label>
-                  <div className="mt-2">
-                    <ColorPicker color={mockupColor} onChange={onMockupColorChange} />
-                  </div>
+            <Section icon={Palette} title="Product color">
+              {currentMockup?.data?.availableColors && (
+                <div className="flex flex-wrap gap-2">
+                  {currentMockup.data.availableColors.map((color: string, index: number) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => onMockupColorChange(color)}
+                      title={color}
+                      className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${
+                        mockupColor === color ? "border-primary ring-2 ring-primary/40" : "border-border"
+                      }`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
                 </div>
-
-                {/* Color Swatches */}
-                {currentMockup?.data?.availableColors && (
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Quick Colors</Label>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {currentMockup.data.availableColors.map((color: string, index: number) => (
-                        <button
-                          key={index}
-                          className="w-8 h-8 rounded-full border-2 border-border hover:border-primary transition-colors"
-                          style={{ backgroundColor: color }}
-                          onClick={() => onMockupColorChange(color)}
-                          title={`Color ${index + 1}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <Separator />
-            </div>
+              )}
+              <ColorField label="Custom" value={mockupColor} onChange={onMockupColorChange} />
+            </Section>
           )}
 
-          {/* Object Properties */}
           {selectedObject ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4" />
-                <h4 className="text-sm font-medium text-foreground">Selected Object</h4>
+            <>
+              {/* Quick actions */}
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { icon: Copy, label: "Duplicate", onClick: duplicateSelectedObject },
+                  { icon: ArrowUp, label: "Forward", onClick: bringForward },
+                  { icon: ArrowDown, label: "Back", onClick: sendBackward },
+                  { icon: Trash2, label: "Delete", onClick: deleteSelectedObject, danger: true },
+                ].map(({ icon: Icon, label, onClick, danger }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={onClick}
+                    className={`flex flex-col items-center gap-1 rounded-xl border border-border bg-background/40 py-2.5 text-[10px] font-medium transition-colors ${
+                      danger
+                        ? "text-destructive hover:bg-destructive/10 hover:border-destructive/50"
+                        : "text-muted-foreground hover:text-foreground hover:border-foreground/40"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                ))}
               </div>
 
-              <div className="space-y-4">
-                {/* Position */}
+              {/* Layout */}
+              <Section icon={Move} title="Position & size">
                 <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">X Position</Label>
-                    <Input
-                      type="number"
-                      value={objectProperties.left || 0}
-                      onChange={(e) => updateObjectProperty("left", e.target.value)}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Y Position</Label>
-                    <Input
-                      type="number"
-                      value={objectProperties.top || 0}
-                      onChange={(e) => updateObjectProperty("top", e.target.value)}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                </div>
-
-                {/* Size */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Width</Label>
-                    <Input
-                      type="number"
-                      value={Math.round(
-                        (objectProperties.width || 0) * (objectProperties.scaleX || 1),
-                      )}
-                      onChange={(e) => {
-                        const newWidth = parseInt(e.target.value);
-                        const scaleX = newWidth / (objectProperties.width || 1);
-                        updateObjectProperty("scaleX", scaleX);
-                      }}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Height</Label>
-                    <Input
-                      type="number"
-                      value={Math.round(
-                        (objectProperties.height || 0) * (objectProperties.scaleY || 1),
-                      )}
-                      onChange={(e) => {
-                        const newHeight = parseInt(e.target.value);
-                        const scaleY = newHeight / (objectProperties.height || 1);
-                        updateObjectProperty("scaleY", scaleY);
-                      }}
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                </div>
-
-                {/* Opacity */}
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Opacity ({objectProperties.opacity}%)
-                  </Label>
-                  <Slider
-                    value={[objectProperties.opacity || 100]}
-                    onValueChange={([value]) => updateObjectProperty("opacity", value)}
-                    max={100}
-                    step={1}
-                    className="mt-2"
+                  <NumberField label="X" value={objectProperties.left || 0} onChange={(v) => updateObjectProperty("left", v)} />
+                  <NumberField label="Y" value={objectProperties.top || 0} onChange={(v) => updateObjectProperty("top", v)} />
+                  <NumberField
+                    label="W"
+                    value={Math.round((objectProperties.width || 0) * (objectProperties.scaleX || 1))}
+                    onChange={(v) => {
+                      const w = parseInt(v);
+                      if (!w) return;
+                      updateObjectProperty("scaleX", w / (objectProperties.width || 1));
+                    }}
+                  />
+                  <NumberField
+                    label="H"
+                    value={Math.round((objectProperties.height || 0) * (objectProperties.scaleY || 1))}
+                    onChange={(v) => {
+                      const h = parseInt(v);
+                      if (!h) return;
+                      updateObjectProperty("scaleY", h / (objectProperties.height || 1));
+                    }}
                   />
                 </div>
+              </Section>
 
-                {/* Colors */}
-                {selectedObject.type !== "image" && (
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Fill Color</Label>
-                      <div className="mt-2">
-                        <ColorPicker
-                          color={objectProperties.fill || "#000000"}
-                          onChange={(color) => updateObjectProperty("fill", color)}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Stroke Color</Label>
-                      <div className="mt-2">
-                        <ColorPicker
-                          color={objectProperties.stroke || "#000000"}
-                          onChange={(color) => updateObjectProperty("stroke", color)}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Stroke Width</Label>
-                      <Input
-                        type="number"
-                        value={objectProperties.strokeWidth || 0}
-                        onChange={(e) =>
-                          updateObjectProperty("strokeWidth", parseInt(e.target.value))
-                        }
-                        className="h-8 text-xs mt-1"
-                        min={0}
-                      />
-                    </div>
-                  </div>
+              {/* Appearance */}
+              <Section icon={Droplet} title="Appearance">
+                <SliderRow
+                  label="Opacity"
+                  unit="%"
+                  value={objectProperties.opacity ?? 100}
+                  onChange={(v) => updateObjectProperty("opacity", v)}
+                />
+                {!isImage && (
+                  <>
+                    <ColorField
+                      label="Fill"
+                      value={objectProperties.fill}
+                      onChange={(c) => updateObjectProperty("fill", c)}
+                    />
+                    <ColorField
+                      label="Stroke"
+                      value={objectProperties.stroke}
+                      onChange={(c) => updateObjectProperty("stroke", c)}
+                    />
+                    <SliderRow
+                      label="Stroke width"
+                      unit="px"
+                      max={20}
+                      value={objectProperties.strokeWidth || 0}
+                      onChange={(v) => updateObjectProperty("strokeWidth", v)}
+                    />
+                  </>
                 )}
+              </Section>
 
-                {/* Text Properties */}
-                {selectedObject.type === "textbox" && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Type className="h-4 w-4" />
-                      <span className="text-xs font-medium">Text Properties</span>
-                    </div>
-                    {/* Text formatting controls would go here */}
-                  </div>
-                )}
-
-                {/* Image Adjustments */}
-                {selectedObject.type === "image" && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 justify-between">
-                      <div className="flex items-center gap-2">
-                        <Palette className="h-4 w-4" />
-                        <span className="text-xs font-medium">Image Adjustments</span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          resetFilters(selectedObject as FabricImage);
-                          setImageAdjustments(DEFAULT_IMAGE_ADJUSTMENTS);
-                        }}
-                        className="h-6 px-2"
-                      >
-                        <RotateCcw className="h-3 w-3" />
-                      </Button>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Brightness</Label>
-                        <Slider
-                          value={[imageAdjustments.brightness]}
-                          onValueChange={([value]) => {
-                            setImageAdjustments((prev) => ({ ...prev, brightness: value }));
-                            setBrightness(selectedObject as FabricImage, value / 100);
-                          }}
-                          min={-100}
-                          max={100}
-                          step={1}
-                          className="mt-2"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Contrast</Label>
-                        <Slider
-                          value={[imageAdjustments.contrast]}
-                          onValueChange={([value]) => {
-                            setImageAdjustments((prev) => ({ ...prev, contrast: value }));
-                            setContrast(selectedObject as FabricImage, value / 100);
-                          }}
-                          min={-100}
-                          max={100}
-                          step={1}
-                          className="mt-2"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Saturation</Label>
-                        <Slider
-                          value={[imageAdjustments.saturation]}
-                          onValueChange={([value]) => {
-                            setImageAdjustments((prev) => ({ ...prev, saturation: value }));
-                            setSaturation(selectedObject as FabricImage, value / 100);
-                          }}
-                          min={-100}
-                          max={100}
-                          step={1}
-                          className="mt-2"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Hue</Label>
-                        <Slider
-                          value={[imageAdjustments.hue]}
-                          onValueChange={([value]) => {
-                            setImageAdjustments((prev) => ({ ...prev, hue: value }));
-                            setHue(selectedObject as FabricImage, value);
-                          }}
-                          min={0}
-                          max={360}
-                          step={1}
-                          className="mt-2"
-                        />
-                      </div>
-
-                      <div>
-                        <Label className="text-xs text-muted-foreground">Blur</Label>
-                        <Slider
-                          value={[imageAdjustments.blur]}
-                          onValueChange={([value]) => {
-                            setImageAdjustments((prev) => ({ ...prev, blur: value }));
-                            setBlur(selectedObject as FabricImage, value / 100);
-                          }}
-                          min={0}
-                          max={100}
-                          step={1}
-                          className="mt-2"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Delete Button */}
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={deleteSelectedObject}
-                  className="w-full"
+              {/* Image adjustments */}
+              {isImage && (
+                <Section
+                  icon={ImageIcon}
+                  title="Image adjustments"
+                  action={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs gap-1"
+                      onClick={() => {
+                        resetFilters(selectedObject as FabricImage);
+                        setImageAdjustments(DEFAULT_IMAGE_ADJUSTMENTS);
+                      }}
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Reset
+                    </Button>
+                  }
                 >
-                  Delete Object
-                </Button>
-              </div>
-            </div>
+                  <SliderRow label="Brightness" min={-100} max={100} value={imageAdjustments.brightness} onChange={(v) => adjust("brightness", v, setBrightness, 100)} />
+                  <SliderRow label="Contrast" min={-100} max={100} value={imageAdjustments.contrast} onChange={(v) => adjust("contrast", v, setContrast, 100)} />
+                  <SliderRow label="Saturation" min={-100} max={100} value={imageAdjustments.saturation} onChange={(v) => adjust("saturation", v, setSaturation, 100)} />
+                  <SliderRow label="Hue" max={360} unit="°" value={imageAdjustments.hue} onChange={(v) => adjust("hue", v, setHue, 1)} />
+                  <SliderRow label="Blur" max={100} value={imageAdjustments.blur} onChange={(v) => adjust("blur", v, setBlur, 100)} />
+                </Section>
+              )}
+            </>
           ) : (
-            <div className="text-center py-8">
-              <Layers className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Select an object to edit its properties
+            <div className="rounded-xl border border-dashed border-border py-12 px-6 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                <MousePointerClick className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium text-foreground">Nothing selected</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Click an element on the canvas to edit its size, color and more.
               </p>
             </div>
           )}

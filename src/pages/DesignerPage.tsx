@@ -3,23 +3,50 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Link, useLocation } from "@/lib/router-compat";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { DesignCanvas } from "@/components/designer/DesignCanvas";
 import { DesignSidebar } from "@/components/designer/DesignSidebar";
 import { InspectorPanel } from "@/components/designer/InspectorPanel";
 import { OrderSubmission } from "@/components/designer/OrderSubmission";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import { Canvas as FabricCanvas } from "fabric";
 import { toast } from "sonner";
+import type { LucideIcon } from "lucide-react";
 import {
   Wrench,
   Sliders,
   Type,
   Image as ImageIcon,
   Shapes,
-  Layout,
   Palette,
 } from "lucide-react";
+
+const MobileNavItem = ({
+  icon: Icon,
+  label,
+  onClick,
+  active = false,
+}: {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      "flex flex-col items-center justify-center gap-1 rounded-xl py-2.5 text-[10px] font-medium transition-all active:scale-95",
+      active
+        ? "bg-primary text-primary-foreground"
+        : "text-muted-foreground hover:text-foreground",
+    )}
+  >
+    <Icon className="h-5 w-5" />
+    {label}
+  </button>
+);
 
 const DesignerPage = () => {
   const { user } = useAuth();
@@ -54,9 +81,7 @@ const DesignerPage = () => {
 
   // If we got here via the "Edit" button on a saved design
   // (/designer?id=...), load that design's actual editable canvas state
-  // back onto the canvas. Previously this query param was completely
-  // ignored - the designer always started fresh with the template picker,
-  // discarding whatever design the user meant to edit.
+  // back onto the canvas.
   useEffect(() => {
     if (!fabricCanvas) return;
     const params = new URLSearchParams(location.search);
@@ -191,12 +216,28 @@ const DesignerPage = () => {
       <Header />
 
       {/* Top action bar */}
-      <div className="p-3 md:p-4 border-b border-border bg-card">
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <h1 className="text-xl md:text-2xl font-bold text-foreground">Product Designer</h1>
+      <div className="px-3 md:px-6 py-3 border-b border-border bg-card/60">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <h1 className="text-lg md:text-xl font-bold leading-tight">Design Studio</h1>
+            <p className="hidden sm:block text-xs text-muted-foreground">
+              Pick a template, add your artwork, then send it to a manufacturer.
+            </p>
+          </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
               <Link to="/">Home</Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="md:hidden"
+              onClick={handleOpenPreview}
+            >
+              Preview
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSaveDesign}>
+              Save
             </Button>
             <Button size="sm" onClick={handleProceedToCheckout}>
               Checkout
@@ -206,12 +247,12 @@ const DesignerPage = () => {
       </div>
 
       {/* Main workspace */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-y-auto md:overflow-hidden">
         {/* Desktop sidebar */}
         <div className="hidden md:flex">{sidebar}</div>
 
         <main className="flex-1 flex flex-col min-w-0">
-          <div className="flex-1 p-3 md:p-6 flex flex-col min-h-0 pb-24 md:pb-6">
+          <div className="flex-1 p-3 md:p-6 flex flex-col min-h-0 pb-28 md:pb-6">
             <DesignCanvas
               onCanvasReady={setFabricCanvas}
               onMeasurementsChange={setMeasurements}
@@ -230,80 +271,50 @@ const DesignerPage = () => {
         <div className="hidden lg:flex">{inspector}</div>
       </div>
 
-      {/* Mobile bottom toolbar (Picsart-style) */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-7 gap-0">
-          <Sheet open={toolsSheetOpen} onOpenChange={setToolsSheetOpen}>
-            <SheetTrigger asChild>
-              <button className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted">
-                <Wrench className="h-5 w-5" />
-                Tools
-              </button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Design Tools</SheetTitle>
-              </SheetHeader>
-              <div className="h-full overflow-hidden">{sidebar}</div>
-            </SheetContent>
-          </Sheet>
-
-          <button
-            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
-            onClick={handleOpenTemplates}
-          >
-            <Palette className="h-5 w-5" />
-            Templates
-          </button>
-
-          <button
-            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
-            onClick={handleAddText}
-          >
-            <Type className="h-5 w-5" />
-            Text
-          </button>
-
-          <button
-            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
+      {/* Mobile bottom toolbar: floating pill */}
+      <div className="md:hidden fixed bottom-3 inset-x-3 z-40 rounded-2xl border border-border bg-card shadow-2xl pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-6 gap-1 p-1.5">
+          <MobileNavItem
+            icon={Wrench}
+            label="Tools"
+            active={toolsSheetOpen}
+            onClick={() => setToolsSheetOpen(true)}
+          />
+          <MobileNavItem icon={Palette} label="Templates" onClick={handleOpenTemplates} />
+          <MobileNavItem icon={Type} label="Text" onClick={handleAddText} />
+          <MobileNavItem
+            icon={ImageIcon}
+            label="Image"
             onClick={() => document.getElementById("image-upload")?.click()}
-          >
-            <ImageIcon className="h-5 w-5" />
-            Image
-          </button>
-
-          <button
-            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
-            onClick={handleOpenShapeLibrary}
-          >
-            <Shapes className="h-5 w-5" />
-            Shapes
-          </button>
-
-          <Sheet open={inspectorSheetOpen} onOpenChange={setInspectorSheetOpen}>
-            <SheetTrigger asChild>
-              <button className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted">
-                <Sliders className="h-5 w-5" />
-                Props
-              </button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-[70vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Properties</SheetTitle>
-              </SheetHeader>
-              <div className="h-full overflow-auto">{inspector}</div>
-            </SheetContent>
-          </Sheet>
-
-          <button
-            className="flex flex-col items-center gap-1 py-2.5 text-xs text-foreground hover:bg-muted"
-            onClick={handleOpenPreview}
-          >
-            <Layout className="h-5 w-5" />
-            Preview
-          </button>
+          />
+          <MobileNavItem icon={Shapes} label="Shapes" onClick={handleOpenShapeLibrary} />
+          <MobileNavItem
+            icon={Sliders}
+            label="Props"
+            active={inspectorSheetOpen}
+            onClick={() => setInspectorSheetOpen(true)}
+          />
         </div>
       </div>
+
+      {/* Sheets (opened from the bar above) */}
+      <Sheet open={toolsSheetOpen} onOpenChange={setToolsSheetOpen}>
+        <SheetContent side="bottom" className="h-[80vh] p-0 rounded-t-2xl md:hidden">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>Design Tools</SheetTitle>
+          </SheetHeader>
+          <div className="h-full overflow-hidden">{sidebar}</div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={inspectorSheetOpen} onOpenChange={setInspectorSheetOpen}>
+        <SheetContent side="bottom" className="h-[70vh] p-0 rounded-t-2xl md:hidden">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>Properties</SheetTitle>
+          </SheetHeader>
+          <div className="h-full overflow-auto">{inspector}</div>
+        </SheetContent>
+      </Sheet>
 
       <div className="hidden md:block">
         <Footer />

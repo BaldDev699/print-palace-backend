@@ -30,8 +30,11 @@ const products = [
 const ProductShowcase = () => {
   return (
     <section id="products" className="py-16 lg:py-24 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center text-foreground mb-12">
+      <div className="text-center mb-12">
+        <span className="text-xs font-semibold uppercase tracking-widest text-primary">
+          Our products
+        </span>
+        <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
           What Would You Like to Print?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

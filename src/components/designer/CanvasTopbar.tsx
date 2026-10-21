@@ -84,7 +84,7 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
   return (
     <>
       <div className="w-full flex flex-wrap items-center justify-between gap-2 p-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
           {/* Zoom Controls */}
           <div className="flex items-center gap-1 border border-border rounded-md">
             <Button variant="ghost" size="sm" onClick={handleZoomOut} disabled={zoom <= 0.1}>
@@ -105,9 +105,16 @@ export const CanvasTopbar: React.FC<CanvasTopbarProps> = ({
           </Button>
 
           {/* Canvas Size */}
-          <Button variant="outline" size="sm" onClick={() => setIsSizeDialogOpen(true)}>
-            <Settings className="h-4 w-4 mr-2" />
-            {currentCanvasSize.width} × {currentCanvasSize.height}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsSizeDialogOpen(true)}
+            className="shrink-0"
+          >
+            <Settings className="h-4 w-4 mr-1.5" />
+            <span className="text-xs">
+              {currentCanvasSize.width}×{currentCanvasSize.height}
+            </span>
           </Button>
         </div>
 

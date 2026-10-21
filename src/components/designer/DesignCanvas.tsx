@@ -285,20 +285,13 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
         currentCanvasSize={designSize}
       />
 
-      {/* Canvas Container - min-h ensures the fabric canvas always has real
-          space to measure against on mobile, instead of collapsing to 0 and
-          then overflowing once content is drawn. */}
-      <div className="flex-1 min-h-[1200px] md:min-h-[500px] w-full border-2 border-border rounded-lg bg-muted/10 relative flex items-center justify-center p-4 mt-4 overflow-hidden">
+      <div className="flex-1 min-h-[420px] md:min-h-[500px] w-full border border-border rounded-2xl bg-muted/20 [background-image:radial-gradient(hsl(0_0%_100%/0.07)_1px,transparent_1px)] [background-size:20px_20px] relative flex items-center justify-center p-4 mt-4 overflow-hidden">
         <canvas
           ref={canvasRef}
           className="shadow-lg shrink-0"
       />
       </div>
 
-      {/* Bottom Panel - stacked under the canvas on desktop/tablet only.
-          On mobile these live behind the "Preview" button in the bottom
-          toolbar (see DesignerPage) so the canvas keeps the full screen. */}
-      {/* Bottom Panel - Desktop only */}
       <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <div className="h-[450px]">
           <ThreeDCanvas

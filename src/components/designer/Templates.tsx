@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +7,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Template } from "@/hooks/useTemplates";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Palette, Tag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Star, Search, Package } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TemplatesProps {
   open: boolean;
@@ -27,99 +24,134 @@ export const Templates: React.FC<TemplatesProps> = ({
   templates,
   onTemplateSelect,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [category, setCategory] = useState<string>("all");
+  const [query, setQuery] = useState("");
 
-  const handleTemplateClick = (template: Template) => {
+  const categories = useMemo(
+    () => ["all", "popular", ...Array.from(new Set(templates.map((t) => t.category)))],
+    [templates],
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return templates.filter((t) => {
+      const inCategory =
+        category === "all" ? true : category === "popular" ? t.popular : t.category === category;
+      const matchesQuery =
+        !q ||
+        t.name.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q) ||
+        t.tags.some((tag) => tag.toLowerCase().includes(q));
+      return inCategory && matchesQuery;
+    });
+  }, [templates, category, query]);
+
+  const handleSelect = (template: Template) => {
     onTemplateSelect(template);
     onOpenChange(false);
   };
 
-  // Group templates by category
-  const categories = Array.from(new Set(templates.map((t) => t.category)));
-  const popularTemplates = templates.filter((t) => t.popular);
-
-  const filteredTemplates =
-    selectedCategory === "all"
-      ? templates
-      : selectedCategory === "popular"
-        ? popularTemplates
-        : templates.filter((t) => t.category === selectedCategory);
-
-  const TemplateCard = ({ template }: { template: Template }) => (
-    <div
-      key={template.id}
-      className="group cursor-pointer relative"
-      onClick={() => handleTemplateClick(template)}
-      title={template.name}
-    >
-      <div className="w-24 h-24 relative overflow-hidden bg-muted rounded-md border border-border hover:border-primary/50 transition-colors">
-        <img
-          src={template.thumbnail}
-          alt={template.name}
-          className="object-cover w-full h-full transition-transform duration-200 group-hover:scale-105"
-        />
-        {template.popular && (
-          <Badge className="absolute -top-1 -right-1 bg-yellow-500 text-yellow-900 hover:bg-yellow-500 z-20 text-xs px-1 py-0 scale-75">
-            <Star className="w-2 h-2" />
-          </Badge>
-        )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-          <span className="text-white text-xs font-medium">Use</span>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl h-[92dvh] max-h-[92dvh] sm:h-auto sm:max-h-[85vh] flex flex-col z-50 bg-background">
-        <DialogHeader className="pb-3">
-          <DialogTitle className="text-xl text-center flex items-center justify-center gap-2">
-            <Palette className="w-5 h-5" />
-            Choose Template
+      <DialogContent className="max-w-5xl h-[88dvh] sm:h-[80vh] flex flex-col gap-0 p-0 overflow-hidden rounded-2xl bg-background">
+        {/* Header */}
+        <DialogHeader className="px-6 pt-6 pb-4 space-y-1 text-left">
+          <DialogTitle className="text-2xl font-bold tracking-tight">
+            Choose your product
           </DialogTitle>
-          <DialogDescription className="sr-only">
-            Select a template to start designing your custom product
+          <DialogDescription>
+            Pick a template to start designing. You can switch any time.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-          className="flex-1 flex flex-col"
-        >
-          <TabsList className="flex w-full mx-3 mb-3 overflow-x-auto bg-muted">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="popular">Popular</TabsTrigger>
-            {categories.map((category) => (
-              <TabsTrigger key={category} value={category}>
-                {category}
-              </TabsTrigger>
+        {/* Search + categories */}
+        <div className="px-6 pb-4 space-y-3 border-b border-border">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search products (e.g. hoodie, banner, mug)"
+              className="pl-9 h-11 rounded-xl"
+            />
+          </div>
+
+          <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {categories.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCategory(c)}
+                className={cn(
+                  "shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium capitalize transition-colors",
+                  category === c
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-foreground/40",
+                )}
+              >
+                {c}
+              </button>
             ))}
-          </TabsList>
+          </div>
+        </div>
 
-          <ScrollArea className="flex-1 px-3 relative z-0">
-            <TabsContent value={selectedCategory} className="mt-0 relative">
-              <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 gap-1 pb-4 relative z-0">
-                {filteredTemplates.map((template) => (
-                  <TemplateCard key={template.id} template={template} />
-                ))}
-              </div>
+        {/* Grid */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5">
+          {filtered.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {filtered.map((template) => {
+                const hasPhoto = !!template.thumbnail && template.thumbnail !== "/placeholder.svg";
+                return (
+                  <button
+                    key={template.id}
+                    type="button"
+                    onClick={() => handleSelect(template)}
+                    className="group text-left rounded-xl border border-border bg-card overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-white">
+                      {hasPhoto ? (
+                        <img
+                          src={template.thumbnail}
+                          alt={template.name}
+                          className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
+                          <Package className="h-8 w-8" />
+                          <span className="text-[11px]">Preview coming soon</span>
+                        </div>
+                      )}
 
-              {filteredTemplates.length === 0 && (
-                <div className="text-center py-12">
-                  <Palette className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                    No templates found
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Try selecting a different category or check back later for new templates.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-          </ScrollArea>
-        </Tabs>
+                      {template.popular && (
+                        <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                          <Star className="h-3 w-3 fill-current" />
+                          Popular
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {template.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {template.category}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center py-16">
+              <Search className="h-10 w-10 text-muted-foreground mb-3" />
+              <p className="font-medium text-foreground">No products found</p>
+              <p className="text-sm text-muted-foreground">
+                Try a different search or category.
+              </p>
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -3,30 +3,10 @@ import HowItWorksStep from "./HowItWorksStep";
 import { Lightbulb, Pencil, ShoppingCart, Truck } from "lucide-react"; // Example icons
 
 const steps = [
-  {
-    stepNumber: 1,
-    title: "Share Your Idea",
-    description: "Tell us about your project, desired design, and quantity. We are here to help!",
-    IconComponent: Lightbulb,
-  },
-  {
-    stepNumber: 2,
-    title: "We Design & Confirm",
-    description: "Our team creates a digital mockup for your approval. Revisions are welcome!",
-    IconComponent: Pencil,
-  },
-  {
-    stepNumber: 3,
-    title: "Production Time",
-    description: "Once approved, we start the printing process using high-quality materials.",
-    IconComponent: ShoppingCart, // Using ShoppingCart as a placeholder for production/settings
-  },
-  {
-    stepNumber: 4,
-    title: "Fast Delivery",
-    description: "Your custom items are carefully packaged and shipped directly to you.",
-    IconComponent: Truck,
-  },
+  { stepNumber: 1, title: "Design It", description: "Pick a product and create your design in our online studio.", IconComponent: Pencil },
+  { stepNumber: 2, title: "Manufacturer Reviews", description: "A verified manufacturer checks your design and confirms they can make it.", IconComponent: Lightbulb },
+  { stepNumber: 3, title: "Pay & Produce", description: "Pay securely once confirmed and production begins.", IconComponent: ShoppingCart },
+  { stepNumber: 4, title: "Delivery", description: "Your custom items are packaged and delivered to you.", IconComponent: Truck },
 ];
 
 const HowItWorks = () => {

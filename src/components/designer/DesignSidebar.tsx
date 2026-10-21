@@ -114,7 +114,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
         <div className="p-4 space-y-6">
           {/* Basic Tools */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Tools
             </h4>
             <div className="grid grid-cols-2 gap-2">
@@ -124,7 +124,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
                   variant={activeTool === tool.id ? "default" : "outline"}
                   size="sm"
                   onClick={() => onToolClick(tool.id)}
-                  className="h-16 flex-col gap-1 text-xs"
+                  className="h-16 flex-col gap-1.5 text-xs rounded-xl"
                   title={tool.tooltip}
                 >
                   <tool.icon className="h-4 w-4" />
@@ -138,7 +138,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Insert Elements */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Insert
             </h4>
             <div className="grid grid-cols-2 gap-2">
@@ -148,7 +148,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={button.action}
-                  className="h-16 flex-col gap-1 text-xs"
+                  className="h-16 flex-col gap-1.5 text-xs rounded-xl"
                   title={button.tooltip}
                 >
                   <button.icon className="h-4 w-4" />
@@ -162,7 +162,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Templates */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Templates
             </h4>
             <Button
@@ -179,7 +179,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Collage */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Collage
             </h4>
             {onOpenCollageTemplates &&
@@ -220,7 +220,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
           {fabricCanvas && (
             <>
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                   Format
                 </h4>
                 <TextFormatMenu fabricCanvas={fabricCanvas} />
@@ -231,7 +231,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Printing Options */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Print
             </h4>
             <PrintingOptions onPrintingMethodSelect={onPrintingMethodSelect} />
@@ -241,7 +241,7 @@ export const DesignSidebar: React.FC<DesignSidebarProps> = ({
 
           {/* Canvas Actions */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
               Actions
             </h4>
             <div className="space-y-2">

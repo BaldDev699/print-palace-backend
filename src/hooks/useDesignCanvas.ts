@@ -98,30 +98,34 @@ export const useDesignCanvas = (): FabricCanvasHook => {
       const updateDisplaySize = () => {
         if (!canvasRef.current || canvasInstance.disposed) return;
 
-        const container = canvasRef.current.parentElement;
-        if (!container) return;
+      // Fabric wraps the <canvas> in a ".canvas-container" div.
+      // The real available space is the parent of that wrapper (the card).
+      const wrapper = canvasRef.current.parentElement;
+      const container = wrapper?.parentElement;
+      if (!wrapper || !container) return;
 
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
+      const availableWidth = Math.max(container.clientWidth - 32, 1);
+      const availableHeight = Math.max(container.clientHeight - 32, 1);
 
-        const availableWidth = Math.max(containerWidth - 32, 1);
-        const availableHeight = Math.max(containerHeight - 32, 1);
+      const { width: targetWidth, height: targetHeight } = designSizeRef.current;
 
-        const { width: targetWidth, height: targetHeight } = designSizeRef.current;
+      const scale = Math.min(availableWidth / targetWidth, availableHeight / targetHeight);
+      const cssWidth = `${targetWidth * scale}px`;
+      const cssHeight = `${targetHeight * scale}px`;
 
-        const scale = Math.min(
-          availableWidth / targetWidth,
-          availableHeight / targetHeight
-        );
+      // Size the wrapper AND both fabric canvases so they all match
+      wrapper.style.width = cssWidth;
+      wrapper.style.height = cssHeight;
+      wrapper.style.flexShrink = "0";
 
-        canvasRef.current.style.width = `${targetWidth * scale}px`;
-        canvasRef.current.style.height = `${targetHeight * scale}px`;
+      [canvasInstance.lowerCanvasEl, canvasInstance.upperCanvasEl].forEach((el) => {
+        if (!el) return;
+        el.style.width = cssWidth;
+        el.style.height = cssHeight;
+      });
 
-        canvasRef.current.style.display = "block";
-        canvasRef.current.style.flexShrink = "0";
-
-        canvasInstance.renderAll();
-      };
+      canvasInstance.renderAll();
+    };
       updateDisplaySizeRef.current = updateDisplaySize;
 
       requestAnimationFrame(() => {
@@ -130,7 +134,7 @@ export const useDesignCanvas = (): FabricCanvasHook => {
       const settleTimeout = setTimeout(updateDisplaySize, 250);
 
       // Watch container changes
-      const container = canvasRef.current.parentElement;
+      const container = canvasRef.current.parentElement?.parentElement ?? null;
 
       let resizeObserver: ResizeObserver | undefined;
 

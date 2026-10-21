@@ -24,9 +24,7 @@ const Header = () => {
     { name: "Home", href: "/" },
     { name: "Collection", href: "/collection" },
     { name: "Manufacturers", href: "/manufacturers" },
-    { name: "Products", href: "#products" },
     { name: "How It Works", href: "#how-it-works" },
-    { name: "About Us", href: "#about-us" },
     { name: "FAQ", href: "#faq" },
   ];
 
@@ -52,7 +50,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-card shadow-md sticky top-0 z-50">
+    <header className="bg-background border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex-shrink-0">
@@ -84,7 +82,7 @@ const Header = () => {
           </nav>
           <div className="hidden md:flex items-center space-x-2">
             <Button asChild>
-              <Link to="/designer">Get a Quote</Link>
+              <Link to="/designer">Start Designing</Link>
             </Button>
 
             {user ? (
