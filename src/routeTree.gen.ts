@@ -20,6 +20,7 @@ import { Route as ManufacturersRouteImport } from './routes/manufacturers'
 import { Route as PaymentCancelledRouteImport } from './routes/payment-cancelled'
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as ManufacturerIndexRouteImport } from './routes/manufacturer.index'
@@ -84,6 +85,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/payment-cancelled': typeof PaymentCancelledRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/payment-cancelled': typeof PaymentCancelledRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/payment-cancelled': typeof PaymentCancelledRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/profile': typeof ProfileRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
   '/manufacturer/orders': typeof ManufacturerOrdersRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/payment-cancelled'
     | '/payment-success'
     | '/profile'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/welcome'
     | '/manufacturer/orders'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/payment-cancelled'
     | '/payment-success'
     | '/profile'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/welcome'
     | '/manufacturer/orders'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/payment-cancelled'
     | '/payment-success'
     | '/profile'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/welcome'
     | '/manufacturer/orders'
@@ -265,6 +277,7 @@ export interface RootRouteChildren {
   PaymentCancelledRoute: typeof PaymentCancelledRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   ProfileRoute: typeof ProfileRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WelcomeRoute: typeof WelcomeRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
@@ -347,6 +360,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -440,6 +460,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentCancelledRoute: PaymentCancelledRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
   ProfileRoute: ProfileRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   WelcomeRoute: WelcomeRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,

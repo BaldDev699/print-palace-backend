@@ -19,7 +19,6 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useUserRole();
 
-
   const navItems = [
     { name: "Home", href: "/" },
     { name: "Collection", href: "/collection" },
@@ -122,9 +121,14 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" asChild>
-                <Link to="/auth">Sign In</Link>
-              </Button>
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to="/auth?mode=signup">Sign Up</Link>
+                </Button>
+              </>
             )}
           </div>
           <div className="md:hidden">
@@ -203,18 +207,27 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              <Link
-                to="/auth"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary"
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  to="/auth"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted hover:text-primary"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/auth?mode=signup"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-muted"
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
           </nav>
           <div className="pt-2 pb-3 px-4">
             <Button className="w-full" asChild>
-              <Link to="/designer">Get a Quote</Link>
+              <Link to="/designer">Start Designing</Link>
             </Button>
           </div>
         </div>
